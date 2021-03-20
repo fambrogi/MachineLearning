@@ -1,0 +1,162 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.1 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\datalist[entry]{none/global//global/global}
+  \entry{BloodPressure}{misc}{}
+    \true{moreauthor}
+    \true{morelabelname}
+    \name{author}{1}{}{%
+      {{hash=KM}{%
+         family={Kachuee},
+         familyi={K\bibinitperiod},
+         given={Mohamad},
+         giveni={M\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{KM+1}
+    \strng{fullhash}{KM+1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+  \field{howpublished}{\url{https://archive.ics.uci.edu/ml/datasets/Cuff-Less+Blood+Pressure+Estimation}}
+    \field{note}{Accessed: 19.02.2021}
+    \field{title}{UCI - Cuff-Less Blood Pressure Estimation Data Set}
+  \endentry
+
+  \entry{BloodPressureDatabase}{misc}{}
+    \field{labeltitlesource}{title}
+    \field{howpublished}{\url{https://archive.physionet.org/mimic2/}}
+    \field{note}{Accessed: 20.02.2021}
+    \field{title}{PhysioNet - Multiparameter Intelligent Monitoring in
+  Intensive Care (MIMIC) II}
+  \endentry
+
+  \entry{Goldberger2000PhysioBankPA}{article}{}
+    \name{author}{10}{}{%
+      {{hash=GA}{%
+         family={Goldberger},
+         familyi={G\bibinitperiod},
+         given={A.},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=ALA}{%
+         family={Amaral},
+         familyi={A\bibinitperiod},
+         given={L.\bibnamedelima A.},
+         giveni={L\bibinitperiod\bibinitdelim A\bibinitperiod},
+      }}%
+      {{hash=GL}{%
+         family={Glass},
+         familyi={G\bibinitperiod},
+         given={L.},
+         giveni={L\bibinitperiod},
+      }}%
+      {{hash=HJM}{%
+         family={Hausdorff},
+         familyi={H\bibinitperiod},
+         given={Jeffrey\bibnamedelima M.},
+         giveni={J\bibinitperiod\bibinitdelim M\bibinitperiod},
+      }}%
+      {{hash=IP}{%
+         family={Ivanov},
+         familyi={I\bibinitperiod},
+         given={P.},
+         giveni={P\bibinitperiod},
+      }}%
+      {{hash=MR}{%
+         family={Mark},
+         familyi={M\bibinitperiod},
+         given={R.},
+         giveni={R\bibinitperiod},
+      }}%
+      {{hash=MJ}{%
+         family={Mietus},
+         familyi={M\bibinitperiod},
+         given={J.},
+         giveni={J\bibinitperiod},
+      }}%
+      {{hash=MG}{%
+         family={Moody},
+         familyi={M\bibinitperiod},
+         given={G.},
+         giveni={G\bibinitperiod},
+      }}%
+      {{hash=PC}{%
+         family={Peng},
+         familyi={P\bibinitperiod},
+         given={C.},
+         giveni={C\bibinitperiod},
+      }}%
+      {{hash=SH}{%
+         family={Stanley},
+         familyi={S\bibinitperiod},
+         given={H.},
+         giveni={H\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{GA+1}
+    \strng{fullhash}{GAALAGLHJMIPMRMJMGPCSH1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{pages}{E215\bibrangedash 20}
+    \field{title}{PhysioBank, PhysioToolkit, and PhysioNet: components of a new
+  research resource for complex physiologic signals.}
+    \field{volume}{101 23}
+    \field{journaltitle}{Circulation}
+    \field{year}{2000}
+  \endentry
+
+  \entry{Kachuee2015CufflessHC}{article}{}
+    \name{author}{4}{}{%
+      {{hash=KM}{%
+         family={Kachuee},
+         familyi={K\bibinitperiod},
+         given={Mohamad},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=KMM}{%
+         family={Kiani},
+         familyi={K\bibinitperiod},
+         given={Mohammad\bibnamedelima Mahdi},
+         giveni={M\bibinitperiod\bibinitdelim M\bibinitperiod},
+      }}%
+      {{hash=MH}{%
+         family={Mohammadzade},
+         familyi={M\bibinitperiod},
+         given={Hoda},
+         giveni={H\bibinitperiod},
+      }}%
+      {{hash=SM}{%
+         family={Shabany},
+         familyi={S\bibinitperiod},
+         given={M.},
+         giveni={M\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{KM+1}
+    \strng{fullhash}{KMKMMMHSM1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{pages}{1006\bibrangedash 1009}
+    \field{title}{Cuff-less high-accuracy calibration-free blood pressure
+  estimation using pulse transit time}
+    \field{journaltitle}{2015 IEEE International Symposium on Circuits and
+  Systems (ISCAS)}
+    \field{year}{2015}
+  \endentry
+\enddatalist
+\endinput

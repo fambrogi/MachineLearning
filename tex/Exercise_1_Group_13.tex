@@ -1,0 +1,92 @@
+\documentclass[12pt, DIV=13, titlepage, headinclude]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage[autostyle=true]{csquotes}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{here}
+\usepackage{tabularx}
+\usepackage[backend=bibtex8, sorting=none]{biblatex}
+\bibliography{literature.bib}
+
+\usepackage{booktabs}
+\usepackage{scrlayer-scrpage}
+\usepackage{lastpage}
+\pagestyle{scrheadings}
+%\clearscrheadfoot
+\automark{section}
+\cfoot{\footnotesize{Seite \thepage\ / \pageref{LastPage}}}
+
+
+\begin{document}
+\title{Exercise 1}
+\date{\today}
+\author{	Adam Höfler \\
+		Federico Ambrigo \\
+		Matteo Panzeri \\ \\
+		Machine Learning\\ TU Vienna}
+\maketitle
+
+\newpage
+
+We decided on the data sets \enquote{tbd} and \enquote{Cuff-Less Blood Pressure Estimation Data Set} \cite{BloodPressure}. They differ in size of the data set, number of features, type of features, etc. to give us a variety of possible scenarios to work with. \textit{TO ADD HERE AFTER WE HAVE A SECOND DATA SET: \enquote{COMPARE CLEANNESS THE DATA SETS}, \enquote{COMPARE NEEDED PREPROCESSING OF THE DATA SETS}}.
+
+\section*{Blood Pressure}
+
+\paragraph{Data origin}
+The original data comes from the Multi-parameter Intelligent Monitoring in Intensive Care II (MIMIC II) online waveform database \cite{BloodPressureDatabase}\cite{Goldberger2000PhysioBankPA}. The data set used here was extracted from MIMIC II and reduced onto Photoplethysmograph (PPG), Electrocardiogram (ECG) and arterial blood pressure (ABP) waveform signals \cite{Kachuee2015CufflessHC}. The data was collected between the years 2001 and 2008 from a variety of Intensive Care Units and were sampled at rate of 125 Hz with 8 bit accuracy. Preprocessing on the original with respect to smoothing the waveform and removing blocks with a) unreasonable blood pressures, b) unreasonable heart rate, c) severe discontinuities and d) big difference in the PPG signal correlation between neighbouring blocks.
+
+\paragraph{Dataset}
+\noindent The data set contains 12,000 rows with each 3 attributes. Due to the preprocessing, there should be no missing values or outliers. The features are all of rational type.
+
+\begin{table}[H]
+    \centering
+        \begin{tabular}{ c c }
+            \toprule
+            PPG signal & Ratio \\
+            ECG signal & Ratio \\
+						ABP signal & Ratio \\
+            \bottomrule
+        \end{tabular}
+    \caption{Features \& Data type of the Life Expectancy data set}
+    \label{tab:bloodPress}
+\end{table}
+
+\paragraph{Task}
+
+This data set is our choice for the classification part with ABP being the target variable. The classification is done by mapping the ABPs systolic and diastolic values to the classes \enquote{hypertension} or \enquote{no hypertension} - possible thresholds could be 140 mmHg for the systolic and 90 mmHg for the diastolic value. The classification is then done on the feature set (PPG, ECG). \textit{MAYBE WE CAN ADD A BIT MORE REASONING ONCE WE HAVE A 2D SURFACE PLOT THAT SHOWS THAT REGRESSION IS DUMB}.
+
+\paragraph{Plots}
+
+\newpage
+\section*{TBD}
+
+\paragraph{Data origin}
+
+\paragraph{Dataset}
+
+\begin{table}[H]
+    \centering
+        \begin{tabular}{ c c }
+            \toprule
+						tbd & tbd \\
+            \bottomrule
+        \end{tabular}
+    \caption{Features \& Data type of the Life Expectancy data set}
+    \label{tab:lifeexp}
+\end{table}
+
+\paragraph{Task}
+
+
+\newpage
+\nocite{*}
+\printbibliography
+
+\end{document}
+
+
+
+
+%ToDo
