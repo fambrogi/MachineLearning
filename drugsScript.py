@@ -16,6 +16,5 @@ for c in dataset.columns:
     plt.xlabel(c, fontsize=15)
     plt.ylabel('Counts', fontsize=15)
     plt.grid(ls=':', color='lightgray')
-    plt.show()
     plt.savefig("drugsPlots/" + c + '.png', dpi=150)
     plt.close()
