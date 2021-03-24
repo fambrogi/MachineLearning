@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99d (TeX Live 2017/Debian)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: Group13_Exercise0.aux
+The style file: plain.bst
+Database file #1: literature.bib
+Warning--I didn't find a database entry for "DrugConsumption"
+Warning--to sort, need author or key in BloodPressureDatabase
+Warning--empty journal in fehrman2017factor
+You've used 5 entries,
+            2118 wiz_defined-function locations,
+            530 strings with 5311 characters,
+and the built_in function-call counts, 1848 in all, are:
+= -- 170
+> -- 118
+< -- 1
++ -- 48
+- -- 42
+* -- 128
+:= -- 309
+add.period$ -- 16
+call.type$ -- 5
+change.case$ -- 35
+chr.to.int$ -- 0
+cite$ -- 7
+duplicate$ -- 57
+empty$ -- 124
+format.name$ -- 42
+if$ -- 383
+int.to.chr$ -- 0
+int.to.str$ -- 5
+missing$ -- 3
+newline$ -- 29
+num.names$ -- 8
+pop$ -- 48
+preamble$ -- 1
+purify$ -- 30
+quote$ -- 0
+skip$ -- 48
+stack$ -- 0
+substring$ -- 83
+swap$ -- 15
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 20
+warning$ -- 2
+while$ -- 11
+width$ -- 6
+write$ -- 53
+(There were 3 warnings)

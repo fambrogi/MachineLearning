@@ -1,0 +1,8 @@
+\babel@toc {english}{}
+\contentsline {paragraph}{\nonumberline Data origin}{3}{section*.3}
+\contentsline {paragraph}{\nonumberline Dataset}{3}{section*.4}
+\contentsline {paragraph}{\nonumberline Task}{3}{section*.5}
+\contentsline {paragraph}{\nonumberline Plots}{3}{section*.6}
+\contentsline {paragraph}{\nonumberline Data origin}{4}{section*.8}
+\contentsline {paragraph}{\nonumberline Dataset}{4}{table.2}
+\contentsline {paragraph}{\nonumberline Task}{4}{section*.10}
