@@ -18,6 +18,7 @@ lib/
 lib64/
 parts/
 sdist/
+
 var/
 wheels/
 pip-wheel-metadata/
@@ -127,3 +128,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+#### Data
+data
+data/
