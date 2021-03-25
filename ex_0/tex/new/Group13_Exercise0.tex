@@ -7,12 +7,13 @@
 \usepackage{amsmath}
 \usepackage{array}
 \usepackage{amssymb}
+%\usepackage[backend=bibtex8, sorting=none]{biblatex}
 \usepackage{colordvi}
 \usepackage{enumerate}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage[footnotesize]{caption}
-\usepackage{fancyhdr} 
+\usepackage{fancyhdr}
 \usepackage{pdfpages}
 \usepackage{slashed}
 \usepackage{tabularx}
@@ -29,7 +30,7 @@
 
 \usepackage{epsfig,amsmath,graphicx,amssymb,listings,slashed}
 \usepackage[colorlinks,citecolor=blue,urlcolor=blue,linkcolor=blue]{hyperref}
-\usepackage[outercaption]{sidecap}  
+\usepackage[outercaption]{sidecap}
 
 \usepackage{booktabs}
 
@@ -48,7 +49,7 @@
 \setlength{\headheight}{0cm}
 \setlength{\headsep}{0cm}
 \setlength{\voffset}{0cm}
-\setlength{\paperheight}{29cm} 
+\setlength{\paperheight}{29cm}
 
 \definecolor{ourbrown}{RGB}{155,100,15}
 \definecolor{ourcyan}{RGB}{20,165,165}
@@ -65,14 +66,13 @@
 
 
 
-
 \begin{document}
 
-\title{ Machine Learning - SS 2021 \\ Exercise 0 } 
+\title{ Machine Learning - SS 2021 \\ Exercise 0 }
 
 
 	\author{Federico Ambrogi, \textcolor{blue} {e1449911@student.tuwien.ac.at } \\
-	Adam Hofler, \textcolor{blue} {11847620@student.tuwien.ac.at } \\
+	Adam Höfler, \textcolor{blue} {e11847620@student.tuwien.ac.at } \\
 	Matteo Panzieri \textcolor{blue}{12039996@student.tuwien.ac.at } \\
     TU Wien }
 
@@ -117,29 +117,29 @@ The signals and the distributions of their values, can be inspected in Fig. \ref
 	\centering
 	\begin{minipage}[b]{0.32\textwidth}
 		\includegraphics[width=\textwidth]{plots/histo_ABP.png}
-		
+
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
 		\includegraphics[width=\textwidth]{plots/histo_ECG.png}
-		
+
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
 		\includegraphics[width=\textwidth]{plots/histo_PPG.png}
-		
+
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
 		\includegraphics[width=\textwidth]{plots/series_ABP_zoom.png}
-		
+
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
 		\includegraphics[width=\textwidth]{plots/series_ECG_zoom.png}
-		
+
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
-		\includegraphics[width=\textwidth]{plots/series_PPG_zoom.png}	
+		\includegraphics[width=\textwidth]{plots/series_PPG_zoom.png}
 	\end{minipage}
-	
-	
+
+
 	\caption{Distribution for the ABP, ECG and PPG signals.}
 	\label{signals}
 \end{figure}
@@ -149,17 +149,17 @@ The signals and the distributions of their values, can be inspected in Fig. \ref
 
 
 \paragraph{Task}
-\noindent This data set is our choice for the regression part with ABP being the target variable. 
+\noindent This data set is our choice for the regression part with ABP being the target variable.
 The most common approach to measure (BP) is by using a cuff, wrapped around the upper arm and inflated. A pressure sensor inserted in the cuff records the arterial pulsations during the cuff deflation, and the amplitudes of these pulsations are used to calculate systolic and diastolic BP. The limitations of the approach include that it relies on a set of empirical coefficients to map the pulse amplitudes to systolic and diastolic BP, specific to the used device. Furthemore, this kind of measurements in patients with atherosclerosis or obese patients, whose pulse amplitudes can be weak, are subject to large errors.
 
-For these reasons, it is very interesting to study te possibility to study a regression model able to predict the BP by using the PPG and/or the ECG signals.
+For these reasons, it is very interesting to study the possibility to study a regression model able to predict the BP by using the PPG and/or the ECG signals.
 
 
 
 
 
 \section{Drug consumption Data Set}
-This dataset \cite{fehrman2017factor} include records of drug usage of 1885 respondents, together with attributes regarding personal information. For each respondent 12 attributes are known: Personality measurements which include NEO-FFI-R (neuroticism, extraversion, openness to experience, agreeableness, and conscientiousness), BIS-11 (impulsivity), and ImpSS (sensation seeking), level of education, age, gender, country of residence and ethnicity. 
+This dataset \cite{fehrman2017factor} includes records of drug usage of 1885 respondents, together with attributes regarding personal information. For each respondent 12 attributes are known: Personality measurements which include NEO-FFI-R (neuroticism, extraversion, openness to experience, agreeableness, and conscientiousness), BIS-11 (impulsivity), and ImpSS (sensation seeking), level of education, age, gender, country of residence and ethnicity.
 
 All input attributes are originally categorical and are quantified. After quantification values of all input features can be considered as real-valued. In addition, participants were questioned concerning their use of 18 legal and illegal drugs (alcohol, amphetamines, amyl nitrite, benzodiazepine, cannabis, chocolate, cocaine, caffeine, crack, ecstasy, heroin, ketamine, legal highs, LSD, methadone, mushrooms, nicotine and volatile substance abuse and one fictitious drug (Semeron) which was introduced to identify over-claimers. For each drug they have to select one of the answers: never used the drug, used it over a decade ago, or in the last decade, year, month, week, or day.
 Database contains 18 classification problems. Each of independent label variables contains seven classes: "Never Used", "Used over a Decade Ago", "Used in Last Decade", "Used in Last Year", "Used in Last Month", "Used in Last Week", and "Used in Last Day".
@@ -173,49 +173,49 @@ Database contains 18 classification problems. Each of independent label variable
 	\centering
 	\begin{minipage}[b]{0.32\textwidth}
 		\includegraphics[width=\textwidth]{plots/drugsPlots/caffeine.png}
-		
+
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
 		\includegraphics[width=\textwidth]{plots/drugsPlots/LSD.png}
-		
+
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
 		\includegraphics[width=\textwidth]{plots/drugsPlots/semeron.png}
 	\end{minipage}
 	\caption{Distribution for drugs.}
-\label{drugs}
+\label{drugs1}
 \end{figure}
 \begin{figure}[h!]
 	\centering
 	\begin{minipage}[b]{0.32\textwidth}
 		\includegraphics[width=\textwidth]{plots/drugsPlots/age.png}
-		
+
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
 		\includegraphics[width=\textwidth]{plots/drugsPlots/country.png}
-		
+
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
 		\includegraphics[width=\textwidth]{plots/drugsPlots/gender.png}
 	\end{minipage}
 	\caption{Distribution for drugs.}
-	\label{drugs}
+	\label{drugs2}
 \end{figure}
 \begin{figure}[h!]
 	\centering
 	\begin{minipage}[b]{0.32\textwidth}
 		\includegraphics[width=\textwidth]{plots/drugsPlots/Ascore.png}
-		
+
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
 		\includegraphics[width=\textwidth]{plots/drugsPlots/Oscore.png}
-		
+
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
 		\includegraphics[width=\textwidth]{plots/drugsPlots/Escore.png}
 	\end{minipage}
 	\caption{Distribution for drugs.}
-	\label{drugs}
+	\label{drugs3}
 \end{figure}
 
 
@@ -226,8 +226,8 @@ This data set is very appropriate for classification experiments, given the part
 
 
 
-
-\bibliography{literature}{}
-\bibliographystyle{plain}
+\newpage
+\bibliography{literature.bib}{}
+\bibliographystyle{unsrt}
 
 \end{document}

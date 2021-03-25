@@ -1,15 +1,23 @@
 \begin{thebibliography}{1}
 
+\bibitem{DrugConsumption}
+Evgeny~M. Mirkes et~al.
+\newblock Uci - drug consumption (quantified) data set.
+\newblock
+  \url{https://archive.ics.uci.edu/ml/datasets/Drug+consumption+%28quantified%29}.
+\newblock Accessed: 25.03.2021.
+
+\bibitem{BloodPressure}
+Mohamad Kachuee et~al.
+\newblock Uci - cuff-less blood pressure estimation data set.
+\newblock
+  \url{https://archive.ics.uci.edu/ml/datasets/Cuff-Less+Blood+Pressure+Estimation}.
+\newblock Accessed: 19.03.2021.
+
 \bibitem{BloodPressureDatabase}
 Physionet - multiparameter intelligent monitoring in intensive care (mimic) ii.
 \newblock \url{https://archive.physionet.org/mimic2/}.
-\newblock Accessed: 20.02.2021.
-
-\bibitem{fehrman2017factor}
-E.~Fehrman, A.~K. Muhammad, E.~M. Mirkes, V.~Egan, and A.~N. Gorban.
-\newblock The five factor model of personality and evaluation of drug
-  consumption risk.
-\newblock 2017.
+\newblock Accessed: 20.03.2021.
 
 \bibitem{Goldberger2000PhysioBankPA}
 A.~Goldberger, L.~A. Amaral, L.~Glass, Jeffrey~M. Hausdorff, P.~Ivanov,
@@ -18,18 +26,17 @@ A.~Goldberger, L.~A. Amaral, L.~Glass, Jeffrey~M. Hausdorff, P.~Ivanov,
   research resource for complex physiologic signals.
 \newblock {\em Circulation}, 101 23:E215--20, 2000.
 
-\bibitem{BloodPressure}
-Mohamad Kachuee et~al.
-\newblock Uci - cuff-less blood pressure estimation data set.
-\newblock
-  \url{https://archive.ics.uci.edu/ml/datasets/Cuff-Less+Blood+Pressure+Estimation}.
-\newblock Accessed: 19.02.2021.
-
 \bibitem{Kachuee2015CufflessHC}
 Mohamad Kachuee, Mohammad~Mahdi Kiani, Hoda Mohammadzade, and M.~Shabany.
 \newblock Cuff-less high-accuracy calibration-free blood pressure estimation
   using pulse transit time.
 \newblock {\em 2015 IEEE International Symposium on Circuits and Systems
   (ISCAS)}, pages 1006--1009, 2015.
+
+\bibitem{fehrman2017factor}
+E.~Fehrman, A.~K. Muhammad, E.~M. Mirkes, V.~Egan, and A.~N. Gorban.
+\newblock The five factor model of personality and evaluation of drug
+  consumption risk.
+\newblock 2017.
 
 \end{thebibliography}
