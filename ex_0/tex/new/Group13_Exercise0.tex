@@ -73,7 +73,7 @@
 
 	\author{Federico Ambrogi, \textcolor{blue} {e1449911@student.tuwien.ac.at } \\
 	Adam Höfler, \textcolor{blue} {e11847620@student.tuwien.ac.at } \\
-	Matteo Panzieri \textcolor{blue}{12039996@student.tuwien.ac.at } \\
+	Matteo Panzeri \textcolor{blue}{12039996@student.tuwien.ac.at } \\
     TU Wien }
 
 
@@ -91,7 +91,7 @@ In this report we describe and analyse the main features of the datasets \textit
 }\cite{DrugConsumption} and \textit{Cuff-Less Blood Pressure Estimation Data Set} \cite{BloodPressure}.
 They differ in size of the data set, number of features, type of features, etc. to give us a variety of possible scenarios to work with.
 
-\section{Dataset: Cuff-Less Blood Pressure Estimation}
+\section{Data Set: Cuff-Less Blood Pressure Estimation}
 The original data comes from the Multi-parameter Intelligent Monitoring in Intensive Care II (MIMIC II) online waveform database \cite{BloodPressureDatabase}\cite{Goldberger2000PhysioBankPA}. The data set was extracted from MIMIC II and reduced onto Photoplethysmograph (PPG), Electrocardiogram (ECG) and arterial blood pressure (ABP) waveform signals \cite{Kachuee2015CufflessHC}. The data was collected between the years 2001 and 2008 from a variety of Intensive Care Units and were sampled at rate of 125 Hz with 8 bit accuracy. The preprocessing on the original included the smoothing of the waveforms and the removal blocks with a) unreasonable blood pressures, b) unreasonable heart rate, c) severe discontinuities and d) big differences in the PPG signal correlation between neighbouring blocks.
 
 \paragraph{Dataset}
@@ -106,7 +106,7 @@ The original data comes from the Multi-parameter Intelligent Monitoring in Inten
 		ABP signal & Ratio \\
 		\bottomrule
 	\end{tabular}
-	\caption{Features \& Data type of the Life Expectancy data set}
+	\caption{Features \& Data type of the Life Expectancy data set {\color {red} WRONG, and I do not think the table is useful for 3 equal entries... } }
 	\label{tab:bloodPress}
 \end{table}
 
@@ -150,7 +150,7 @@ The signals and the distributions of their values, can be inspected in Fig. \ref
 
 \paragraph{Task}
 \noindent This data set is our choice for the regression part with ABP being the target variable.
-The most common approach to measure (BP) is by using a cuff, wrapped around the upper arm and inflated. A pressure sensor inserted in the cuff records the arterial pulsations during the cuff deflation, and the amplitudes of these pulsations are used to calculate systolic and diastolic BP. The limitations of the approach include that it relies on a set of empirical coefficients to map the pulse amplitudes to systolic and diastolic BP, specific to the used device. Furthemore, this kind of measurements in patients with atherosclerosis or obese patients, whose pulse amplitudes can be weak, are subject to large errors.
+The most common approach to measure (BP) is by using a cuff, wrapped around the upper arm and inflated. A pressure sensor inserted in the cuff records the arterial pulsations during the cuff deflation, and the amplitudes of these pulsations are used to calculate systolic and diastolic BP. The limitations of the approach include that it relies on a set of empirical coefficients to map the pulse amplitudes to systolic and diastolic BP, specific to the used device. Furthermore, this kind of measurements in patients with atherosclerosis or obese patients, whose pulse amplitudes can be weak, are subject to large errors.
 
 For these reasons, it is very interesting to study the possibility to study a regression model able to predict the BP by using the PPG and/or the ECG signals.
 
@@ -158,11 +158,15 @@ For these reasons, it is very interesting to study the possibility to study a re
 
 
 
-\section{Drug consumption Data Set}
-This dataset \cite{fehrman2017factor} includes records of drug usage of 1885 respondents, together with attributes regarding personal information. For each respondent 12 attributes are known: Personality measurements which include NEO-FFI-R (neuroticism, extraversion, openness to experience, agreeableness, and conscientiousness), BIS-11 (impulsivity), and ImpSS (sensation seeking), level of education, age, gender, country of residence and ethnicity.
+\section{Data Set: Drug Consumption}
+This dataset \cite{fehrman2017factor} includes records of drug usage of 1885 respondents, together with attributes regarding personal information, collected through an online survey. Data refers to two general categories. 
+The first is related to personal aspects of the respondent: level of education, age, gender, country of residence and ethnicity. Many studies have shown that personality traits such as neuroticism (N), extraversion (E), openness to experience (O), agreeableness (A), and conscientiousness (C) can be associated to drugs consumption. For example, the personality traits of N,E, and C are highly correlated with dangerous health behaviours. In this dataset, two additional personality traits are considered: the Barratt Impulsiveness Scale version 11 (BIS-11), and the Impulsivity Sensation-Seeking scale (ImpSS). The dataset include then the scores of these seven personality traits.
 
-All input attributes are originally categorical and are quantified. After quantification values of all input features can be considered as real-valued. In addition, participants were questioned concerning their use of 18 legal and illegal drugs (alcohol, amphetamines, amyl nitrite, benzodiazepine, cannabis, chocolate, cocaine, caffeine, crack, ecstasy, heroin, ketamine, legal highs, LSD, methadone, mushrooms, nicotine and volatile substance abuse and one fictitious drug (Semeron) which was introduced to identify over-claimers. For each drug they have to select one of the answers: never used the drug, used it over a decade ago, or in the last decade, year, month, week, or day.
-Database contains 18 classification problems. Each of independent label variables contains seven classes: "Never Used", "Used over a Decade Ago", "Used in Last Decade", "Used in Last Year", "Used in Last Month", "Used in Last Week", and "Used in Last Day".
+The second category of data regards the usage of specific drugs acting as central nervous system depressants, stimulants, or hallucinogens:alcohol, amphetamines, amyl nitrite, benzodiazepine, cannabis, chocolate, cocaine, caffeine, crack, ecstasy, heroin, ketamine, legal highs, LSD, methadone, mushrooms, nicotine and volatile substance abuse and one fictitious drug (Semeron) which was introduced to identify over-claimers. 
+
+For each substance, the respondent had to classify the own usage using according to the following frequency categories: "Never Used", "Used over a Decade Ago", "Used in Last Decade", "Used in Last Year", "Used in Last Month", "Used in Last Week", and "Used in Last Day".
+
+
 
 \clearpage
 \paragraph{Dataset}
@@ -172,19 +176,33 @@ Database contains 18 classification problems. Each of independent label variable
 \begin{figure}[h!]
 	\centering
 	\begin{minipage}[b]{0.32\textwidth}
-		\includegraphics[width=\textwidth]{plots/drugsPlots/caffeine.png}
+		\includegraphics[width=\textwidth]{plots/drugsPlots/alcohol_freq.png}
 
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
-		\includegraphics[width=\textwidth]{plots/drugsPlots/LSD.png}
+		\includegraphics[width=\textwidth]{plots/drugsPlots/amphetamines_freq.png}
 
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
-		\includegraphics[width=\textwidth]{plots/drugsPlots/semeron.png}
+		\includegraphics[width=\textwidth]{plots/drugsPlots/amylNitrite_freq.png}
 	\end{minipage}
-	\caption{Distribution for drugs.}
+	\begin{minipage}[b]{0.32\textwidth}
+	\includegraphics[width=\textwidth]{plots/drugsPlots/chocolate_freq.png}
+	
+\end{minipage}
+\begin{minipage}[b]{0.32\textwidth}
+	\includegraphics[width=\textwidth]{plots/drugsPlots/heroin_freq.png}
+	
+\end{minipage}
+\begin{minipage}[b]{0.32\textwidth}
+	\includegraphics[width=\textwidth]{plots/drugsPlots/cocaine_freq.png}
+\end{minipage}
+
+	\caption{Example of frequency use for a selection of drugs.}
 \label{drugs1}
 \end{figure}
+
+
 \begin{figure}[h!]
 	\centering
 	\begin{minipage}[b]{0.32\textwidth}
