@@ -97,19 +97,6 @@ The original data comes from the Multi-parameter Intelligent Monitoring in Inten
 \paragraph{Dataset}
 \noindent The data set contains 12,000 rows with 3 attributes each, i.e. the PPG, ECG and ABP. Due to the preprocessing, there should be no missing values or outliers. The features are of numeric type.
 
-\begin{table}
-	\centering
-	\begin{tabular}{ c c }
-		\toprule
-		PPG signal & Ratio \\
-		ECG signal & Ratio \\
-		ABP signal & Ratio \\
-		\bottomrule
-	\end{tabular}
-	\caption{Features \& Data type of the Life Expectancy data set {\color {red} WRONG, and I do not think the table is useful for 3 equal entries... } }
-	\label{tab:bloodPress}
-\end{table}
-
 The signals and the distributions of their values, can be inspected in Fig. \ref{signals}.
 
 
@@ -158,20 +145,23 @@ For these reasons, it is very interesting to study the possibility to study a re
 
 
 
-\section{Data Set: Drug Consumption}
-This dataset \cite{fehrman2017factor} includes records of drug usage of 1885 respondents, together with attributes regarding personal information, collected through an online survey. Data refers to two general categories. 
-The first is related to personal aspects of the respondent: level of education, age, gender, country of residence and ethnicity. Many studies have shown that personality traits such as neuroticism (N), extraversion (E), openness to experience (O), agreeableness (A), and conscientiousness (C) can be associated to drugs consumption. For example, the personality traits of N,E, and C are highly correlated with dangerous health behaviours. In this dataset, two additional personality traits are considered: the Barratt Impulsiveness Scale version 11 (BIS-11), and the Impulsivity Sensation-Seeking scale (ImpSS). The dataset include then the scores of these seven personality traits.
+\section{Dataset: Drug Consumption}
+This dataset \cite{fehrman2017factor} includes records of drug usage of 1885 respondents, together with attributes regarding personal information, collected through an online survey. Data refers to two general categories.
+The first is related to personal aspects of the respondent and builds the input features: level of education, age, gender, country of residence and ethnicity. Additionally to that, the personality traits of the respondents was classified using the Revised NEO Five-Factor Inventory (NEO-FFI-R) benchmark. Many studies have shown that personality traits such as neuroticism (N), extraversion (E), openness to experience (O), agreeableness (A), and conscientiousness (C) - all quantified by NEO-FFI-R -  can be associated to drug consumption\cite{Roncero2014NeuroticismAW}\cite{Vollrath2002WhoTH}\cite{Flory2002TheRA}. For example, the personality traits of N,E, and C are highly correlated with dangerous health behaviours. Furthermore, two additional personality traits are considered: the Barratt Impulsiveness Scale version 11 (BIS-11), and the Impulsivity Sensation-Seeking scale (ImpSS).
 
-The second category of data regards the usage of specific drugs acting as central nervous system depressants, stimulants, or hallucinogens:alcohol, amphetamines, amyl nitrite, benzodiazepine, cannabis, chocolate, cocaine, caffeine, crack, ecstasy, heroin, ketamine, legal highs, LSD, methadone, mushrooms, nicotine and volatile substance abuse and one fictitious drug (Semeron) which was introduced to identify over-claimers. 
+The second category of data regards the usage of specific drugs acting as central nervous system depressants, stimulants, or hallucinogens: alcohol, amphetamines, amyl nitrite, benzodiazepine, cannabis, chocolate, cocaine, caffeine, crack, ecstasy, heroin, ketamine, legal highs, LSD, methadone, mushrooms, nicotine and volatile substance abuse and one fictitious drug (Semeron) which was introduced to identify over-claimers.
 
-For each substance, the respondent had to classify the own usage using according to the following frequency categories: "Never Used", "Used over a Decade Ago", "Used in Last Decade", "Used in Last Year", "Used in Last Month", "Used in Last Week", and "Used in Last Day".
+For each substance, the respondent had to classify the own usage according to the following frequency categories: "Never Used", "Used over a Decade Ago", "Used in Last Decade", "Used in Last Year", "Used in Last Month", "Used in Last Week", and "Used in Last Day".
 
 
 
-\clearpage
 \paragraph{Dataset}
 
-\noindent The data set contains xxx TO DO.
+\noindent The dataset contains 1885 rows with each 32 features of which all are of categorical nature - there are no missing values. The first column contains and ID and has now further usage, leaving 31 usable features. The respondents ages were collected in age ranges making them of type nominal instead of ratio. The other non-character related attributes (level of education, gender, country of residence and ethnicity) also are nominal. All of the previously named features were mapped to the real number realm - the mapping was not necessarily monotonic but bijective, keeping the classification intact.
+
+The Revised NEO Five-Factor Inventory (NEO-FFI-R) questionnaire was employed to score the personality traits N, E, O, A and C of the respondents. This ordinal scoring (ranging 20 to 60) was then also mapped to the real number realm. The BIS-11 and ImpSS scores are evaluated in a similar fashion.
+
+The remaining 19 (target) features contain information about the respondents recent consumption of the drugs listed above. The nominal classes (mentioned above) were labelled as "CL0"-"CL6" in the same order as above.
 
 \begin{figure}[h!]
 	\centering
@@ -188,11 +178,11 @@ For each substance, the respondent had to classify the own usage using according
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
 	\includegraphics[width=\textwidth]{plots/drugsPlots/chocolate_freq.png}
-	
+
 \end{minipage}
 \begin{minipage}[b]{0.32\textwidth}
 	\includegraphics[width=\textwidth]{plots/drugsPlots/heroin_freq.png}
-	
+
 \end{minipage}
 \begin{minipage}[b]{0.32\textwidth}
 	\includegraphics[width=\textwidth]{plots/drugsPlots/cocaine_freq.png}
@@ -237,14 +227,13 @@ For each substance, the respondent had to classify the own usage using according
 \end{figure}
 
 
-
+\clearpage
 \paragraph{Task}
 
-This data set is very appropriate for classification experiments, given the partition of the data attributes into different classes.
+This data set is very appropriate for classification experiments, given the partition of the target features into different classes. Finding a way to predict the consumption behavior for specific drugs - general correlations between certain character traits and the overall behavior towards drugs is known\cite{Roncero2014NeuroticismAW}\cite{Vollrath2002WhoTH}\cite{Flory2002TheRA} - based on the personality traits and/or ruling out certain traits is desired. The stability related to and effect of unexpected input attributes should be studied to be able to name the scope in which the prediction is reliable.
 
 
-
-\newpage
+\clearpage
 \bibliography{literature.bib}{}
 \bibliographystyle{unsrt}
 
