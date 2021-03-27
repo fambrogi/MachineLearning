@@ -40,6 +40,7 @@ def get_mat_data(files_list):
         dic = {'PPG':ppg  , 'ABP':abp, 'ECG':ecg}
         df = pd.DataFrame.from_dict(dic)
         dataframes.append(df)
+        print(len(df) + " ROWSS for dataset " + f)
         
     """ Creating one unique df out of the available """
     if len(dataframes) >1:
