@@ -1,6 +1,6 @@
-\contentsline {section}{\numberline {1}Data Set: Cuff-Less Blood Pressure Estimation}{1}{section.1}%
-\contentsline {paragraph}{Dataset}{1}{section*.3}%
-\contentsline {paragraph}{Task}{1}{section*.5}%
-\contentsline {section}{\numberline {2}Dataset: Drug Consumption}{2}{section.2}%
-\contentsline {paragraph}{Dataset}{2}{section*.6}%
-\contentsline {paragraph}{Task}{4}{section*.10}%
+\contentsline {section}{\numberline {1}Data Set: Cuff-Less Blood Pressure Estimation}{1}{section.1}
+\contentsline {paragraph}{Dataset}{1}{section*.3}
+\contentsline {paragraph}{Task}{1}{section*.5}
+\contentsline {section}{\numberline {2}Dataset: Drug Consumption}{2}{section.2}
+\contentsline {paragraph}{Dataset}{2}{section*.6}
+\contentsline {paragraph}{Task}{4}{section*.10}
