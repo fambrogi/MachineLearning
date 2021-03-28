@@ -40,64 +40,9 @@ def get_mat_data(files_list):
         dic = {'PPG':ppg  , 'ABP':abp, 'ECG':ecg}
         df = pd.DataFrame.from_dict(dic)
         dataframes.append(df)
-
-    """ Creating one unique df out of the available """
-    if len(dataframes) >1:
-        df = pd.concat(dataframes)
-    #f = scipy.io.loadmat(file)
-    print(' Succesfully read the file and created the data frame ' )
-    return df 
-    
-    
-data = get_mat_data(files)
-
-
-
-def analyze_data(data):
-    """ Extracts some statistical information from the data """
-    
-    for c in data.columns:
-        values = data[c]
-        
-        cleaned = [v for v in values if not np.isnan(v)]
-        nans = [v for v in values if  np.isnan(v)] 
-        mean = np.mean(cleaned)
-        median = np.median(cleaned)
-        
-        print("Valid entries: ", len(cleaned) )
-        print("Nans : ", len(nans) )
-        print("Mean : ", mean )
-        print("Median : ", median )
-        
-        print(0)
-    
-#dummy = analyze_data(data)
-
-
-def plot(data):
-    if not os.path.isdir('Plots'):
-        os.mkdir('Plots')
-        
-    """ Main function to create summary plots """
-    plot_prop = {'PPG': {'l' : 'Photoplethysmograph [PPG]'      , 'c': 'orange' },
-                         'ABP' : {'l' :'Arterial Blood Pressure [ABP]'    , 'c': 'cyan'    },
-                         'ECG' : {'l' : 'Raw Electrocardiogram [ECG]'  , 'c':'lime'     } 
-                         }
-    
-    fs = 15
-    
-    def histo(data):
-        """ Plot distributions """
-        for c in data.columns:
-            plt.hist(data[c] , bins = 30, histtype = 'stepfilled' , color =  plot_prop[c]['c'] , alpha = 0.7 )
-            plt.xlabel( plot_prop[c]['l'], fontsize = fs)
-            plt.ylabel( 'Counts', fontsize = fs)
-            
-            plt.grid(ls = ':', color = 'lightgray')
-            plt.savefig('Plots/blood_pressure/histo_' + c + '.png' , dpi = 150)
-            plt.close()
-        
-    def timeseries(data):
+        print(len(df), " ROWS for file ", f)
+        if partial:
+            a = plot(data=df, text=f.split('/')[-1])
         for c in data.columns:
             
             plt.plot(data[c][30000:40000] , color =  plot_prop[c]['c'] , alpha = 0.7 )

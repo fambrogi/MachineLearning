@@ -95,9 +95,9 @@ They differ in size of the data set, number of features, type of features, etc. 
 The original data comes from the Multi-parameter Intelligent Monitoring in Intensive Care II (MIMIC II) online waveform database \cite{BloodPressureDatabase}\cite{Goldberger2000PhysioBankPA}. The data set was extracted from MIMIC II and reduced onto Photoplethysmograph (PPG), Electrocardiogram (ECG) and arterial blood pressure (ABP) waveform signals \cite{Kachuee2015CufflessHC}. The data was collected between the years 2001 and 2008 from a variety of Intensive Care Units and were sampled at rate of 125 Hz with 8 bit accuracy. The preprocessing on the original included the smoothing of the waveforms and the removal blocks with a) unreasonable blood pressures, b) unreasonable heart rate, c) severe discontinuities and d) big differences in the PPG signal correlation between neighbouring blocks.
 
 \paragraph{Dataset}
-\noindent The data set contains 12,000 rows with 3 attributes each, i.e. the PPG, ECG and ABP. Due to the preprocessing, there should be no missing values or outliers. The features are of numeric type.
+\noindent The data set contains 144,000 rows with 3 attributes each, i.e. the PPG, ECG and ABP. Due to the preprocessing, there are no missing values or outliers. The features are of numeric type. The signals and the distributions of their values, can be inspected in Fig. \ref{signals}. While the data measured intrinsically positive values, we found that 9179 entries for the ECG have negative values, which can be seen also from the corresponding distribution. We will therefore take care of this anomaly during the data processing. 
 
-The signals and the distributions of their values, can be inspected in Fig. \ref{signals}.
+
 
 
 \begin{figure}[h!]
@@ -133,8 +133,6 @@ The signals and the distributions of their values, can be inspected in Fig. \ref
 
 
 
-
-
 \paragraph{Task}
 \noindent This data set is our choice for the regression part with ABP being the target variable.
 The most common approach to measure (BP) is by using a cuff, wrapped around the upper arm and inflated. A pressure sensor inserted in the cuff records the arterial pulsations during the cuff deflation, and the amplitudes of these pulsations are used to calculate systolic and diastolic BP. The limitations of the approach include that it relies on a set of empirical coefficients to map the pulse amplitudes to systolic and diastolic BP, specific to the used device. Furthermore, this kind of measurements in patients with atherosclerosis or obese patients, whose pulse amplitudes can be weak, are subject to large errors.
@@ -157,11 +155,11 @@ For each substance, the respondent had to classify the own usage according to th
 
 \paragraph{Dataset}
 
-\noindent The dataset contains 1885 rows with each 32 features of which all are of categorical nature - there are no missing values. The first column contains and ID and has now further usage, leaving 31 usable features. The respondents ages were collected in age ranges making them of type nominal instead of ratio. The other non-character related attributes (level of education, gender, country of residence and ethnicity) also are nominal. All of the previously named features were mapped to the real number realm - the mapping was not necessarily monotonic but bijective, keeping the classification intact.
+\noindent The dataset contains 1885 rows with each 32 features of which all are of categorical nature - there are no missing values. The first column contains and ID and has now further usage, leaving 31 usable features. The respondents ages were collected in age ranges making them of type nominal instead of ratio. The other non-character related attributes (level of education, gender, country of residence and ethnicity) are also nominal. All of the previously named features were mapped to the real number realm - the mapping was not necessarily monotonic but bijective, keeping the classification intact.
 
 The Revised NEO Five-Factor Inventory (NEO-FFI-R) questionnaire was employed to score the personality traits N, E, O, A and C of the respondents. This ordinal scoring (ranging 20 to 60) was then also mapped to the real number realm. The BIS-11 and ImpSS scores are evaluated in a similar fashion.
 
-The remaining 19 (target) features contain information about the respondents recent consumption of the drugs listed above. The nominal classes (mentioned above) were labelled as "CL0"-"CL6" in the same order as above.
+The remaining 19 (target) features contain information about the respondents recent consumption of the drugs listed above. The frequency categories of usage were labelled as "CL0"-"CL6". 
 
 \begin{figure}[h!]
 	\centering
@@ -230,7 +228,7 @@ The remaining 19 (target) features contain information about the respondents rec
 \clearpage
 \paragraph{Task}
 
-This data set is very appropriate for classification experiments, given the partition of the target features into different classes. Finding a way to predict the consumption behavior for specific drugs - general correlations between certain character traits and the overall behavior towards drugs is known\cite{Roncero2014NeuroticismAW}\cite{Vollrath2002WhoTH}\cite{Flory2002TheRA} - based on the personality traits and/or ruling out certain traits is desired. The stability related to and effect of unexpected input attributes should be studied to be able to name the scope in which the prediction is reliable.
+This data set is very appropriate for classification experiments, given the partition of the target features into different classes. Finding a way to predict the consumption behaviour for specific drugs - general correlations between certain character traits and the overall behaviour towards drugs is known\cite{Roncero2014NeuroticismAW}\cite{Vollrath2002WhoTH}\cite{Flory2002TheRA} - based on the personality traits and/or ruling out certain traits is desired. The stability related to and effect of unexpected input attributes should be studied to be able to name the scope in which the prediction is reliable.
 
 
 \clearpage
