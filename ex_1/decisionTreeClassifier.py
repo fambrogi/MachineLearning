@@ -79,11 +79,15 @@ def main():
         x,y,x_train,x_test,y_train,y_test=splitDataset(dataset,c)
         gini=giniBasedClassifier(x_train,x_test,y_train)
         entropy=entropyBasedClassifier(x_train,x_test,y_train)
+
+
         print("results of Gini Index for "+ c)
         yPredGini=predict(x_test,gini,c)
         evaluation(y_test,yPredGini)
         confusionMatrix=confusion_matrix(y_test, yPredGini)
         printMatrix(c,confusionMatrix,'gini')
+
+
         print("results of Entropy for " + c)
         yPredEntropy = predict(x_test, entropy, c)
         evaluation(y_test, yPredEntropy)
