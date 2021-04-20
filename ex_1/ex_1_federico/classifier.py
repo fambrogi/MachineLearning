@@ -14,6 +14,8 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+import graphviz
+from sklearn import tree
 
 """ Define the output directory for Plots (global) """
 plot_dir = 'Plots'
@@ -73,9 +75,16 @@ def predict(x_test, classifier, objectiveCol):
     return y_pred
 
 def evaluation(y_test,y_pred):
-    print("Confusion matrix: ",confusion_matrix(y_test,y_pred))
-    print("accuracy: ",accuracy_score(y_test,y_pred))
-    print("Report: ",classification_report(y_test,y_pred))
+    confusion_m = confusion_matrix(y_test, y_pred, normalize='true')
+    accuracy = accuracy_score(y_test,y_pred)
+
+    # return the class_report as a dictionary
+    report = classification_report(y_test, y_pred, output_dict= True)
+    print("Confusion matrix: ", confusion_m)
+    #print("accuracy: ", accuracy)
+    print("Report: ", report)
+
+    return confusion_m, accuracy, report
 
 def printMatrix(target, matrix, classifier, param):
     """ Creates a confusion matrix """
@@ -89,12 +98,16 @@ def printMatrix(target, matrix, classifier, param):
     # plot colorbar to the right
     plt.colorbar()
     fmt = 'd'
+    fmt = 'f.2'
     # write the number of predictions in each bucket
     thresh = matrix.max() / 2.
     for i, j in itertools.product(range(matrix.shape[0]), range(matrix.shape[1])):
         # if background is dark, use a white number, and vice-versa
-        plt.text(j, i, format(matrix[i, j], fmt), horizontalalignment="center",
+        #plt.text(j, i, format(matrix[i, j], fmt), horizontalalignment="center",
+        #         color="white" if matrix[i, j] > thresh else "black")
+        plt.text(j, i, '{0:.2f}'.format(matrix[i, j]) , horizontalalignment="center",
                  color="white" if matrix[i, j] > thresh else "black")
+
     classes = ['0', '1', '2', '3', '4', '5', '6']
     tick_marks = np.arange(len(classes))
     plt.xticks(tick_marks, classes)
@@ -114,17 +127,16 @@ def printMatrix(target, matrix, classifier, param):
     plt.close()
 
 
-
 """ Dictionary containing the training and prediction features """
 
 features = { 'drugs' : { 'train':  ['age', 'gender', 'education', 'ethnicity', 'Nscore',
                                     'Escore', 'Oscore', 'Ascore',
                                     'Cscore', 'Impulsive', 'SS'] ,
+
                          'target': ['alcohol', 'amphetamines', 'amylNitrite', 'benzodiazepine', 'caffeine',
                                     'cannabis', 'chocolate', 'cocaine', 'crack', 'ecstasy', 'heroin',
                                     'ketamine', 'legal', 'LSD',
                                     'methadone', 'mushrooms', 'nicotine', 'volatileSubstance'] }
-
 
              }
 
@@ -132,37 +144,96 @@ features = { 'drugs' : { 'train':  ['age', 'gender', 'education', 'ethnicity', '
 
 
 
+def plot_reports(report_summary, classifier, dataset):
+
+    fs = 15
+    labels = report_summary[0].keys()  # class labels
+
+    os.system('mkdir Plots/validation/')
+    for feature,num in zip( features[dataset]['target'], range(len(features[dataset]['target'])) ):
+        dic = report_summary[num]
+        precision, recall, f1= [], [], []
+
+        classes = range(0,7)
+        for l in classes:
+            lab = str(l)
+            precision.append(dic[lab]['precision'])
+            recall.append(dic[lab]['recall'])
+            f1.append(dic[lab]['f1-score'])
+
+        plt.plot(classes, precision, label = 'Precision')
+        plt.plot(classes, recall, label = 'Recall')
+        plt.plot(classes, f1, label='f1-score')
+        plt.ylim(0,1)
+        plt.legend(loc = 'upper left')
+        plt.grid(ls=':', color='lightgray')
+        plt.title(classifier + ' Measures - ' + feature, fontsize=fs, y=1.02 )
+        plt.tight_layout()
+        print("*** Done plotting *** ", feature )
+        plt.savefig('Plots/validation/' + feature + '.png', dpi = 200)
+        plt.close()
+
+def plot_tree(feature, dataset, classifier):
+
+    dot_data = tree.export_graphviz(classifier, out_file='Plots/tree_' + feature, filled=True, rounded=True, feature_names=features[dataset]['train'],
+                                    class_names= classes  )
+    graph = graphviz.Source(dot_data)
+    graph.render()
+
+def plot_t(feature, dataset, classifier):
+    classes = ['0','1','2','3','4','5', '6']
+
+    fig = plt.figure(figsize=(25, 20))
+    _ = tree.plot_tree(classifier,
+                       feature_names= features[dataset]['train'],
+                       class_names= classes,
+                       filled=True)
+    plt.savefig('Plots/tree_' + feature)
+
+
+
 classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
+
+classifiers = ['GaussianNB']
+
+classifiers = ['DecisionTree']
+
+
 def main():
 
     dataset = 'drugs'
     ds = importDataset(dataset)
 
 
+    report_summary = []
+
     for target in features[dataset]['target']:
+
         x,y,x_train,x_test,y_train,y_test = splitDataset(dataset= ds,
                                                          train_features= features[dataset]['train'],
                                                          target_features= target)
 
-
         for classifier in classifiers:
 
+
+
             if classifier == 'DecisionTree' : # Run DecisionTreeClassifier
-                for param in ['gini' , 'entropy'] :  # run the classifier with two different parameter
+                for param in ['gini'] :  # run the classifier with two different parameter
+                #for param in ['gini', 'entropy']:  # run the classifier with two different parameter
+
                     cf = Classifier(x_train,y_train, classifier=classifier, criterion=param )
                     print("results of " + param + " Index for " + target )
                     y_prediction=predict(x_test,cf,target)
-                    evaluation(y_test, y_prediction )
-                    confusionMatrix=confusion_matrix(y_test, y_prediction)
-                    printMatrix(target, confusionMatrix, classifier, param)
+                    confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                    printMatrix(target, confusion_m, classifier, param)
+                    #tree = plot_t(target, dataset, cf)
 
             if classifier == 'KNeighbors':
-                for param in [4]:
+                for param in [5, 10 , 50]:
                     cf = Classifier(x_train,y_train, classifier=classifier, n_neighbors=param )
                     print("results of " + str(param) + " Index for " + target )
                     y_prediction=predict(x_test,cf,target)
-                    evaluation(y_test, y_prediction )
-                    confusionMatrix=confusion_matrix(y_test, y_prediction)
+                    evaluation(y_test, y_prediction)
                     printMatrix(target, confusionMatrix, classifier, param)
 
             if classifier == 'GaussianNB':
@@ -170,10 +241,12 @@ def main():
                     cf = Classifier(x_train,y_train, classifier=classifier)
                     print("results of " + param + " Index for " + target )
                     y_prediction=predict(x_test,cf,target)
-                    evaluation(y_test, y_prediction )
-                    confusionMatrix=confusion_matrix(y_test, y_prediction)
-                    printMatrix(target, confusionMatrix, classifier, param)
+                    confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                    printMatrix(target, confusion_m, classifier, param)
 
+                    report_summary.append(report)
+
+    #dummy = plot_reports(report_summary, classifier, dataset)
 
 if __name__=="__main__":
     main()
