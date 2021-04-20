@@ -14,7 +14,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-import graphviz
+#import graphviz
 from sklearn import tree
 
 """ Define the output directory for Plots (global) """
@@ -41,6 +41,8 @@ def splitDataset(dataset = '', train_features = [], target_features = [] ):
     target_set = dataset[target_features]
 
     x_train, x_test, y_train, y_test = train_test_split(train_set, target_set, test_size=0.30)
+    # first shuffle the dataset !!!!
+    # then train_test_split
 
     return train_set, target_set, x_train, x_test, y_train, y_test
 
@@ -88,11 +90,12 @@ def evaluation(y_test,y_pred):
 
 def printMatrix(target, matrix, classifier, param):
     """ Creates a confusion matrix """
+    fs = 12
     plt.clf()
     # place labels at the top
 
-    #plt.gca().xaxis.tick_top()
-    #plt.gca().xaxis.set_label_position('top')
+    plt.gca().xaxis.tick_top()
+    plt.gca().xaxis.set_label_position('top')
     # plot the matrix per se
     plt.imshow(matrix, interpolation='nearest', cmap=plt.cm.Blues)
     # plot colorbar to the right
@@ -112,10 +115,10 @@ def printMatrix(target, matrix, classifier, param):
     tick_marks = np.arange(len(classes))
     plt.xticks(tick_marks, classes)
     plt.yticks(tick_marks, classes)
-    plt.title(str(classifier) + ' Confusion Matrix' , y = 1.02 )
+    plt.title(str(classifier) + ' Confusion Matrix - ' + target , y = 1.15, fontsize = fs )
 
-    plt.ylabel('True label', size=15)
-    plt.xlabel('Predicted label', size=15)
+    plt.ylabel('True label', size=fs)
+    plt.xlabel('Predicted label', size=fs)
 
     # Save the fig
     out = plot_dir + '/ConfusionMatrix/'
@@ -208,6 +211,9 @@ def main():
     report_summary = []
 
     for target in features[dataset]['target']:
+
+        if target == 'cocaine':
+            print(0)
 
         x,y,x_train,x_test,y_train,y_test = splitDataset(dataset= ds,
                                                          train_features= features[dataset]['train'],

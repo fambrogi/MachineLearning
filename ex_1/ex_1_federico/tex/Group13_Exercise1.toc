@@ -1,0 +1,8 @@
+\contentsline {section}{\numberline {1}Data Sets Description}{1}{section.1}
+\contentsline {paragraph}{Drug consumption data set}{1}{section*.3}
+\contentsline {paragraph}{Asteroids data set}{1}{section*.4}
+\contentsline {paragraph}{}{1}{section*.5}
+\contentsline {paragraph}{}{1}{section*.6}
+\contentsline {section}{\numberline {2}Data Exploration and Pre-processing}{2}{section.2}
+\contentsline {section}{\numberline {3}Holdout and Cross Validation}{2}{section.3}
+\contentsline {section}{\numberline {4}Performance Tests}{2}{section.4}
