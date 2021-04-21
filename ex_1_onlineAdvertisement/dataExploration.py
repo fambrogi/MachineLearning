@@ -132,6 +132,11 @@ def main():
     generalFrame = pd.concat([cleanedTrain, cleanedTest])
     numericC, nNumericC = devideNumericCols(generalFrame)
     #plotOutliers(generalFrame, nNumericC,numericC)
+
+    cleanedTrain = cleanedTrain.dropna()
+    cleanedTest = cleanedTest.dropna()
+    cleanedSolution = cleanedSolution.dropna()
+
     cleanedTrain.to_csv('data/cleanedTrain.csv')
     cleanedTest.to_csv('data/cleanedTest.csv')
     cleanedSolution.to_csv('data/cleanedSolution.csv')
