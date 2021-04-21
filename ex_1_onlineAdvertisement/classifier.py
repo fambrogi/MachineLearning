@@ -131,7 +131,7 @@ features = { 'advertisingBidding' : { 'train':  ['Region', 'City', 'AdExchange',
                                      'Inmarket_book', 'Inmarket_medicine', 'Inmarket_food_drink',
                                      'interest_culture' ,'interest_sex', 'Demographic_gender_male',
                                      'Demographic_gender_famale', 'Inmarket_homeimprovement', 'Payingprice',
-                                     'imp', 'click', 'Browser_cat', 'Adslotvisibility_cat' ,'Adslotformat_cat'],
+                                     'imp', 'click', 'Browser', 'Adslotvisibility' ,'Adslotformat'],
                          'target': ['conv'] }
 
 
