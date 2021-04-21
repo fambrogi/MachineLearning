@@ -72,7 +72,9 @@ def main():
     testSet = pd.read_csv("data/advertisingBidding.shuf.tes.csv")
     trainSet = pd.read_csv("data/advertisingBidding.shuf.lrn.csv")
     solutionSet = pd.read_csv("data/advertisingBidding.shuf.sol.ex.csv")
+
     generalFrame=pd.concat([trainSet,testSet])
+
     printBasicInfo(generalFrame)
 
     findMissingValues(generalFrame)
@@ -90,8 +92,11 @@ def main():
     #The browser column creates issues due its values I want to solve it encoding the column
     labelencoder=LabelEncoder()
 
-    cleanedTest['Browser_cat']=labelencoder.fit_transform(cleanedTest['Browser'])
-    cleanedTrain['Browser_cat']=labelencoder.fit_transform(cleanedTrain['Browser'])
+    """ 
+    ## PS you can write directly a column with the same name, there is no need to call it differently and then delete the old one
+    cleanedTest['Browser_cat']=labelencoder.fit_transform(cleanedTest['Browser'].astype(str))
+    cleanedTrain['Browser_cat']=labelencoder.fit_transform(cleanedTrain['Browser'].astype(str))
+
     cleanedTest['Adslotvisibility_cat'] = labelencoder.fit_transform(cleanedTest['Adslotvisibility'])
     cleanedTrain['Adslotvisibility_cat'] = labelencoder.fit_transform(cleanedTrain['Adslotvisibility'])
 
@@ -104,29 +109,25 @@ def main():
     del cleanedTrain['Adslotvisibility']
     del cleanedTest['Adslotformat']
     del cleanedTrain['Adslotformat']
+    """
 
 
 
-    #I remove all this columns because we can assume that they depend by the single observation thay only create noise
-    #and not relevant data
-    del cleanedTest['RowID']
-    del cleanedTest['UserID']
-    del cleanedTrain['RowID']
-    del cleanedTrain['UserID']
-    del cleanedTest['BidID']
-    del cleanedTrain['BidID']
-    del cleanedTest['IP']
-    del cleanedTrain['IP']
+    """ Converting each class to string, since nans are considered as float, hence it cerates a conflict wth object types """
+    for cl in ['Browser' , 'Adslotvisibility' , 'Adslotformat' ]:
+        cleanedTest[cl] = labelencoder.fit_transform(cleanedTest[cl].astype(str))
+        cleanedTrain[cl]= labelencoder.fit_transform(cleanedTrain[cl].astype(str))
 
-    del cleanedTest['Domain']
-    del cleanedTrain['Domain']
-    del cleanedTrain['URL']
-    del cleanedTest['URL']
-    del cleanedTrain['Time_Bid']
-    del cleanedTest['Time_Bid']
-    del cleanedTrain['AdslotID']
-    del cleanedTest['AdslotID']
+
+    # I remove all this columns because we can assume that they depend by the single observation thay only create noise
+    # and not relevant data
+
+    for rem in ['RowID', 'UserID' , 'BidID', 'IP' , 'Domain', 'URL', 'Time_Bid', 'AdslotID' ]:
+        del cleanedTest[rem]
+        del cleanedTrain[rem]
     del cleanedSolution['RowID']
+
+
 
     generalFrame = pd.concat([cleanedTrain, cleanedTest])
     numericC, nNumericC = devideNumericCols(generalFrame)
@@ -134,6 +135,7 @@ def main():
     cleanedTrain.to_csv('data/cleanedTrain.csv')
     cleanedTest.to_csv('data/cleanedTest.csv')
     cleanedSolution.to_csv('data/cleanedSolution.csv')
+
 
     print(cleanedTrain.head())
 
