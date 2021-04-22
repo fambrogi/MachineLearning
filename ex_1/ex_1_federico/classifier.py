@@ -26,7 +26,7 @@ if not os.path.isdir(plot_dir):
 def importDataset(ds):
     """ Directory with the datasets paths """
     datasets = {'drugs'     : "input_data/drug_consumption.data.cleaned.csv" ,
-                'asteroids' : "data/cleaned_satellites.csv"}
+                'asteroids' : "input_data/asteroids_cleaned.csv"}
 
     """ Return a pandas dataframe """
     dataset = pd.read_csv( datasets[ds])
@@ -88,7 +88,7 @@ def evaluation(y_test,y_pred):
 
     return confusion_m, accuracy, report
 
-def printMatrix(target, matrix, classifier, param):
+def printMatrix(target, matrix, classifier, param, dataset):
     """ Creates a confusion matrix """
     fs = 12
     plt.clf()
@@ -111,8 +111,14 @@ def printMatrix(target, matrix, classifier, param):
         plt.text(j, i, '{0:.2f}'.format(matrix[i, j]) , horizontalalignment="center",
                  color="white" if matrix[i, j] > thresh else "black")
 
-    classes = ['0', '1', '2', '3', '4', '5', '6']
+    ticks = { 'asteroids' : ['Hazardous' , 'Non Hazardous'],
+              'drugs': ['0', '1', '2', '3', '4', '5', '6'] }
+
+    classes = ticks[dataset]
+
+    classes = range(0,len(matrix))
     tick_marks = np.arange(len(classes))
+
     plt.xticks(tick_marks, classes)
     plt.yticks(tick_marks, classes)
     plt.title(str(classifier) + ' Confusion Matrix - ' + target , y = 1.15, fontsize = fs )
@@ -121,7 +127,8 @@ def printMatrix(target, matrix, classifier, param):
     plt.xlabel('Predicted label', size=fs)
 
     # Save the fig
-    out = plot_dir + '/ConfusionMatrix/'
+    out = plot_dir + '/ConfusionMatrix/' + dataset + '/'
+
     if not os.path.isdir(out):
         os.system('mkdir ' + out )
     plt.tight_layout()
@@ -139,7 +146,19 @@ features = { 'drugs' : { 'train':  ['age', 'gender', 'education', 'ethnicity', '
                          'target': ['alcohol', 'amphetamines', 'amylNitrite', 'benzodiazepine', 'caffeine',
                                     'cannabis', 'chocolate', 'cocaine', 'crack', 'ecstasy', 'heroin',
                                     'ketamine', 'legal', 'LSD',
-                                    'methadone', 'mushrooms', 'nicotine', 'volatileSubstance'] }
+                                    'methadone', 'mushrooms', 'nicotine', 'volatileSubstance'] } ,
+
+             'asteroids' : { 'train': ['Absolute Magnitude', 'Est Dia in KM(min)', 'Est Dia in KM(max)',
+                                       'Relative Velocity km per sec', 'Miss Dist.(kilometers)',
+                                       'Minimum Orbit Intersection', 'Jupiter Tisserand Invariant',
+                                       'Eccentricity', 'Semi Major Axis', 'Inclination', 'Asc Node Longitude',
+                                       'Orbital Period', 'Perihelion Distance', 'Perihelion Arg',
+                                       'Aphelion Dist', 'Perihelion Time', 'Mean Anomaly', 'Mean Motion'] ,
+
+                             'target':  ['Hazardous']
+
+}
+
 
              }
 
@@ -173,7 +192,7 @@ def plot_reports(report_summary, classifier, dataset):
         plt.title(classifier + ' Measures - ' + feature, fontsize=fs, y=1.02 )
         plt.tight_layout()
         print("*** Done plotting *** ", feature )
-        plt.savefig('Plots/validation/' + feature + '.png', dpi = 200)
+        plt.savefig('Plots/validation/' + dataset + '/' + feature + '.png', dpi = 200)
         plt.close()
 
 def plot_tree(feature, dataset, classifier):
@@ -201,27 +220,23 @@ classifiers = ['GaussianNB']
 
 classifiers = ['DecisionTree']
 
+dataset = 'drugs'
+
+dataset = 'asteroids'
 
 def main():
 
-    dataset = 'drugs'
     ds = importDataset(dataset)
-
 
     report_summary = []
 
     for target in features[dataset]['target']:
-
-        if target == 'cocaine':
-            print(0)
 
         x,y,x_train,x_test,y_train,y_test = splitDataset(dataset= ds,
                                                          train_features= features[dataset]['train'],
                                                          target_features= target)
 
         for classifier in classifiers:
-
-
 
             if classifier == 'DecisionTree' : # Run DecisionTreeClassifier
                 for param in ['gini'] :  # run the classifier with two different parameter
@@ -231,7 +246,7 @@ def main():
                     print("results of " + param + " Index for " + target )
                     y_prediction=predict(x_test,cf,target)
                     confusion_m, accuracy, report = evaluation(y_test, y_prediction )
-                    printMatrix(target, confusion_m, classifier, param)
+                    printMatrix(target, confusion_m, classifier, param, dataset)
                     #tree = plot_t(target, dataset, cf)
 
             if classifier == 'KNeighbors':
@@ -240,7 +255,7 @@ def main():
                     print("results of " + str(param) + " Index for " + target )
                     y_prediction=predict(x_test,cf,target)
                     evaluation(y_test, y_prediction)
-                    printMatrix(target, confusionMatrix, classifier, param)
+                    printMatrix(target, confusionMatrix, classifier, param, dataset)
 
             if classifier == 'GaussianNB':
                 for param in ['naiveB']:
@@ -248,7 +263,7 @@ def main():
                     print("results of " + param + " Index for " + target )
                     y_prediction=predict(x_test,cf,target)
                     confusion_m, accuracy, report = evaluation(y_test, y_prediction )
-                    printMatrix(target, confusion_m, classifier, param)
+                    printMatrix(target, confusion_m, classifier, param, dataset)
 
                     report_summary.append(report)
 

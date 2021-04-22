@@ -109,6 +109,10 @@ Blah
 In this section we describe the necessary preliminary steps to import and prepare the data to make them suitable for the learning algorithms.
 The steps are handled by the script \textit{data\_preparation.py} which includes dedicated function to pre-process each data set.
 
+\subsection{Asteroids Data Set}
+The original data set contained 40 columns of different variable types (numeric and categorical). However, some columns were unnecessary, not usable or redundant for classification purposes, or contained constant values. 
+
+
 
 \section{Holdout and Cross Validation}
 Here we describe briefly the techniques of "holdout" and "cross validation" that are used to evaluate a model. The \textbf{holdout} method is essentially based on the splitting on the input data set into two subset, one used for training the model, and one used for testing the model, for example in $80\%-20\%$ proportion, although there is not fix recipe for this split. Once the model is trained, the evaluation can be performed on the test data set, and this is therefore possible to check if the prediction of the model match the data. One big issue of this model is that the training strongly depend on the splitting of the initial data set, for example if the characteristic of the training data set are not representative of the whole data set. 
