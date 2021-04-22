@@ -30,13 +30,13 @@ def findMissingValues(dataset):
 def plotOutliers(dataset,notNumericCols,numericCols):
     # outliers for categorical attributes
 
-    #for col in notNumericCols:
-    #    print(col)
-    #    dataset[col].value_counts().plot.bar()
-    #    plt.title(col)
-    #    plt.plot()
-    #    plt.savefig("preprocessingPlots/" + col + '.png', dpi=150)
-    #    plt.close()
+    for col in notNumericCols:
+        print(col)
+        dataset[col].value_counts().plot.bar()
+        plt.title(col)
+        plt.plot()
+        plt.savefig("preprocessingPlots/" + col + '.png', dpi=150)
+        plt.close()
 
     # due the fact that numerical attributes are numerical but they corresponts at intervals I print histograms also for them in order to
     # spot outliers
