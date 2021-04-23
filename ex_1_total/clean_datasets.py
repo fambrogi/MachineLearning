@@ -275,122 +275,67 @@ def cleanOnlineAdvertisement():
 	solutionSet = pd.read_csv("input_data/advertisingBidding.shuf.sol.ex.csv")
 
 
-	test_set = testSet
-	test_set['conv'] = solutionSet['conv']
-
-
-
-	toWrite=[]
-	out = open('input_data/' + 'onlineAdvertisement_preparation_summary.txt', 'w')
-
-	generalFrame = pd.concat([trainSet, testSet])
-
-	toWrite.append(printBasicInfo(generalFrame))
-
-	findMissingValues(generalFrame)
-	findDuplicatedValues(generalFrame, 'RowID')
-	toPrint,lowInfoCols = findLowInfoCols(generalFrame)
-	toWrite.append(toPrint)
-
-	# in the Url the 4% of the observation is null I delete those rows they are 1000 on 25000
-	cleanedTrain = generalFrame[trainSet['URL'].notnull()]
-	rowsToDelete = generalFrame[trainSet['URL'].isnull()].loc[:, 'RowID']
-	cleanedTest = generalFrame[testSet['URL'].notnull()]
-	# I have to remove the rows in the solution set that I have deleted from the testSet
-	cleanedSolution = solutionSet[~solutionSet.RowID.isin(rowsToDelete.tolist())]
-	# The browser column creates issues due its values I want to solve it encoding the column
-	labelencoder = LabelEncoder()
-
-	""" Converting each class to string, since nans are considered as float, hence it cerates a conflict wth object types """
-	for cl in ['Browser', 'Adslotvisibility', 'Adslotformat']:
-		cleanedTest[cl] = labelencoder.fit_transform(cleanedTest[cl].astype(str))
-		cleanedTrain[cl] = labelencoder.fit_transform(cleanedTrain[cl].astype(str))
-
-	# I remove all this columns because we can assume that they depend by the single observation thay only create noise
-	# and not relevant data
-
 	for rem in ['RowID', 'UserID', 'BidID', 'IP', 'Domain', 'URL', 'Time_Bid', 'AdslotID']:
-		del cleanedTest[rem]
-		del cleanedTrain[rem]
-	del cleanedSolution['RowID']
+		del testSet[rem]
+		del trainSet[rem]
 
-	generalFrame = pd.concat([cleanedTrain, cleanedTest])
-	numericC, nNumericC = devideNumericCols(generalFrame)
-	plotOutliersForContinuosData(generalFrame, nNumericC, numericC, 'onlineAdvertisement')
+	test_columns = testSet.columns
 
-	cleanedTrain = cleanedTrain.dropna()
+	trainSet = trainSet.dropna()
 
-	#cleanedTest = cleanedTest.dropna()
-	#cleanedSolution = cleanedSolution.dropna()
-
-
-
-	cleanedTrain.to_csv('input_data/advertisingBidding.shuf.lrn_cleaned.csv' , index = False )
-	cleanedTest.to_csv('input_data/advertisingBidding.shuf.tes_cleaned.csv', index = False )
-	cleanedSolution.to_csv('input_data/advertisingBidding.shuf.sol.ex_cleaned.csv', index = False)
-	for s in toWrite:
-		out.write(str(s))
-	out.close()
-
-def cleanOnlineAdvertisement():
-
-	testSet = pd.read_csv("input_data/advertisingBidding.shuf.tes.csv")
-	trainSet = pd.read_csv("input_data/advertisingBidding.shuf.lrn.csv")
-	solutionSet = pd.read_csv("input_data/advertisingBidding.shuf.sol.ex.csv")
-
-
-
-	toWrite=[]
-	out = open('input_data/' + 'onlineAdvertisement_preparation_summary.txt', 'w')
-
-	generalFrame = pd.concat([trainSet, testSet])
-
-	toWrite.append(printBasicInfo(generalFrame))
-
-	findMissingValues(generalFrame)
-	findDuplicatedValues(generalFrame, 'RowID')
-	toPrint,lowInfoCols = findLowInfoCols(generalFrame)
-	toWrite.append(toPrint)
-
-	# in the Url the 4% of the observation is null I delete those rows they are 1000 on 25000
-	cleanedTrain = generalFrame[trainSet['URL'].notnull()]
-	rowsToDelete = generalFrame[trainSet['URL'].isnull()].loc[:, 'RowID']
-	cleanedTest = generalFrame[testSet['URL'].notnull()]
-	# I have to remove the rows in the solution set that I have deleted from the testSet
-	cleanedSolution = solutionSet[~solutionSet.RowID.isin(rowsToDelete.tolist())]
-
-	# The browser column creates issues due its values I want to solve it encoding the column
-	labelencoder = LabelEncoder()
-
-	""" Converting each class to string, since nans are considered as float, hence it cerates a conflict wth object types """
-	for cl in ['Browser', 'Adslotvisibility', 'Adslotformat']:
-		cleanedTest[cl] = labelencoder.fit_transform(cleanedTest[cl].astype(str))
-		cleanedTrain[cl] = labelencoder.fit_transform(cleanedTrain[cl].astype(str))
-
-	# I remove all this columns because we can assume that they depend by the single observation thay only create noise
-	# and not relevant data
-
-	for rem in ['RowID', 'UserID', 'BidID', 'IP', 'Domain', 'URL', 'Time_Bid', 'AdslotID']:
-		del cleanedTest[rem]
-		del cleanedTrain[rem]
-	del cleanedSolution['RowID']
-
-	test_col = cleanedTest.columns
-
-	generalFrame = pd.concat([cleanedTrain, cleanedTest])
-	numericC, nNumericC = devideNumericCols(generalFrame)
-	#plotOutliersForContinuosData(generalFrame, nNumericC, numericC, 'onlineAdvertisement')
+	#for c in trainSet.columns:
+	#	v = trainSet[c]
+	#	d = v.dropna()
+	#	print(c, ' ', len(v) , ' ' , len(d) )
+	#	print('next')
 
 	# create a global solution data frame
-	solution_all = cleanedTest
-	solution_all['conv'] = cleanedSolution['conv']
+	solution_all = testSet
+	solution_all['conv'] = solutionSet['conv']
 	solution_all = solution_all.dropna()
 
 
-	cleanedTrain = cleanedTrain.dropna()
-	cleanedTrain.to_csv('input_data/advertisingBidding.shuf.lrn_cleaned.csv' , index = False )
+	toWrite=[]
+	out = open('input_data/' + 'onlineAdvertisement_preparation_summary.txt', 'w')
 
-	test = solution_all[test_col]
+	#toWrite.append(printBasicInfo(generalFrame))
+
+	#findMissingValues(generalFrame)
+	#findDuplicatedValues(generalFrame, 'RowID')
+	#toPrint,lowInfoCols = findLowInfoCols(generalFrame)
+	#toWrite.append(toPrint)
+
+	# in the Url the 4% of the observation is null I delete those rows they are 1000 on 25000
+
+	#cleanedTrain = generalFrame[trainSet['URL'].notnull()]
+	#rowsToDelete = generalFrame[trainSet['URL'].isnull()].loc[:, 'RowID']
+	#cleanedTest = generalFrame[testSet['URL'].notnull()]
+	# I have to remove the rows in the solution set that I have deleted from the testSet
+	#cleanedSolution = solutionSet[~solutionSet.RowID.isin(rowsToDelete.tolist())]
+
+	# The browser column creates issues due its values I want to solve it encoding the column
+	labelencoder = LabelEncoder()
+
+	""" Converting each class to string, since nans are considered as float, hence it cerates a conflict wth object types """
+	for cl in ['Browser', 'Adslotvisibility', 'Adslotformat']:
+		#cleanedTest[cl] = labelencoder.fit_transform(cleanedTest[cl].astype(str))
+		solution_all[cl] = labelencoder.fit_transform(solution_all[cl].astype(str))
+		trainSet[cl] = labelencoder.fit_transform(trainSet[cl].astype(str))
+
+	# I remove all this columns because we can assume that they depend by the single observation thay only create noise
+	# and not relevant data
+
+
+	#generalFrame = pd.concat([cleanedTrain, cleanedTest])
+	#numericC, nNumericC = devideNumericCols(generalFrame)
+	#plotOutliersForContinuosData(generalFrame, nNumericC, numericC, 'onlineAdvertisement')
+
+
+
+
+	trainSet.to_csv('input_data/advertisingBidding.shuf.lrn_cleaned.csv' , index = False )
+
+	test = solution_all[test_columns]
 	test.to_csv('input_data/advertisingBidding.shuf.tes_cleaned.csv', index = False )
 
 	solution = solution_all['conv']

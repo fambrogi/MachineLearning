@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from matplotlib.colors import ListedColormap
@@ -86,7 +87,7 @@ features = { 'drugs' :
 
 
 
-def importDataset(ds):
+def importDataset(ds, full_chain = True):
     """ Directory with the datasets paths """
     datasets = {'drugs'     : "input_data/drug_consumption.data_cleaned.csv" ,
 
@@ -104,8 +105,11 @@ def importDataset(ds):
                 }
 
     """ Return a pandas dataframe """
-    if ds in ['asteroids' , 'drugs']:
-        dataset = pd.read_csv( datasets[ds])
+    if full_chain:
+        if ds in ['asteroids' , 'drugs']:
+             dataset = pd.read_csv( datasets[ds])
+        else:
+            dataset = pd.read_csv(datasets[ds]['learn'])
         return dataset
 
     else:
@@ -127,7 +131,9 @@ def splitDataset(dataset = '', train_features = [], target_features = [] ):
     train_set  = dataset[train_features]
     target_set = dataset[target_features]
 
-    x_train, x_test, y_train, y_test = train_test_split(train_set, target_set, test_size=0.30)
+    x_train, x_test, y_train, y_test = train_test_split(train_set, target_set,
+                                                        test_size=0.30,
+                                                        shuffle = True)
     # first shuffle the dataset !!!!
     # then train_test_split
 
@@ -242,6 +248,47 @@ def printMatrix(target, matrix, classifier, param, dataset):
 
 
 
+def plot_balance_ds(df, dataset):
+    fs = 17
+
+    ticks = { 'asteroids' : ['Hazardous' , 'Non Hazardous'],
+              'drugs': ["Never", ">10 Years Ago", "Last Decade", "Last Year", "Last Month",
+              "Last Week", "Last Day"],
+              'breastCancer' :  ['0' , '1'] ,
+              'advertisingBidding' : ['0','1']
+              }
+
+    Labels = ticks[dataset]
+    drugs = features[dataset]['target']
+
+    classes = [ i for i in range(0,7) ] # for drugs
+    res = {}
+
+    for c in classes:
+        res[c] = []
+        for d in drugs:
+            a = len( np.where(df[d] == c )[0] )
+            res[c].append(a)
+
+    fig, ax = plt.subplots(figsize = (11,7))
+
+    width = 0.7
+    for i in range(0,7):
+        ax.bar(drugs, res[i], width  , label=Labels[i])
+
+    ax.set_ylabel('Counts', fontsize=fs)
+    ax.set_title('Class Distribution for Drugs', fontsize=fs, y=1.03 )
+    ax.legend()
+
+    ax.set_xticklabels(drugs, rotation=35, fontsize=10 )
+
+    plt.tight_layout()
+    plt.grid(ls = ':' , color = 'lightgray')
+    plt.savefig('Inbalance_drugs.png', dpi = 200)
+
+    print('*** Plotted inbalance distributions drugs ***')
+
+
 
 
 def plot_reports(report_summary, classifier, dataset):
@@ -273,40 +320,38 @@ def plot_reports(report_summary, classifier, dataset):
         plt.savefig('Plots/validation/' + dataset + '/' + feature + '.png', dpi = 200)
         plt.close()
 
-def plot_tree(feature, dataset, classifier):
 
-    dot_data = tree.export_graphviz(classifier, out_file='Plots/tree_' + feature, filled=True,
-                                    rounded=True, feature_names=features[dataset]['train'],
-                                    class_names= classes  )
-    graph = graphviz.Source(dot_data)
-    graph.render()
 
-"""
-# with too many classes it does not work
-def plot_t(feature, dataset, classifier):
-    classes = ['0','1','2','3','4','5', '6']
+def clean_fast():
+    ds = pd.read_csv('input_data/advertisingBidding.shuf.lrn.csv').dropna()
+    for rem in ['RowID', 'UserID', 'BidID', 'IP', 'Domain', 'URL', 'Time_Bid', 'AdslotID']:
+        del ds[rem]
+    labelencoder = LabelEncoder()
+    for cl in ['Browser', 'Adslotvisibility', 'Adslotformat']:
+        # cleanedTest[cl] = labelencoder.fit_transform(cleanedTest[cl].astype(str))
+        ds[cl] = labelencoder.fit_transform(ds[cl].astype(str))
 
-    fig = plt.figure(figsize=(25, 20))
-    _ = tree.plot_tree(classifier,
-                       feature_names= features[dataset]['train'],
-                       class_names= classes,
-                       filled=True)
-    plt.savefig('Plots/tree_' + feature)
-"""
+    return ds
 
+
+""" Main input parameters to choose """
 
 classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
 classifiers = ['GaussianNB']
 classifiers = ['DecisionTree']
 
 dataset = 'drugs'
-
-
 dataset = 'breastCancer'
-split = 'holdout'
 
+validation = 'holdout'
+dataset = 'breastCancer'
 dataset = 'advertisingBidding'
 
+classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
+dataset = 'breastCancer'
+dataset = 'advertisingBidding'
+
+dataset = 'drugs'
 
 def main():
 
@@ -314,20 +359,34 @@ def main():
     if dataset in ['asteroids', 'drugs']:
         ds = importDataset(dataset)
     else:
-        xtrain, ytrain, xtest, ytest = importDataset(dataset)
+        ds = importDataset(dataset, full_chain= True)
+
+        # need to implement the separate testing only
+        # xtrain, ytrain, xtest, ytest = importDataset(dataset)
 
 
     report_summary = []
 
     for target in features[dataset]['target']:
 
-        if dataset in ['asteroids', 'drugs']:  # must split the data into train-test
+        if dataset in ['asteroids', 'drugs', 'advertisingBidding', 'breastCancer']:  # must split the data into train-test
             # Simple Hold Out
             # TO DO Implement: data reshuffling
-            if valdation == 'holdout':
-                x,y,x_train,x_test,y_train,y_test = splitDataset(dataset= ds,
-                                                                train_features= features[dataset]['train'],
-                                                                target_features= target)
+            if validation == 'holdout':
+
+                if dataset == 'drugs':
+
+                    a = plot_balance_ds(ds, dataset)
+
+                    x,y,x_train,x_test,y_train,y_test = splitDataset(dataset= ds,
+                                                                    train_features= features[dataset]['features'],
+                                                                    target_features= target )
+                else:
+                    x, y, x_train, x_test, y_train, y_test = splitDataset(dataset=ds,
+                                                                          train_features=features[dataset]['features'],
+                                                                          target_features=features[dataset]['target'])
+
+                print('*** Split dataset ***')
             else:
                 0 # TO DO implement cross validation
 
@@ -354,8 +413,8 @@ def main():
                     cf = Classifier(x_train,y_train, classifier=classifier, n_neighbors=param )
                     print("results of " + str(param) + " Index for " + target )
                     y_prediction=predict(x_test,cf,target)
-                    evaluation(y_test, y_prediction)
-                    printMatrix(target, confusionMatrix, classifier, param, dataset)
+                    confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                    printMatrix(target, confusion_m, classifier, param, dataset)
 
             if classifier == 'GaussianNB':
                 for param in ['naiveB']:
@@ -365,7 +424,6 @@ def main():
                     confusion_m, accuracy, report = evaluation(y_test, y_prediction )
                     printMatrix(target, confusion_m, classifier, param, dataset)
 
-                    report_summary.append(report)
 
     #dummy = plot_reports(report_summary, classifier, dataset)
 
