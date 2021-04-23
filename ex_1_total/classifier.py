@@ -23,14 +23,101 @@ if not os.path.isdir(plot_dir):
     os.system('mkdir ' + plot_dir )
 
 
+
+
+""" Dictionary containing the training and prediction features """
+features = { 'drugs' :
+                 {'features':  ['age', 'gender', 'education', 'ethnicity', 'Nscore',
+                                    'Escore', 'Oscore', 'Ascore',
+                                    'Cscore', 'Impulsive', 'SS'] ,
+
+                  'target': ['alcohol', 'amphetamines', 'amylNitrite', 'benzodiazepine', 'caffeine',
+                                    'cannabis', 'chocolate', 'cocaine', 'crack', 'ecstasy', 'heroin',
+                                    'ketamine', 'legal', 'LSD',
+                                    'methadone', 'mushrooms', 'nicotine', 'volatileSubstance'] } ,
+
+             'asteroids' :
+                 {'features': ['Absolute Magnitude', 'Est Dia in KM(min)', 'Est Dia in KM(max)',
+                                       'Relative Velocity km per sec', 'Miss Dist.(kilometers)',
+                                       'Minimum Orbit Intersection', 'Jupiter Tisserand Invariant',
+                                       'Eccentricity', 'Semi Major Axis', 'Inclination', 'Asc Node Longitude',
+                                       'Orbital Period', 'Perihelion Distance', 'Perihelion Arg',
+                                       'Aphelion Dist', 'Perihelion Time', 'Mean Anomaly', 'Mean Motion'] ,
+
+                    'target':  ['Hazardous'] } ,
+
+             'advertisingBidding':
+                 {'features': ['Region', 'City', 'AdExchange', 'Adslotwidth', 'Adslotheight', 'Adslotfloorprice',
+                           'CreativeID', 'Biddingprice', 'AdvertiserID',
+                           'interest_news', 'interest_eduation', 'interest_automobile',
+                           'interest_realestate', 'interest_IT', 'interest_electronicgame',
+                           'interest_fashion', 'interest_entertainment', 'interest_luxury',
+                           'interest_homeandlifestyle', 'interest_health', 'interest_food',
+                           'interest_divine', 'interest_motherhood_parenting', 'interest_sports',
+                           'interest_travel_outdoors', 'interest_social', 'Inmarket_3cproduct',
+                           'Inmarket_appliances', 'Inmarket_clothing_shoes_bags',
+                           'Inmarket_Beauty_PersonalCare', 'Inmarket_infant_momproducts',
+                           'Inmarket_sportsitem', 'Inmarket_outdoor', 'Inmarket_healthcareproducts',
+                           'Inmarket_luxury', 'Inmarket_realestate', 'Inmarket_automobile',
+                           'Inmarket_finance', 'Inmarket_travel', 'Inmarket_education',
+                           'Inmarket_service', 'interest_art_photography_design',
+                           'interest_onlineliterature', 'Inmarket_electronicgame', 'interest_3c',
+                           'Inmarket_book', 'Inmarket_medicine', 'Inmarket_food_drink',
+                           'interest_culture', 'interest_sex', 'Demographic_gender_male',
+                           'Demographic_gender_famale', 'Inmarket_homeimprovement', 'Payingprice',
+                           'imp', 'click', 'Browser', 'Adslotvisibility', 'Adslotformat'],
+                   'target': ['conv']} ,
+
+
+            'breastCancer' :
+                 {'features':  ['radiusMean', ' textureMean', ' perimeterMean', ' areaMean',
+                                ' smoothnessMean', ' compactnessMean', ' concavityMean',
+                                ' concavePointsMean', ' symmetryMean', ' fractalDimensionMean',
+                                ' radiusStdErr', ' textureStdErr' ,' perimeterStdErr' ,' areaStdErr',
+                                ' smoothnessStdErr', ' compactnessStdErr', ' concavityStdErr',
+                                ' concavePointsStdErr' ,' symmetryStdErr' ,' fractalDimensionStdErr',
+                                ' radiusWorst', ' textureWorst' ,' perimeterWorst' ,' areaWorst',
+                                ' smoothnessWorst' ,' compactnessWorst' ,' concavityWorst',
+                                ' concavePointsWorst', ' symmetryWorst', ' fractalDimensionWorst'],
+                  'target': ['class'] }
+
+
+             }
+
+
+
 def importDataset(ds):
     """ Directory with the datasets paths """
     datasets = {'drugs'     : "input_data/drug_consumption.data_cleaned.csv" ,
-                'asteroids' : "input_data/asteroids_cleaned.csv"}
+
+                'asteroids' : "input_data/asteroids_cleaned.csv" ,
+
+                'breastCancer':
+                    {'learn' : "input_data/breast-cancer-diagnostic.shuf.lrn_cleaned.csv",
+                     'test_x': "input_data/breast-cancer-diagnostic.shuf.tes_cleaned.csv",
+                     'test_y': "input_data/breast-cancer-diagnostic.shuf.sol.ex_cleaned.csv" },
+
+                'advertisingBidding':
+                    {'learn' : "input_data/advertisingBidding.shuf.lrn_cleaned.csv",
+                     'test_x': "input_data/advertisingBidding.shuf.tes_cleaned.csv",
+                     'test_y': "input_data/advertisingBidding.shuf.sol.ex_cleaned.csv"},
+                }
 
     """ Return a pandas dataframe """
-    dataset = pd.read_csv( datasets[ds])
-    return dataset
+    if ds in ['asteroids' , 'drugs']:
+        dataset = pd.read_csv( datasets[ds])
+        return dataset
+
+    else:
+        train = pd.read_csv( datasets[ds]['learn'])
+
+        train_x = train[ features[ds]['features'] ]
+        train_y = train[ features[ds]['target'] ]
+
+        test_x = pd.read_csv( datasets[ds]['test_x'])
+        test_y = pd.read_csv( datasets[ds]['test_y'])
+
+        return train_x, train_y, test_x, test_y
 
 
 
@@ -113,8 +200,13 @@ def printMatrix(target, matrix, classifier, param, dataset):
 
     ticks = { 'asteroids' : ['Hazardous' , 'Non Hazardous'],
               'drugs': ["Never", ">10 Years Ago", "Last Decade", "Last Year", "Last Month",
-              "Last Week", "Last Day"] }
+              "Last Week", "Last Day"],
+              'breastCancer' :  ['0' , '1'] ,
+              'advertisingBidding' : ['0','1']
+              }
 
+    # "recurrence-events" or not ("no-recurrence-events")
+    #
     classes = ticks[dataset]
 
     classes = range(0,len(matrix))
@@ -126,7 +218,9 @@ def printMatrix(target, matrix, classifier, param, dataset):
 
 
     titles = { 'drugs' : target ,
-               'asteroids' : 'Asteroids' }
+               'asteroids': 'Asteroids',
+               'breastCancer': 'Breast Cancer',
+               'advertisingBidding': 'Advertising Bidding'}
 
     plt.title(str(classifier) + ' Confusion Matrix - ' + titles[dataset] , y = -0.2 , fontsize = fs )
 
@@ -145,32 +239,6 @@ def printMatrix(target, matrix, classifier, param, dataset):
 
     plt.savefig(out + target + '_' + str(classifier) +  '_' + str(param) + '.png', dpi=150)
     plt.close()
-
-
-""" Dictionary containing the training and prediction features """
-
-features = { 'drugs' : { 'train':  ['age', 'gender', 'education', 'ethnicity', 'Nscore',
-                                    'Escore', 'Oscore', 'Ascore',
-                                    'Cscore', 'Impulsive', 'SS'] ,
-
-                         'target': ['alcohol', 'amphetamines', 'amylNitrite', 'benzodiazepine', 'caffeine',
-                                    'cannabis', 'chocolate', 'cocaine', 'crack', 'ecstasy', 'heroin',
-                                    'ketamine', 'legal', 'LSD',
-                                    'methadone', 'mushrooms', 'nicotine', 'volatileSubstance'] } ,
-
-             'asteroids' : { 'train': ['Absolute Magnitude', 'Est Dia in KM(min)', 'Est Dia in KM(max)',
-                                       'Relative Velocity km per sec', 'Miss Dist.(kilometers)',
-                                       'Minimum Orbit Intersection', 'Jupiter Tisserand Invariant',
-                                       'Eccentricity', 'Semi Major Axis', 'Inclination', 'Asc Node Longitude',
-                                       'Orbital Period', 'Perihelion Distance', 'Perihelion Arg',
-                                       'Aphelion Dist', 'Perihelion Time', 'Mean Anomaly', 'Mean Motion'] ,
-
-                             'target':  ['Hazardous']
-
-}
-
-
-             }
 
 
 
@@ -207,7 +275,8 @@ def plot_reports(report_summary, classifier, dataset):
 
 def plot_tree(feature, dataset, classifier):
 
-    dot_data = tree.export_graphviz(classifier, out_file='Plots/tree_' + feature, filled=True, rounded=True, feature_names=features[dataset]['train'],
+    dot_data = tree.export_graphviz(classifier, out_file='Plots/tree_' + feature, filled=True,
+                                    rounded=True, feature_names=features[dataset]['train'],
                                     class_names= classes  )
     graph = graphviz.Source(dot_data)
     graph.render()
@@ -233,22 +302,42 @@ classifiers = ['DecisionTree']
 dataset = 'drugs'
 
 
-dataset = 'asteroids'
+dataset = 'breastCancer'
+split = 'holdout'
+
+dataset = 'advertisingBidding'
+
 
 def main():
 
-    ds = importDataset(dataset)
+    # Loading the dat frames
+    if dataset in ['asteroids', 'drugs']:
+        ds = importDataset(dataset)
+    else:
+        xtrain, ytrain, xtest, ytest = importDataset(dataset)
+
 
     report_summary = []
 
     for target in features[dataset]['target']:
 
-        x,y,x_train,x_test,y_train,y_test = splitDataset(dataset= ds,
-                                                         train_features= features[dataset]['train'],
-                                                         target_features= target)
+        if dataset in ['asteroids', 'drugs']:  # must split the data into train-test
+            # Simple Hold Out
+            # TO DO Implement: data reshuffling
+            if valdation == 'holdout':
+                x,y,x_train,x_test,y_train,y_test = splitDataset(dataset= ds,
+                                                                train_features= features[dataset]['train'],
+                                                                target_features= target)
+            else:
+                0 # TO DO implement cross validation
+
+        else:  # data already split
+            x_train, x_test, y_train, y_test = xtrain, xtest, ytrain, ytest
+
+            print(0)
+
 
         for classifier in classifiers:
-
             if classifier == 'DecisionTree' : # Run DecisionTreeClassifier
                 for param in ['gini'] :  # run the classifier with two different parameter
                 #for param in ['gini', 'entropy']:  # run the classifier with two different parameter

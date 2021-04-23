@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.preprocessing import LabelEncoder
-
+import os,sys
 
 def clean_drug():
 	dataset = pd.read_csv("input_data/" + 'drug_consumption.data')
@@ -74,7 +74,7 @@ def clean_drug():
 	del dataset['country']
 	del dataset['ID']
 
-	dataset.to_csv('input_data/' + 'drug_consumption' + '_cleaned.csv')
+	dataset.to_csv('input_data/' + 'drug_consumption' + '_cleaned.csv' , index = False)
 	for s in to_write:
 		out.write(str(s))
 	out.close()
@@ -158,14 +158,23 @@ def findMissingValues(dataset):
 def plotOutliersForContinuosData(dataset, notNumericCols, numericCols, folderName):
 	# outliers for categorical attributes
 
+
 	for col in notNumericCols:
 		dataset[col].value_counts().plot.bar()
 		plt.title(col)
 		plt.plot()
+
+		if not os.path.isdir("Plots/preprocessing_plots/"  ):
+			os.mkdir("Plots/preprocessing_plots/"  )
+
+		if not os.path.isdir("Plots/preprocessing_plots/" + folderName ):
+			os.mkdir("Plots/preprocessing_plots/" + folderName )
+
+
 		plt.savefig("Plots/preprocessing_plots/" + folderName + '/' + col + '.png', dpi=150)
 		plt.close()
 
-	# due the fact that numerical attributes are numerical but they corresponts at intervals I print histograms also for them in order to
+	# due the fact that numerical attributes are numerical but they corresponds to intervals I print histograms also for them in order to
 	# spot outliers
 	for col in numericCols:
 		dataset.boxplot(column=col)
@@ -219,6 +228,7 @@ def cleanBreastCancer():
 	toWrite.append(toPrint)
 	# In this dataset the numerical values are not organized in ranges but we can have values in all the domain
 	# we don't have intervals instead of instograms is better use boxplots
+
 	generalFrame = pd.concat([trainSet, testSet])
 	numericC, nNumericC = devideNumericCols(generalFrame)
 	plotOutliersForContinuosData(generalFrame, nNumericC, numericC, 'breastCancer')
@@ -229,9 +239,9 @@ def cleanBreastCancer():
 	del cleanedTrain['ID']
 	del cleanedTest['ID']
 	del cleanedSolution['ID']
-	cleanedTrain.to_csv('input_data/cleanedTrain.csv')
-	cleanedTest.to_csv('input_data/cleanedTest.csv')
-	cleanedSolution.to_csv('input_data/cleanedSolution.csv')
+	cleanedTrain.to_csv('input_data/breast-cancer-diagnostic.shuf.lrn_cleaned.csv', index = False )
+	cleanedTest.to_csv('input_data/breast-cancer-diagnostic.shuf.tes_cleaned.csv', index = False)
+	cleanedSolution.to_csv('input_data/breast-cancer-diagnostic.shuf.sol.ex_cleaned.csv', index = False)
 	for s in toPrint:
 		out.write(str(s))
 	out.close()
@@ -259,9 +269,17 @@ def plotOutliersNotContinuous(dataset, notNumericCols, numericCols, folderName):
 
 
 def cleanOnlineAdvertisement():
+
 	testSet = pd.read_csv("input_data/advertisingBidding.shuf.tes.csv")
 	trainSet = pd.read_csv("input_data/advertisingBidding.shuf.lrn.csv")
 	solutionSet = pd.read_csv("input_data/advertisingBidding.shuf.sol.ex.csv")
+
+
+	test_set = testSet
+	test_set['conv'] = solutionSet['conv']
+
+
+
 	toWrite=[]
 	out = open('input_data/' + 'onlineAdvertisement_preparation_summary.txt', 'w')
 
@@ -301,22 +319,105 @@ def cleanOnlineAdvertisement():
 	plotOutliersForContinuosData(generalFrame, nNumericC, numericC, 'onlineAdvertisement')
 
 	cleanedTrain = cleanedTrain.dropna()
-	cleanedTest = cleanedTest.dropna()
-	cleanedSolution = cleanedSolution.dropna()
 
-	cleanedTrain.to_csv('input_data/cleanedTrain.csv')
-	cleanedTest.to_csv('input_data/cleanedTest.csv')
-	cleanedSolution.to_csv('input_data/cleanedSolution.csv')
+	#cleanedTest = cleanedTest.dropna()
+	#cleanedSolution = cleanedSolution.dropna()
+
+
+
+	cleanedTrain.to_csv('input_data/advertisingBidding.shuf.lrn_cleaned.csv' , index = False )
+	cleanedTest.to_csv('input_data/advertisingBidding.shuf.tes_cleaned.csv', index = False )
+	cleanedSolution.to_csv('input_data/advertisingBidding.shuf.sol.ex_cleaned.csv', index = False)
 	for s in toWrite:
 		out.write(str(s))
 	out.close()
 
-def main():
-	clean_drug()
-	cleanBreastCancer()
-	cleanOnlineAdvertisement()
-	clean_asteroids()
+def cleanOnlineAdvertisement():
 
+	testSet = pd.read_csv("input_data/advertisingBidding.shuf.tes.csv")
+	trainSet = pd.read_csv("input_data/advertisingBidding.shuf.lrn.csv")
+	solutionSet = pd.read_csv("input_data/advertisingBidding.shuf.sol.ex.csv")
+
+
+
+	toWrite=[]
+	out = open('input_data/' + 'onlineAdvertisement_preparation_summary.txt', 'w')
+
+	generalFrame = pd.concat([trainSet, testSet])
+
+	toWrite.append(printBasicInfo(generalFrame))
+
+	findMissingValues(generalFrame)
+	findDuplicatedValues(generalFrame, 'RowID')
+	toPrint,lowInfoCols = findLowInfoCols(generalFrame)
+	toWrite.append(toPrint)
+
+	# in the Url the 4% of the observation is null I delete those rows they are 1000 on 25000
+	cleanedTrain = generalFrame[trainSet['URL'].notnull()]
+	rowsToDelete = generalFrame[trainSet['URL'].isnull()].loc[:, 'RowID']
+	cleanedTest = generalFrame[testSet['URL'].notnull()]
+	# I have to remove the rows in the solution set that I have deleted from the testSet
+	cleanedSolution = solutionSet[~solutionSet.RowID.isin(rowsToDelete.tolist())]
+
+	# The browser column creates issues due its values I want to solve it encoding the column
+	labelencoder = LabelEncoder()
+
+	""" Converting each class to string, since nans are considered as float, hence it cerates a conflict wth object types """
+	for cl in ['Browser', 'Adslotvisibility', 'Adslotformat']:
+		cleanedTest[cl] = labelencoder.fit_transform(cleanedTest[cl].astype(str))
+		cleanedTrain[cl] = labelencoder.fit_transform(cleanedTrain[cl].astype(str))
+
+	# I remove all this columns because we can assume that they depend by the single observation thay only create noise
+	# and not relevant data
+
+	for rem in ['RowID', 'UserID', 'BidID', 'IP', 'Domain', 'URL', 'Time_Bid', 'AdslotID']:
+		del cleanedTest[rem]
+		del cleanedTrain[rem]
+	del cleanedSolution['RowID']
+
+	test_col = cleanedTest.columns
+
+	generalFrame = pd.concat([cleanedTrain, cleanedTest])
+	numericC, nNumericC = devideNumericCols(generalFrame)
+	#plotOutliersForContinuosData(generalFrame, nNumericC, numericC, 'onlineAdvertisement')
+
+	# create a global solution data frame
+	solution_all = cleanedTest
+	solution_all['conv'] = cleanedSolution['conv']
+	solution_all = solution_all.dropna()
+
+
+	cleanedTrain = cleanedTrain.dropna()
+	cleanedTrain.to_csv('input_data/advertisingBidding.shuf.lrn_cleaned.csv' , index = False )
+
+	test = solution_all[test_col]
+	test.to_csv('input_data/advertisingBidding.shuf.tes_cleaned.csv', index = False )
+
+	solution = solution_all['conv']
+	solution.to_csv('input_data/advertisingBidding.shuf.sol.ex_cleaned.csv', index = False)
+
+	for s in toWrite:
+		out.write(str(s))
+
+	out.close()
+
+
+
+def main():
+
+	print("*** Cleaning Drugs \n *** ")
+	#clean_drug()
+
+	print("*** Cleaning BreastCancer \n *** ")
+	#cleanBreastCancer()
+
+	print("*** Cleaning OnlineAdvertisement \n *** ")
+	cleanOnlineAdvertisement()
+
+	print("*** Cleaning Asteroids \n *** ")
+	#clean_asteroids()
+
+	print("*** Finished cleaning all datasets! *** ")
 
 if __name__ == "__main__":
 	main()
