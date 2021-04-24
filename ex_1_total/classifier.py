@@ -7,6 +7,8 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
+import random
+
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from matplotlib.colors import ListedColormap
 
@@ -39,11 +41,11 @@ features = { 'drugs' :
 
              'asteroids' :
                  {'features': ['Absolute Magnitude', 'Est Dia in KM(min)', 'Est Dia in KM(max)',
-                                       'Relative Velocity km per sec', 'Miss Dist.(kilometers)',
-                                       'Minimum Orbit Intersection', 'Jupiter Tisserand Invariant',
-                                       'Eccentricity', 'Semi Major Axis', 'Inclination', 'Asc Node Longitude',
-                                       'Orbital Period', 'Perihelion Distance', 'Perihelion Arg',
-                                       'Aphelion Dist', 'Perihelion Time', 'Mean Anomaly', 'Mean Motion'] ,
+                               'Relative Velocity km per sec', 'Miss Dist.(kilometers)',
+                               'Minimum Orbit Intersection', 'Jupiter Tisserand Invariant',
+                               'Eccentricity', 'Semi Major Axis', 'Inclination', 'Asc Node Longitude',
+                               'Orbital Period', 'Perihelion Distance', 'Perihelion Arg',
+                               'Aphelion Dist', 'Perihelion Time', 'Mean Anomaly', 'Mean Motion'] ,
 
                     'target':  ['Hazardous'] } ,
 
@@ -181,7 +183,7 @@ def evaluation(y_test,y_pred):
 
     return confusion_m, accuracy, report
 
-def printMatrix(target, matrix, classifier, param, dataset):
+def printMatrix(target, matrix, classifier, param, dataset, balance = ''):
     """ Creates a confusion matrix """
     fs = 12
     plt.clf()
@@ -207,8 +209,8 @@ def printMatrix(target, matrix, classifier, param, dataset):
     ticks = { 'asteroids' : ['Hazardous' , 'Non Hazardous'],
               'drugs': ["Never", ">10 Years Ago", "Last Decade", "Last Year", "Last Month",
               "Last Week", "Last Day"],
-              'breastCancer' :  ['0' , '1'] ,
-              'advertisingBidding' : ['0','1']
+              'breastCancer' :  ['Reccurence' , 'No recurrence'] ,
+              'advertisingBidding' : ['Buy','Not Buy']
               }
 
     # "recurrence-events" or not ("no-recurrence-events")
@@ -228,7 +230,10 @@ def printMatrix(target, matrix, classifier, param, dataset):
                'breastCancer': 'Breast Cancer',
                'advertisingBidding': 'Advertising Bidding'}
 
-    plt.title(str(classifier) + ' Confusion Matrix - ' + titles[dataset] , y = -0.2 , fontsize = fs )
+    plt.title(str(classifier) + '[' + str(param) + ']' +
+              '  Confusion Matrix - '
+
+              + titles[dataset] , y = -0.2 , fontsize = fs-1 )
 
     plt.ylabel('True label', size=fs)
     plt.xlabel('Predicted label', size=fs)
@@ -243,19 +248,25 @@ def printMatrix(target, matrix, classifier, param, dataset):
         os.system('mkdir ' + out )
     plt.tight_layout()
 
-    plt.savefig(out + target + '_' + str(classifier) +  '_' + str(param) + '.png', dpi=150)
+    plt.savefig(out + target + '_' + str(classifier) + '_' +
+                str(param) + '_balance_' + str(balance) + '.png', dpi=150)
+
     plt.close()
 
 
 
 def plot_balance_ds(df, dataset):
+    """ make a plot of the different classes for the target attributes
+    (frequency of drug usage for drugs,
+    binary True/False for the others """
+
     fs = 17
 
     ticks = { 'asteroids' : ['Hazardous' , 'Non Hazardous'],
               'drugs': ["Never", ">10 Years Ago", "Last Decade", "Last Year", "Last Month",
               "Last Week", "Last Day"],
-              'breastCancer' :  ['True' , 'False'] ,
-              'advertisingBidding' : ['True','False']
+              'breastCancer' :  ['Recurrence events' , 'No recurrence events'] ,
+              'advertisingBidding' : ['Buy','Not Buy']
               }
 
     Labels = ticks[dataset]
@@ -271,16 +282,24 @@ def plot_balance_ds(df, dataset):
                 a = len( np.where(df[d] == c )[0] )
                 res[c].append(a)
 
-        fig, ax = plt.subplots(figsize = (11,7))
+        fig, ax = plt.subplots(figsize = (12,7))
+        ax.set_title('Class Distribution for ' + dataset, fontsize=fs, y=1.03)
+
         width = 0.7
         cum_sum = np.full( len(res[0]), 0)
 
         for i in range(0,7):
-             ax.bar ([''], res[i], width, label=Labels[i], bottom = cum_sum)
-             cum_sum += np.array(res[i])
+             ax.bar (drugs, res[i], width, label=Labels[i], bottom = cum_sum)
+             cum_sum += res[i]
 
 
         ax.set_xticklabels(drugs, rotation=35, fontsize=10 )
+        ax.legend()
+        ax.set_ylabel('Counts', fontsize=fs)
+
+        plt.tight_layout()
+        plt.grid(ls=':', color='lightgray')
+        plt.savefig('Plots/Inbalance_' + dataset + '.png', dpi=200)
 
     else:
         width = 0.7
@@ -288,7 +307,7 @@ def plot_balance_ds(df, dataset):
         f = np.count_nonzero(df[features[dataset]['target']] == False )
         t = np.count_nonzero(df[features[dataset]['target']] == True )
 
-        fig, ax = plt.subplots(figsize = (11,7))
+        fig, ax = plt.subplots(figsize = (6,7))
 
         ax.bar( ticks[dataset], [t,f] , width )
         ax.set_xticklabels(ticks[dataset], fontsize=fs )
@@ -307,7 +326,6 @@ def plot_balance_ds(df, dataset):
 
 
 def plot_reports(report_summary, classifier, dataset):
-
 
     fs = 15
     labels = report_summary[0].keys()  # class labels
@@ -337,6 +355,31 @@ def plot_reports(report_summary, classifier, dataset):
         plt.close()
 
 
+def balance_ds(ds, dataset):
+    """ Return a dataset with balanced classes.
+        Select the minority class, end extracts its length L.
+        Then select L + 10% random entries from the majority list. """
+
+    target = features[dataset]['target'][0]
+    if dataset != 'drugs':
+        classes = ['True', 'False']
+
+        t = ds.loc[ds[target] == True] # always minority
+        length = int( len(t) + 0.1* len(t) )
+
+        f = ds.loc[ds[target] == False]
+        f = f.sample(frac=1) # shuffling the majority class
+
+    randomlist = []
+    for i in range(0, length):
+        n = random.randint(1,len(f))
+        randomlist.append(n)
+        print(randomlist)
+
+    random_f = f.iloc[randomlist]
+
+    full_ds = pd.concat([t, random_f])
+    return full_ds.sample(frac=1)
 
 def clean_fast():
     ds = pd.read_csv('input_data/advertisingBidding.shuf.lrn.csv').dropna()
@@ -352,101 +395,92 @@ def clean_fast():
 
 """ Main input parameters to choose """
 
-classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
-classifiers = ['GaussianNB']
-classifiers = ['DecisionTree']
-
-dataset = 'drugs'
-dataset = 'breastCancer'
+#classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
 
 validation = 'holdout'
-dataset = 'breastCancer'
-dataset = 'advertisingBidding'
 
 classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
-dataset = 'breastCancer'
-dataset = 'advertisingBidding'
+datasets = ['asteroids','advertisingBidding' , 'breastCancer', 'drugs' ]
+datasets = ['drugs']
+datasets = ['asteroids','advertisingBidding' , 'breastCancer', 'drugs' ]
 
-dataset = 'breastCancer'
-dataset = 'asteroids'
+train_test = True
+balance = True
 
-#dataset = 'drugs'
+datasets = ['asteroids','advertisingBidding' , 'breastCancer' ]
 
 def main():
 
-    # Loading the dat frames
-    if dataset in ['asteroids', 'drugs']:
-        ds = importDataset(dataset)
-    else:
-        ds = importDataset(dataset, full_chain= True)
+    for dataset in datasets:
+        # Loading the data frames
+        if dataset in ['asteroids', 'drugs']:
+            ds = importDataset(dataset)
+        else:
+            ds = importDataset(dataset, full_chain= True)
 
-        # need to implement the separate testing only
-        # xtrain, ytrain, xtest, ytest = importDataset(dataset)
+            # need to implement the separate testing only
+            # xtrain, ytrain, xtest, ytest = importDataset(dataset)
 
+        #report_summary = []
 
-    report_summary = []
+        # loop over the possible features (number of drugs)
+        # for the other datasets it is only one iteration
 
-    for target in features[dataset]['target']:
+        a = plot_balance_ds(ds, dataset)
+        #continue
 
-        if dataset in ['asteroids', 'drugs', 'advertisingBidding', 'breastCancer']:  # must split the data into train-test
-            # Simple Hold Out
-            # TO DO Implement: data reshuffling
-            if validation == 'holdout':
+        # balance the dataset if balance = True
+        if balance:
+             ds = balance_ds(ds, dataset)
 
-                a = plot_balance_ds(ds, dataset)
+        for target in features[dataset]['target']:
+
+            if train_test :  # must split the data into train-test
+                # Simple Hold Out
 
                 if dataset == 'drugs':
-
-                    #a = plot_balance_ds(ds, dataset)
-
                     x,y,x_train,x_test,y_train,y_test = splitDataset(dataset= ds,
-                                                                    train_features= features[dataset]['features'],
-                                                                    target_features= target )
+                                                                        train_features= features[dataset]['features'],
+                                                                        target_features= target )
                 else:
                     x, y, x_train, x_test, y_train, y_test = splitDataset(dataset=ds,
-                                                                          train_features=features[dataset]['features'],
-                                                                          target_features=features[dataset]['target'])
+                                                                              train_features=features[dataset]['features'],
+                                                                              target_features=features[dataset]['target'])
+                print('*** I Split dataset ' , dataset , ' ***')
 
-                print('*** Split dataset ***')
             else:
-                0 # TO DO implement cross validation
+                # TO DO must only test with the given dataset, cancer and bidding
+                print(0)
 
-        else:  # data already split
-            x_train, x_test, y_train, y_test = xtrain, xtest, ytrain, ytest
+            for classifier in classifiers:
+                if classifier == 'DecisionTree' : # Run DecisionTreeClassifier
+                    for param in ['gini','entropy'] :  # run the classifier with two different parameter
+                    #for param in ['gini', 'entropy']:  # run the classifier with two different parameter
 
-            print(0)
+                        cf = Classifier(x_train,y_train, classifier=classifier, criterion=param )
+                        print("results of " + param + " Index for " + target )
+                        y_prediction=predict(x_test,cf,target)
+                        confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                        printMatrix(target, confusion_m, classifier, param, dataset, balance = balance)
+                        #tree = plot_t(target, dataset, cf)
 
+                if classifier == 'KNeighbors':
+                    for param in [5, 10 , 50]:
+                        cf = Classifier(x_train,y_train, classifier=classifier, n_neighbors=param )
+                        print("results of " + str(param) + " Index for " + target )
+                        y_prediction=predict(x_test,cf,target)
+                        confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                        printMatrix(target, confusion_m, classifier, param, dataset,balance = balance)
 
-        for classifier in classifiers:
-            if classifier == 'DecisionTree' : # Run DecisionTreeClassifier
-                for param in ['gini'] :  # run the classifier with two different parameter
-                #for param in ['gini', 'entropy']:  # run the classifier with two different parameter
+                if classifier == 'GaussianNB':
+                    for param in ['naiveB']:
+                        cf = Classifier(x_train,y_train, classifier=classifier)
+                        print("results of " + param + " Index for " + target )
+                        y_prediction=predict(x_test,cf,target)
+                        confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                        printMatrix(target, confusion_m, classifier, param, dataset, balance = balance)
 
-                    cf = Classifier(x_train,y_train, classifier=classifier, criterion=param )
-                    print("results of " + param + " Index for " + target )
-                    y_prediction=predict(x_test,cf,target)
-                    confusion_m, accuracy, report = evaluation(y_test, y_prediction )
-                    printMatrix(target, confusion_m, classifier, param, dataset)
-                    #tree = plot_t(target, dataset, cf)
-
-            if classifier == 'KNeighbors':
-                for param in [5, 10 , 50]:
-                    cf = Classifier(x_train,y_train, classifier=classifier, n_neighbors=param )
-                    print("results of " + str(param) + " Index for " + target )
-                    y_prediction=predict(x_test,cf,target)
-                    confusion_m, accuracy, report = evaluation(y_test, y_prediction )
-                    printMatrix(target, confusion_m, classifier, param, dataset)
-
-            if classifier == 'GaussianNB':
-                for param in ['naiveB']:
-                    cf = Classifier(x_train,y_train, classifier=classifier)
-                    print("results of " + param + " Index for " + target )
-                    y_prediction=predict(x_test,cf,target)
-                    confusion_m, accuracy, report = evaluation(y_test, y_prediction )
-                    printMatrix(target, confusion_m, classifier, param, dataset)
-
-
-    #dummy = plot_reports(report_summary, classifier, dataset)
+        #dummy = plot_reports(report_summary, classifier, dataset)
 
 if __name__=="__main__":
     main()

@@ -1,0 +1,11 @@
+### TO DO
+
+PREPROCESSING, CLEANING
+	- box plots are nice, maybedo one total plot wth all the categories.
+	- we must remove outliers, it is not enough to say that we identified them
+	- make a pot of how many nan values there are in the original files, and how many there are after we removed the rows
+
+
+CLASSIFIERS
+
+

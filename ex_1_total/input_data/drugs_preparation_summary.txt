@@ -1,0 +1,80 @@
+shape of the dataset
+(1884, 32)
+types of the objects
+ID                     int64
+age                  float64
+gender               float64
+education            float64
+country              float64
+ethnicity            float64
+Nscore               float64
+Escore               float64
+Oscore               float64
+Ascore               float64
+Cscore               float64
+Impulsive            float64
+SS                   float64
+alcohol               object
+amphetamines          object
+amylNitrite           object
+benzodiazepine        object
+caffeine              object
+cannabis              object
+chocolate             object
+cocaine               object
+crack                 object
+ecstasy               object
+heroin                object
+ketamine              object
+legal                 object
+LSD                   object
+methadone             object
+mushrooms             object
+nicotine              object
+semeron               object
+volatileSubstance     object
+dtype: object
+List of the numeric columns
+['ID' 'age' 'gender' 'education' 'country' 'ethnicity' 'Nscore' 'Escore'
+ 'Oscore' 'Ascore' 'Cscore' 'Impulsive' 'SS']
+list of the non numeric Columns
+['alcohol' 'amphetamines' 'amylNitrite' 'benzodiazepine' 'caffeine'
+ 'cannabis' 'chocolate' 'cocaine' 'crack' 'ecstasy' 'heroin' 'ketamine'
+ 'legal' 'LSD' 'methadone' 'mushrooms' 'nicotine' 'semeron'
+ 'volatileSubstance']
+percentage of missing values
+ID - 0.0%
+age - 0.0%
+gender - 0.0%
+education - 0.0%
+country - 0.0%
+ethnicity - 0.0%
+Nscore - 0.0%
+Escore - 0.0%
+Oscore - 0.0%
+Ascore - 0.0%
+Cscore - 0.0%
+Impulsive - 0.0%
+SS - 0.0%
+alcohol - 0.0%
+amphetamines - 0.0%
+amylNitrite - 0.0%
+benzodiazepine - 0.0%
+caffeine - 0.0%
+cannabis - 0.0%
+chocolate - 0.0%
+cocaine - 0.0%
+crack - 0.0%
+ecstasy - 0.0%
+heroin - 0.0%
+ketamine - 0.0%
+legal - 0.0%
+LSD - 0.0%
+methadone - 0.0%
+mushrooms - 0.0%
+nicotine - 0.0%
+semeron - 0.0%
+volatileSubstance - 0.0%
+
+low information columns 90% of observation are equal
+['ethnicity', 'semeron']
