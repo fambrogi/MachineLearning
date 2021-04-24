@@ -254,37 +254,52 @@ def plot_balance_ds(df, dataset):
     ticks = { 'asteroids' : ['Hazardous' , 'Non Hazardous'],
               'drugs': ["Never", ">10 Years Ago", "Last Decade", "Last Year", "Last Month",
               "Last Week", "Last Day"],
-              'breastCancer' :  ['0' , '1'] ,
-              'advertisingBidding' : ['0','1']
+              'breastCancer' :  ['True' , 'False'] ,
+              'advertisingBidding' : ['True','False']
               }
 
     Labels = ticks[dataset]
-    drugs = features[dataset]['target']
 
-    classes = [ i for i in range(0,7) ] # for drugs
-    res = {}
+    if dataset == 'drugs':
+        drugs = features[dataset]['target']
+        classes = range(0,7)  # for drugs
+        res = {}
 
-    for c in classes:
-        res[c] = []
-        for d in drugs:
-            a = len( np.where(df[d] == c )[0] )
-            res[c].append(a)
+        for c in classes:
+            res[c] = []
+            for d in drugs:
+                a = len( np.where(df[d] == c )[0] )
+                res[c].append(a)
 
-    fig, ax = plt.subplots(figsize = (11,7))
+        fig, ax = plt.subplots(figsize = (11,7))
+        width = 0.7
+        cum_sum = np.full( len(res[0]), 0)
 
-    width = 0.7
-    for i in range(0,7):
-        ax.bar(drugs, res[i], width  , label=Labels[i])
+        for i in range(0,7):
+             ax.bar ([''], res[i], width, label=Labels[i], bottom = cum_sum)
+             cum_sum += np.array(res[i])
 
-    ax.set_ylabel('Counts', fontsize=fs)
-    ax.set_title('Class Distribution for Drugs', fontsize=fs, y=1.03 )
+
+        ax.set_xticklabels(drugs, rotation=35, fontsize=10 )
+
+    else:
+        width = 0.7
+        data = df[features[dataset]['target']]
+        f = np.count_nonzero(df[features[dataset]['target']] == False )
+        t = np.count_nonzero(df[features[dataset]['target']] == True )
+
+        fig, ax = plt.subplots(figsize = (11,7))
+
+        ax.bar( ticks[dataset], [t,f] , width )
+        ax.set_xticklabels(ticks[dataset], fontsize=fs )
+
+    ax.set_title('Class Distribution for ' + dataset, fontsize=fs, y=1.03)
     ax.legend()
 
-    ax.set_xticklabels(drugs, rotation=35, fontsize=10 )
-
+    ax.set_ylabel('Counts', fontsize=fs)
     plt.tight_layout()
-    plt.grid(ls = ':' , color = 'lightgray')
-    plt.savefig('Inbalance_drugs.png', dpi = 200)
+    plt.grid(ls=':', color='lightgray')
+    plt.savefig('Plots/Inbalance_' + dataset +'.png', dpi=200)
 
     print('*** Plotted inbalance distributions drugs ***')
 
@@ -292,6 +307,7 @@ def plot_balance_ds(df, dataset):
 
 
 def plot_reports(report_summary, classifier, dataset):
+
 
     fs = 15
     labels = report_summary[0].keys()  # class labels
@@ -351,7 +367,10 @@ classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
 dataset = 'breastCancer'
 dataset = 'advertisingBidding'
 
-dataset = 'drugs'
+dataset = 'breastCancer'
+dataset = 'asteroids'
+
+#dataset = 'drugs'
 
 def main():
 
@@ -374,9 +393,11 @@ def main():
             # TO DO Implement: data reshuffling
             if validation == 'holdout':
 
+                a = plot_balance_ds(ds, dataset)
+
                 if dataset == 'drugs':
 
-                    a = plot_balance_ds(ds, dataset)
+                    #a = plot_balance_ds(ds, dataset)
 
                     x,y,x_train,x_test,y_train,y_test = splitDataset(dataset= ds,
                                                                     train_features= features[dataset]['features'],
