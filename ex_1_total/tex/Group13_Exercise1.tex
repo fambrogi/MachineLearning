@@ -60,7 +60,7 @@
 
 \setlength{\marginparwidth}{20mm}
 
-
+%\bibliography{literature.bib}
 
 
 
@@ -87,7 +87,7 @@
 \tableofcontents
 
 \section{Introduction}
-In this document we describe the results of the implementation of three algorithms to solve classification problems on four different dataset. 
+In this document we describe the results of the implementation of three algorithms to solve classification problems on four different dataset.
 
 
 
@@ -95,7 +95,7 @@ In this document we describe the results of the implementation of three algorith
 \subsection{Data Sets Description}
 Here we briefly introduce our four datasets.
 
-\paragraph{Drug consumption data set} This is the data set taken from exercise 0, so here we only provide basic details. The primary task of our implementation is to classify the likeliness of the frequency of usage of a certain type of drug (from never used to current usage), given personal aspects such as gender, ethnicity, education background etc. and psychological traits.  
+\paragraph{Drug consumption data set} This is the data set taken from exercise 0, so here we only provide basic details. The primary task of our implementation is to classify the likeliness of the frequency of usage of a certain type of drug (from never used to current usage), given personal aspects such as gender, ethnicity, education background etc. and psychological traits.
 In detail:
 \begin{itemize}
 	\item  \textbf{attributes}: 'age', 'gender', 'education', 'ethnicity', 'Nscore', 'Escore', 'Oscore', 'Ascore', 'Cscore', 'Impulsive', 'SS' \\
@@ -105,19 +105,19 @@ In detail:
 \end{itemize}
 
 
-\paragraph{Asteroids data set} 
+\paragraph{Asteroids data set}
 The asteroids data set is designed to perform a binary classification task. It consists of a total of astrophysical data, such as the distance from the Earth, the size of the major axis of the orbits, their mass etc. as well metadata regarding their name. The target feature for classification is a string variable that maps to boolean values "True" in the case the asteroid represents a concrete hazard for the Earth i.e. with high risk of impact, and "False" otherwise.
 
 In detail:
 \begin{itemize}
 	\item  \textbf{attributes}:'Absolute Magnitude', 'Est Dia in KM(min)', 'Est Dia in KM(max)', 'Relative Velocity km per sec', 'Miss Dist.(kilometers)', 'Minimum Orbit Intersection', 'Jupiter Tisserand Invariant', 'Eccentricity', 'Semi Major Axis', 'Inclination', 'Asc Node Longitude', 'Orbital Period', 'Perihelion   Distance', 'Perihelion Arg', 'Aphelion Dist', 'Perihelion Time', 'Mean Anomaly', 'Mean Motion' \\
-	
-	
+
+
 	\item  \textbf{target}: 'Hazardous' divided in \textbf{classes}: "True" and "False" \\
 \end{itemize}
 
 
-\paragraph{Breast Cancer (Kaggle Data Set)} 
+\paragraph{Breast Cancer (Kaggle Data Set)}
 ccc
 
 \begin{itemize}
@@ -130,22 +130,22 @@ ccc
 	'radiusWorst', 'textureWorst' ,'perimeterWorst' ,'areaWorst',
 	'smoothnessWorst' ,'compactnessWorst' ,'concavityWorst',
 	'concavePointsWorst', 'symmetryWorst', 'fractalDimensionWorst' \\
-	
+
 	\item  \textbf{target}: 'class' divided in \textbf{classes}: "True" and "False" \\
 \end{itemize}
-	
-\paragraph{Advertising Bidding (Kaggle Data Set)} 
+
+\paragraph{Advertising Bidding (Kaggle Data Set)}
 ccc
 
 In detail:
 \begin{itemize}
 	\item  \textbf{attributes}: 'Region', 'City', 'AdExchange', 'Adslotwidth', 'Adslotheight', 'Adslotfloorprice',
-	'CreativeID', 'Biddingprice', 'AdvertiserID', 'interest\_news', 'eduation', 'automobile','interest\_realestate', 'IT', 'electronicgame','interest\_fashion', 'entertainment', 'luxury','homeandlifestyle', 'interest\_health', 'food','interest\_divine', 'interest\_motherhood\_parenting', 'sports','interest\_travel\_outdoors', 'interest\_social', 'Inmarket\_3cproduct','Inmarket\_appliances', 'Inmarket\_clothing\_shoes\_bags' , 
-	     
+	'CreativeID', 'Biddingprice', 'AdvertiserID', 'interest\_news', 'eduation', 'automobile','interest\_realestate', 'IT', 'electronicgame','interest\_fashion', 'entertainment', 'luxury','homeandlifestyle', 'interest\_health', 'food','interest\_divine', 'interest\_motherhood\_parenting', 'sports','interest\_travel\_outdoors', 'interest\_social', 'Inmarket\_3cproduct','Inmarket\_appliances', 'Inmarket\_clothing\_shoes\_bags' ,
+
 	'Inmarket\_Beauty\_PersonalCare', 'Inmarket\_infant\_momproducts',
 	'Inmarket\_sportsitem', 'Inmarket\_outdoor', 'Inmarket\_healthcareproducts',
 	'Inmarket\_luxury', 'Inmarket\_realestate',
-	 
+
 	'Inmarket\_automobile',
 	'Inmarket\_finance', 'Inmarket\_travel', 'Inmarket\_education',
 	'Inmarket\_service', 'art\_photography\_design',
@@ -153,18 +153,18 @@ In detail:
 	'Inmarket\_book', 'Inmarket\_medicine', 'Inmarket\_fooddrink',
 	'culture', 'sex',
 	'Demographic\_gender\_male',
-	
+
 	'Demographic\_gender\_famale', 'Inmarket\_homeimprovement', 'Payingprice',
 	'imp', 'click', 'Browser', 'Adslotvisibility', 'Adslotformat' \\
-	
+
 	\item  \textbf{target}: 'conv' divided in \textbf{classes}: "True" and "False"
 \end{itemize}
 
 In detail:
 \begin{itemize}
 	\item  \textbf{attributes}:'Absolute Magnitude', 'Est Dia in KM(min)', 'Est Dia in KM(max)', 'Relative Velocity km per sec', 'Miss Dist.(kilometers)', 'Minimum Orbit Intersection', 'Jupiter Tisserand Invariant', 'Eccentricity', 'Semi Major Axis', 'Inclination', 'Asc Node Longitude', 'Orbital Period', 'Perihelion   Distance', 'Perihelion Arg', 'Aphelion Dist', 'Perihelion Time', 'Mean Anomaly', 'Mean Motion' \\
-	
-	
+
+
 	\item  \textbf{target}: 'Hazardous' divided in \textbf{classes}: "True" and "False"
 \end{itemize}
 
@@ -172,17 +172,22 @@ In detail:
 ccc
 
 \paragraph{Algorithms}
-We chose three different algorithms for our study.
-\paragraph{Decsion Three} a 
-\paragraph{kNN - k Nearest Neighbours} b 
-\paragraph{naive Bayes} c 
+We chose three different algorithms for our study. All are part of the sklearn python library
+\paragraph{Decsion Three} a
+\paragraph{kNN - k Nearest Neighbours} b
+\paragraph{naive Bayes} c
 
 \section{Data Exploration and Pre-processing}
 In this section we describe the necessary preliminary steps to import and prepare the data to make them suitable for the learning algorithms.
 The steps are handled by the script \textit{data\_preparation.py} which includes dedicated function to pre-process each data set.
 
+\paragraph{Drug consumption}
+Since this dataset was already preprocessed (transformation of the nominal features) and cleaned of missing values or outliers by the providers of the dataset \cite{fehrman2017factor}, the data preparation is not given. As can be seen in Fig.\ref{fig:imbalance} we deal with heavily imbalanced data. Normally, the approach would be to resample the data (see Sec.\ref{sec:balance}) but with our later on discussed approach we would run into problems due to low statictics - we decided to keep the dataset as it is.
+
+ As can be seen in Fig.\ref{fig:imbalance} the majority of the drugs can be grouped by their imbalance towards either CL0 ("Never used") or CL6 ("Last day") - those two groups give a rough representation of "everyday drugs" like chocolate and "marginal drugs" like heroin. Since the total number of respondents is constant, a vast majority of one class implies a small occurences of the other classes and equalizing the samples results in low statistics and no usable outcome of the classification - this was the result of our tests. \\
+
 \subsection{Asteroids Data Set}
-The original data set contained 40 columns of different variable types (numeric and categorical). However, some columns were unnecessary, not usable or redundant for classification purposes, or contained constant values. 
+The original data set contained 40 columns of different variable types (numeric and categorical). However, some columns were unnecessary, not usable or redundant for classification purposes, or contained constant values.
 
 
 
@@ -193,7 +198,7 @@ We remind here the definition of the metric parameters we will used to quantify 
 \\
 
 \begin{equation}
-P = \frac{TP}{TP + FP} \ \ \ \ \ \ \ \  R = \frac{TP}{TP + FN} \ \ \ \ \ \ \ \  A = \frac{TP + TN}{\#all} 
+P = \frac{TP}{TP + FP} \ \ \ \ \ \ \ \  R = \frac{TP}{TP + FN} \ \ \ \ \ \ \ \  A = \frac{TP + TN}{\#all}
 \end{equation}
 \\
 
@@ -202,19 +207,19 @@ It is straightforward to calculate these parameters for binary classification ta
 	\item  $TPs$ are the values in the diagonal; \
 	\item  $FNs$ for a certain class are the sum of values in the corresponding row excluding the $TP$; \
 	\item  $FPs$ for a certain class are the sum of values in the corresponding column excluding the $TP$; \
-	\item  $TNs$ for a certain class are the sum of all rows and columns, excluding the class's column and row. \	
+	\item  $TNs$ for a certain class are the sum of all rows and columns, excluding the class's column and row. \
 \end{itemize}
 
 
 Another convenient metric, particularly because it is calculated directly from the proper \textit{scikit-learn} function, is called $f1-score$, which is defined as the harmonic mean of the precision and recall:
 \begin{equation}
-f1-score = 2 \times \frac{P \dot R }{P + R } 
+f1-score = 2 \times \frac{P \dot R }{P + R }
 \end{equation}
 
 
 \subsection{Confusion Matrix}
-For each classifier, we produce a confusion matrix where each entry $i,j$ corresponds to the number of observations in group $i$, but predicted to be in group $j$. We chose to normalize the entries according to the sum of each row.  
-In case of binary classification, the matrix reduces to the number of true negatives ($TN$), false positives ($FP$), false negatives ($FN$) and true positives ($TP$). 
+For each classifier, we produce a confusion matrix where each entry $i,j$ corresponds to the number of observations in group $i$, but predicted to be in group $j$. We chose to normalize the entries according to the sum of each row.
+In case of binary classification, the matrix reduces to the number of true negatives ($TN$), false positives ($FP$), false negatives ($FN$) and true positives ($TP$).
 
 Examples can be see in Fig. \ref{confusion_matrices}.
 
@@ -242,24 +247,24 @@ Examples can be see in Fig. \ref{confusion_matrices}.
 
 
 \subsection{Holdout and Cross Validation}
-Here we describe briefly the techniques of "holdout" and "cross validation" that are used to evaluate a model. The \textbf{holdout} method is essentially based on the splitting on the input data set into two subset, one used for training the model, and one used for testing the model, for example in $80\%-20\%$ proportion, although there is not fix recipe for this split. Once the model is trained, the evaluation can be performed on the test data set, and this is therefore possible to check if the prediction of the model match the data. One big issue of this model is that the training strongly depend on the splitting of the initial data set, for example if the characteristic of the training data set are not representative of the whole data set. 
+Here we describe briefly the techniques of "holdout" and "cross validation" that are used to evaluate a model. The \textbf{holdout} method is essentially based on the splitting on the input data set into two subset, one used for training the model, and one used for testing the model, for example in $80\%-20\%$ proportion, although there is not fix recipe for this split. Once the model is trained, the evaluation can be performed on the test data set, and this is therefore possible to check if the prediction of the model match the data. One big issue of this model is that the training strongly depend on the splitting of the initial data set, for example if the characteristic of the training data set are not representative of the whole data set.
 
 A more powerful method is the \textbf{cross-validation} or "k-fold cross validation". Form the full dataset, a test is held out for final evaluation, but the validation set is no longer needed. For this, the training set is split into $k$ sets, so that the model is trained using $k-1$ folds as training data, and the remaining one is used for the validation as a test set (to compute the interesting metric of the model).
-Once we obtain such $k$ number of metrics, the final result is the average of these parameters, obtained for each iteration of the cross-validation on each distinct fold. 
+Once we obtain such $k$ number of metrics, the final result is the average of these parameters, obtained for each iteration of the cross-validation on each distinct fold.
 
-\subsection{Class Balance}
-In this section we discuss the problem of imbalanced data. Whenever classes are not represented equally (imbalanced data), the result of the training and testing of the model might be biased. In particular, a metric such the accuracy might appear very satisfying while, in fact, it is only representing the underlying class distribution. The model in in fact favoured to learn the class with the majority of instances. 
+\subsection{Class Balance}\label{sec:balance}
+In this section we discuss the problem of imbalanced data. Whenever classes are not represented equally (imbalanced data), the result of the training and testing of the model might be biased. In particular, a metric such the accuracy might appear very satisfying while, in fact, it is only representing the underlying class distribution. The model in in fact favoured to learn the class with the majority of instances.
 
-Fig. \ref{imbalance} shows the distribution of the various class attributes for our datasets. Starting with the binary classification problems we see that the "breast cancer" dataset is slightly imbalanced 
-($37,5\%$- $62,5\%$) recurrence events vs non recurrence, while the imbalance is more pronounced for the other dataset, in particular we see 
-($17\%$-$83\%$) hazardous vs non hazardous, and ($2\%$-$98\%$) buy vs  non buy classes. 
+Fig. \ref{fig:imbalance} shows the distribution of the various class attributes for our datasets. Starting with the binary classification problems we see that the "breast cancer" dataset is slightly imbalanced
+($37,5\%$- $62,5\%$) recurrence events vs non recurrence, while the imbalance is more pronounced for the other dataset, in particular we see
+($17\%$-$83\%$) hazardous vs non hazardous, and ($2\%$-$98\%$) buy vs  non buy classes.
 
-In the case of the drug consumption dataset, the situation it is more complicated to analyze since it varies largely depending on the considered drug. 
+In the case of the drug consumption dataset, the situation it is more complicated to analyze since it varies largely depending on the considered drug.
 
 \begin{figure}[h!]
 	\centering
 	\begin{minipage}[b]{0.99\textwidth}
-		\includegraphics[width=\textwidth]{Plots/Inbalance_drugs.png}	
+		\includegraphics[width=\textwidth]{Plots/Inbalance_drugs.png}
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
 	\includegraphics[width=\textwidth]{Plots/Inbalance_asteroids.png}
@@ -270,18 +275,53 @@ In the case of the drug consumption dataset, the situation it is more complicate
 	\begin{minipage}[b]{0.32\textwidth}
 	\includegraphics[width=\textwidth]{Plots/Inbalance_advertisingBidding.png}
     \end{minipage}
-	\caption{Distribution of classes for the target attributes for the multiclass classification (top panel, drug dataset) and binary classification (bottom panel, asteroids, breast cancer and adertising bidding datasets). }
-	\label{imbalance}
+	\caption{Distribution of classes for the target attributes for the multiclass classification (top panel, drug dataset) and binary classification (bottom panel, asteroids, breast cancer and advertising bidding datasets).}
+	\label{fig:imbalance}
 \end{figure}
 
 In order to balance the dataset, we implemented and algorithm that performs the following steps.
 First, it extracts the number of entries in the under-represented class (which by chance is always class "True" for the three binary classification tasks). Then we randomly select a number of rows from the remaining data of where class is equal to "False", adding an extra $10\%$ to this total. Then, we create a final dataset combining the rows with the class "True" and the randomly selected "False".
-This step is done at a preliminary phase before any splitting into the training and testing subsets. 
+This step is done at a preliminary phase before any splitting into the training and testing subsets.
 
 
 
 
 \section{Comparison}
+
+\subsection{Drug consumption}
+
+Overall the performance of the classification is not well. Looking at the confusion matrices we can see the expected influence of the datas imbalance. The overall fitting strategy is towards the most dominant class whereas the decision tree seems to be the most resistant against this bias (looking at the distribution around the main diagonal).
+
+\begin{figure}[h!]
+	\centering
+	\begin{minipage}[b]{0.32\textwidth}
+		\includegraphics[width=\textwidth]{Plots/alcohol_DecisionTree_entropy.png}
+	\end{minipage}
+	\begin{minipage}[b]{0.32\textwidth}
+		\includegraphics[width=\textwidth]{Plots/alcohol_DecisionTree_gini.png}
+	\end{minipage}
+	\begin{minipage}[b]{0.32\textwidth}
+		\includegraphics[width=\textwidth]{Plots/alcohol_GaussianNB_naiveB.png}
+	\end{minipage}
+	\begin{minipage}[b]{0.32\textwidth}
+		\includegraphics[width=\textwidth]{Plots/alcohol_KNeighbors_5.png}
+  \end{minipage}
+	\begin{minipage}[b]{0.32\textwidth}
+		\includegraphics[width=\textwidth]{Plots/alcohol_KNeighbors_10.png}
+  \end{minipage}
+	\begin{minipage}[b]{0.32\textwidth}
+		\includegraphics[width=\textwidth]{Plots/alcohol_KNeighbors_50.png}
+  \end{minipage}
+	\caption{Confusion matrices for the used classifiers on the drug cocaine.}
+	\label{fig:conf_matr_cocaine}
+\end{figure}
+
+
+
+
+\paragraph{Decision Tree}
+
+
 
 \clearpage
 \bibliography{literature.bib}{}

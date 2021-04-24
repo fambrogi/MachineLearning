@@ -16,7 +16,6 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 #import graphviz
 from sklearn import tree
 
@@ -109,7 +108,7 @@ def importDataset(ds, full_chain = True):
     """ Return a pandas dataframe """
     if full_chain:
         if ds in ['asteroids' , 'drugs']:
-             dataset = pd.read_csv( datasets[ds])
+            dataset = pd.read_csv( datasets[ds])
         else:
             dataset = pd.read_csv(datasets[ds]['learn'])
         return dataset
@@ -156,7 +155,7 @@ def Classifier(x_train,y_train, classifier = 'tree', criterion = "gini" , n_neig
     """
 
     if classifier == 'DecisionTree':
-        cl=DecisionTreeClassifier(criterion = criterion )
+        cl = DecisionTreeClassifier(criterion = criterion )
     if classifier == 'KNeighbors':
         cl = KNeighborsClassifier(n_neighbors= n_neighbors )
     if classifier == 'GaussianNB':
@@ -167,8 +166,8 @@ def Classifier(x_train,y_train, classifier = 'tree', criterion = "gini" , n_neig
 
 def predict(x_test, classifier, objectiveCol):
     y_pred=classifier.predict(x_test)
-    print("predicted values for "+objectiveCol)
-    print(y_pred)
+    #print("predicted values for "+objectiveCol)
+    #print(y_pred)
     return y_pred
 
 def evaluation(y_test,y_pred):
@@ -177,16 +176,18 @@ def evaluation(y_test,y_pred):
 
     # return the class_report as a dictionary
     report = classification_report(y_test, y_pred, output_dict= True)
-    print("Confusion matrix: ", confusion_m)
+    #print("Confusion matrix: ", confusion_m)
     #print("accuracy: ", accuracy)
-    print("Report: ", report)
+    for i in report:
+        print(i, ":", report[i])
+    #print("Report: ", report)
 
     return confusion_m, accuracy, report
 
 def printMatrix(target, matrix, classifier, param, dataset, balance = ''):
     """ Creates a confusion matrix """
     fs = 12
-    plt.clf()
+    plt.figure(figsize=(6,5))
     # place labels at the top
 
     plt.gca().xaxis.tick_top()
@@ -401,13 +402,13 @@ validation = 'holdout'
 
 classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
 datasets = ['asteroids','advertisingBidding' , 'breastCancer', 'drugs' ]
-datasets = ['drugs']
 datasets = ['asteroids','advertisingBidding' , 'breastCancer', 'drugs' ]
 
 train_test = True
-balance = True
+balance = False
 
 datasets = ['asteroids','advertisingBidding' , 'breastCancer' ]
+datasets = ['drugs']
 
 def main():
 
@@ -439,13 +440,13 @@ def main():
                 # Simple Hold Out
 
                 if dataset == 'drugs':
-                    x,y,x_train,x_test,y_train,y_test = splitDataset(dataset= ds,
-                                                                        train_features= features[dataset]['features'],
-                                                                        target_features= target )
+                    x, y, x_train, x_test, y_train, y_test = splitDataset(dataset= ds,
+                                                                                train_features= features[dataset]['features'],
+                                                                                target_features= target )
                 else:
                     x, y, x_train, x_test, y_train, y_test = splitDataset(dataset=ds,
-                                                                              train_features=features[dataset]['features'],
-                                                                              target_features=features[dataset]['target'])
+                                                                                train_features=features[dataset]['features'],
+                                                                                target_features=features[dataset]['target'])
                 print('*** I Split dataset ' , dataset , ' ***')
 
             else:
@@ -458,7 +459,7 @@ def main():
                     #for param in ['gini', 'entropy']:  # run the classifier with two different parameter
 
                         cf = Classifier(x_train,y_train, classifier=classifier, criterion=param )
-                        print("results of " + param + " Index for " + target )
+                        print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
                         y_prediction=predict(x_test,cf,target)
                         confusion_m, accuracy, report = evaluation(y_test, y_prediction )
                         printMatrix(target, confusion_m, classifier, param, dataset, balance = balance)
@@ -466,17 +467,17 @@ def main():
 
                 if classifier == 'KNeighbors':
                     for param in [5, 10 , 50]:
-                        cf = Classifier(x_train,y_train, classifier=classifier, n_neighbors=param )
-                        print("results of " + str(param) + " Index for " + target )
+                        cf = Classifier(x_train, y_train, classifier=classifier, n_neighbors = param )
+                        print("\n\n\n\n\nResults of " + classifier + " with k=" + str(param) + ". Index for " + target )
                         y_prediction=predict(x_test,cf,target)
                         confusion_m, accuracy, report = evaluation(y_test, y_prediction )
                         printMatrix(target, confusion_m, classifier, param, dataset,balance = balance)
 
                 if classifier == 'GaussianNB':
                     for param in ['naiveB']:
-                        cf = Classifier(x_train,y_train, classifier=classifier)
-                        print("results of " + param + " Index for " + target )
-                        y_prediction=predict(x_test,cf,target)
+                        cf = Classifier(x_train, y_train, classifier=classifier)
+                        print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
+                        y_prediction=predict(x_test, cf, target)
                         confusion_m, accuracy, report = evaluation(y_test, y_prediction )
                         printMatrix(target, confusion_m, classifier, param, dataset, balance = balance)
 
@@ -484,6 +485,3 @@ def main():
 
 if __name__=="__main__":
     main()
-
-
-
