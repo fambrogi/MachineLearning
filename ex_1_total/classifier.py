@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold
 from sklearn.preprocessing import LabelEncoder
 
 import random
@@ -18,6 +19,7 @@ from sklearn.neighbors import KNeighborsClassifier
 
 #import graphviz
 from sklearn import tree
+
 
 """ Define the output directory for Plots (global) """
 plot_dir = 'Plots'
@@ -170,8 +172,8 @@ def predict(x_test, classifier, objectiveCol):
     #print(y_pred)
     return y_pred
 
-def evaluation(y_test,y_pred):
-    confusion_m = confusion_matrix(y_test, y_pred, normalize='true')
+def evaluation(y_test,y_pred, normalize='true'):
+    confusion_m = confusion_matrix(y_test, y_pred, normalize=normalize)
     accuracy = accuracy_score(y_test,y_pred)
 
     # return the class_report as a dictionary
@@ -398,16 +400,17 @@ def clean_fast():
 #classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
 
 validation = 'holdout'
+cv_splits = 3
 
 classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
 datasets = ['asteroids','advertisingBidding' , 'breastCancer', 'drugs' ]
 datasets = ['asteroids','advertisingBidding' , 'breastCancer', 'drugs' ]
 
 train_test = True
-balance = True
+balance = False
 
 datasets = ['asteroids','advertisingBidding' , 'breastCancer' ]
-datasets = ['breastCancer']
+datasets = ['asteroids']
 
 def main():
 
@@ -421,6 +424,8 @@ def main():
             # need to implement the separate testing only
             # xtrain, ytrain, xtest, ytest = importDataset(dataset)
 
+        # reshuffle data
+        ds = ds.sample(frac=1).reset_index()
         #report_summary = []
 
         # loop over the possible features (number of drugs)
@@ -430,54 +435,120 @@ def main():
         #continue
 
         # balance the dataset if balance = True
-        if balance:
+        if balance and dataset != 'drugs':
              ds = balance_ds(ds, dataset)
 
         for target in features[dataset]['target']:
 
-            if train_test :  # must split the data into train-test
+            # In case of cv the x and y will be used and the rest overwritten
+            if dataset == 'drugs':
+                x, y, x_train, x_test, y_train, y_test = splitDataset(dataset= ds, train_features= features[dataset]['features'], target_features= target )
+            else:
+                x, y, x_train, x_test, y_train, y_test = splitDataset(dataset=ds, train_features=features[dataset]['features'], target_features=features[dataset]['target'])
+
+            if validation == 'holdout' :  # must split the data into train-test
                 # Simple Hold Out
 
-                if dataset == 'drugs':
-                    x, y, x_train, x_test, y_train, y_test = splitDataset(dataset= ds,
-                                                                                train_features= features[dataset]['features'],
-                                                                                target_features= target )
-                else:
-                    x, y, x_train, x_test, y_train, y_test = splitDataset(dataset=ds,
-                                                                                train_features=features[dataset]['features'],
-                                                                                target_features=features[dataset]['target'])
                 print('*** I Split dataset ' , dataset , ' ***')
+
+                for classifier in classifiers:
+                    if classifier == 'DecisionTree' : # Run DecisionTreeClassifier
+                        for param in ['gini','entropy'] :  # run the classifier with two different parameter
+                            #for param in ['gini', 'entropy']:  # run the classifier with two different parameter
+                            print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
+                            cf = Classifier(x_train,y_train, classifier=classifier, criterion=param )
+                            y_prediction=predict(x_test,cf,target)
+                            confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                            printMatrix(target, confusion_m, classifier, param, dataset, balance = balance)
+                            #tree = plot_t(target, dataset, cf)
+
+                    if classifier == 'KNeighbors':
+                        for param in [5, 10 , 50]:
+                            print("\n\n\n\n\nResults of " + classifier + " with k=" + str(param) + ". Index for " + target )
+                            cf = Classifier(x_train, y_train, classifier=classifier, n_neighbors = param )
+                            y_prediction=predict(x_test,cf,target)
+                            confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                            printMatrix(target, confusion_m, classifier, param, dataset,balance = balance)
+
+                    if classifier == 'GaussianNB':
+                        for param in ['naiveB']:
+                            print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
+                            cf = Classifier(x_train, y_train, classifier=classifier)
+                            y_prediction=predict(x_test, cf, target)
+                            confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                            printMatrix(target, confusion_m, classifier, param, dataset, balance = balance)
+
+            elif validation == 'crossvalidation':
+                confusion_m = np.zeros((2,2))
+                accuracy = 0
+
+                kf = KFold(n_splits=cv_splits)
+                for classifier in classifiers:
+                    if classifier == 'DecisionTree' : # Run DecisionTreeClassifier
+                        for param in ['gini','entropy'] :  # run the classifier with two different parameter
+                            for fold, (train_index, test_index) in enumerate(kf.split(x), 1):
+                                x_train = x.iloc[train_index]
+                                y_train = y.iloc[train_index]
+                                x_test = x.iloc[test_index]
+                                y_test = y.iloc[test_index]
+                                #for param in ['gini', 'entropy']:  # run the classifier with two different parameter
+                                print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
+                                cf = Classifier(x_train,y_train, classifier=classifier, criterion=param )
+                                y_prediction=predict(x_test,cf,target)
+                                confusion_mT, accuracyT, report = evaluation(y_test, y_prediction, None)
+                                confusion_m += confusion_mT
+                                accuracy += accuracyT
+                            # after all folds, rescale the matrix and the accuracy and print it
+                            row_sums = confusion_m.sum(axis=1)
+                            confusion_m = confusion_m / row_sums[:, np.newaxis]
+                            accuracy /= cv_splits
+                            printMatrix(target, confusion_m, classifier, param, dataset, balance = balance)
+                            #tree = plot_t(target, dataset, cf)
+
+                    if classifier == 'KNeighbors':
+                        for param in [5, 10 , 50]:
+                            for fold, (train_index, test_index) in enumerate(kf.split(x), 1):
+                                x_train = x.iloc[train_index]
+                                y_train = y.iloc[train_index]
+                                x_test = x.iloc[test_index]
+                                y_test = y.iloc[test_index]
+                                print("\n\n\n\n\nResults of " + classifier + " with k=" + str(param) + ". Index for " + target )
+                                cf = Classifier(x_train, y_train, classifier=classifier, n_neighbors = param )
+                                y_prediction=predict(x_test,cf,target)
+                                confusion_mT, accuracyT, report = evaluation(y_test, y_prediction, None)
+                                confusion_m += confusion_mT
+                                accuracy += accuracyT
+                            # after all folds, rescale the matrix and the accuracy and print it
+                            row_sums = confusion_m.sum(axis=1)
+                            confusion_m = confusion_m / row_sums[:, np.newaxis]
+                            accuracy /= cv_splits
+                            printMatrix(target, confusion_m, classifier, param, dataset,balance = balance)
+
+                    if classifier == 'GaussianNB':
+                        for param in ['naiveB']:
+                            for fold, (train_index, test_index) in enumerate(kf.split(x), 1):
+                                x_train = x.iloc[train_index]
+                                y_train = y.iloc[train_index]
+                                x_test = x.iloc[test_index]
+                                y_test = y.iloc[test_index]
+                                print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
+                                cf = Classifier(x_train, y_train, classifier=classifier)
+                                y_prediction=predict(x_test, cf, target)
+                                confusion_mT, accuracyT, report = evaluation(y_test, y_prediction, None )
+                                confusion_m += confusion_mT
+                                accuracy += accuracyT
+                            # after all folds, rescale the matrix and the accuracy and print it
+                            row_sums = confusion_m.sum(axis=1)
+                            confusion_m = confusion_m / row_sums[:, np.newaxis]
+                            accuracy /= cv_splits
+                            printMatrix(target, confusion_m, classifier, param, dataset, balance = balance)
+
+
 
             else:
                 # TO DO must only test with the given dataset, cancer and bidding
                 print(0)
 
-            for classifier in classifiers:
-                if classifier == 'DecisionTree' : # Run DecisionTreeClassifier
-                    for param in ['gini','entropy'] :  # run the classifier with two different parameter
-                    #for param in ['gini', 'entropy']:  # run the classifier with two different parameter
-                        print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
-                        cf = Classifier(x_train,y_train, classifier=classifier, criterion=param )
-                        y_prediction=predict(x_test,cf,target)
-                        confusion_m, accuracy, report = evaluation(y_test, y_prediction )
-                        printMatrix(target, confusion_m, classifier, param, dataset, balance = balance)
-                        #tree = plot_t(target, dataset, cf)
-
-                if classifier == 'KNeighbors':
-                    for param in [5, 10 , 50]:
-                        print("\n\n\n\n\nResults of " + classifier + " with k=" + str(param) + ". Index for " + target )
-                        cf = Classifier(x_train, y_train, classifier=classifier, n_neighbors = param )
-                        y_prediction=predict(x_test,cf,target)
-                        confusion_m, accuracy, report = evaluation(y_test, y_prediction )
-                        printMatrix(target, confusion_m, classifier, param, dataset,balance = balance)
-
-                if classifier == 'GaussianNB':
-                    for param in ['naiveB']:
-                        print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
-                        cf = Classifier(x_train, y_train, classifier=classifier)
-                        y_prediction=predict(x_test, cf, target)
-                        confusion_m, accuracy, report = evaluation(y_test, y_prediction )
-                        printMatrix(target, confusion_m, classifier, param, dataset, balance = balance)
 
         #dummy = plot_reports(report_summary, classifier, dataset)
 
