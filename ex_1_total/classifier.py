@@ -395,7 +395,6 @@ def clean_fast():
 
 """ Main input parameters to choose """
 
-#classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
 
 validation = 'holdout'
 

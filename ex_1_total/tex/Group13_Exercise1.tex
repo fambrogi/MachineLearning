@@ -164,25 +164,33 @@ In detail:
 \begin{itemize}
 	\item  \textbf{attributes}:'Absolute Magnitude', 'Est Dia in KM(min)', 'Est Dia in KM(max)', 'Relative Velocity km per sec', 'Miss Dist.(kilometers)', 'Minimum Orbit Intersection', 'Jupiter Tisserand Invariant', 'Eccentricity', 'Semi Major Axis', 'Inclination', 'Asc Node Longitude', 'Orbital Period', 'Perihelion   Distance', 'Perihelion Arg', 'Aphelion Dist', 'Perihelion Time', 'Mean Anomaly', 'Mean Motion' \\
 
-
 	\item  \textbf{target}: 'Hazardous' divided in \textbf{classes}: "True" and "False"
 \end{itemize}
 
 \subsection{Framework and Implementation}
-ccc
+We implemented our analysis using the \textbf{python3.8} language, with its library for machine learning application \textit{scikit-learn} as well as \textit{numpy} and \textit{pandas} for data statistical analysis and data manipulation. In the attached package, two distinct files can be found: the first, called \textit{data\_preparation.py}, cleans and standardizes the input data set, so that they are ready for data processing. The main script for the data analysis is called \textit{classifier.py}. This code will run the different classifiers on the data sets, and will produce the comparison data and plots that will be found in this report.
 
-\paragraph{Algorithms}
-We chose three different algorithms for our study. All are part of the sklearn python library
-\paragraph{Decsion Three} a
-\paragraph{kNN - k Nearest Neighbours} b
-\paragraph{naive Bayes} c
+
+
+\subsection{Workflow}
+Without giving particular details on the implementations of the various classifier, which can be read inside the scripts, we summarize here how the workflow is constructed, as well as how the classification tasks have been implemented.
+First, the cleaned data (i.e. processed by \textit{data\_preparation.py} ) are imported as \textit{pandas} data frame. For each data set, a dictionary provided the list of names of features that will be used to predict the target feature. Then, we analyse the class balancing of the predicting features; it is possible to decide to apply a balacing procedure before processing further(see Section \ref{sec:balance} for details). The data can now be trained: the splitting of the data into a training and testing set is done differently depending on the chosen methods between "hold out" (by the $model_selection.train_test_split$)  or "kNN-cross validation" (by the $ XXX$); see Section \ref{sec:cross}.
+At this point, the classification algorithms are applied to the training and testing sets. The following algorithms have been chosen.
+
+\paragraph{Decision Three} We use the \textit{DecisionTreeClassifier} module, where we try two implementation of the "Gini" and "entropy" (parameter $criterion$) criteria for the Gini impurity and for the information gain,respectively, to measure the quality of a split.
+
+\paragraph{kNN - k Nearest Neighbours} We use the \textit{KNeighborsClassifier} module, where we vary the number of neighbours (parameter $n_neighbors$) in the set $[5,10,50]$.
+
+\paragraph{naive Bayes}  We use the \textit{GaussianNB} module, with default parameters.
+
+
 
 \section{Data Exploration and Pre-processing}
 In this section we describe the necessary preliminary steps to import and prepare the data to make them suitable for the learning algorithms.
 The steps are handled by the script \textit{data\_preparation.py} which includes dedicated function to pre-process each data set.
 
 \paragraph{Drug consumption}
-Since this dataset was already preprocessed (transformation of the nominal features) and cleaned of missing values or outliers by the providers of the dataset \cite{fehrman2017factor}, the data preparation is not given. As can be seen in Fig.\ref{fig:imbalance} we deal with heavily imbalanced data. Normally, the approach would be to resample the data (see Sec.\ref{sec:balance}) but with our later on discussed approach we would run into problems due to low statictics - we decided to keep the dataset as it is.
+Since this dataset was already preprocessed (transformation of the nominal features) and cleaned of missing values or outliers by the providers of the dataset \cite{fehrman2017factor}, the data preparation is not given. As can be seen in Fig.\ref{fig:imbalance} we deal with heavily imbalanced data. Normally, the approach would be to resample the data (see Sec.\ref{sec:balance}) but with our later on discussed approach we would run into problems due to low statistics - we decided to keep the dataset as it is.
 
  As can be seen in Fig.\ref{fig:imbalance} the majority of the drugs can be grouped by their imbalance towards either CL0 ("Never used") or CL6 ("Last day") - those two groups give a rough representation of "everyday drugs" like chocolate and "marginal drugs" like heroin. Since the total number of respondents is constant, a vast majority of one class implies a small occurences of the other classes and equalizing the samples results in low statistics and no usable outcome of the classification - this was the result of our tests. \\
 
@@ -246,7 +254,7 @@ Examples can be see in Fig. \ref{confusion_matrices}.
 {\color{red} Describe micro averaging and macro averaging, will we report both ? }
 
 
-\subsection{Holdout and Cross Validation}
+\subsection{Holdout and Cross Validation}\label{sec:cross}
 Here we describe briefly the techniques of "holdout" and "cross validation" that are used to evaluate a model. The \textbf{holdout} method is essentially based on the splitting on the input data set into two subset, one used for training the model, and one used for testing the model, for example in $80\%-20\%$ proportion, although there is not fix recipe for this split. Once the model is trained, the evaluation can be performed on the test data set, and this is therefore possible to check if the prediction of the model match the data. One big issue of this model is that the training strongly depend on the splitting of the initial data set, for example if the characteristic of the training data set are not representative of the whole data set.
 
 A more powerful method is the \textbf{cross-validation} or "k-fold cross validation". Form the full dataset, a test is held out for final evaluation, but the validation set is no longer needed. For this, the training set is split into $k$ sets, so that the model is trained using $k-1$ folds as training data, and the remaining one is used for the validation as a test set (to compute the interesting metric of the model).
