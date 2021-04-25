@@ -88,7 +88,7 @@
 \tableofcontents
 
 \section{Introduction}
-In this document we describe the results of the implementation of three algorithms to solve classification problems on four different dataset.
+In this document we describe the results of the implementation of three algorithms to solve classification problems on four different dataset. we will first briefly describe the datasets we will classify; then, the framework and the algorithms chosen for the classification task are introduced. A brief description of the data pre-processing is then given. Finally, the results of the classifications as well as a few comparisons between different settings are discussed. 
 
 
 
@@ -171,10 +171,9 @@ In detail:
 We implemented our analysis using the \textbf{python3.8} language, with its library for machine learning application \textit{scikit-learn} as well as \textit{numpy} and \textit{pandas} for data statistical analysis and data manipulation. In the attached package, two distinct files can be found: the first, called \textit{data\_preparation.py}, cleans and standardizes the input data set, so that they are ready for data processing. The main script for the data analysis is called \textit{classifier.py}. This code will run the different classifiers on the data sets, and will produce the comparison data and plots that will be found in this report.
 
 
-
-\subsection{Workflow}
+\subsection{Workflow Overview}
 Without giving particular details on the implementations of the various classifier, which can be read inside the scripts, we summarize here how the workflow is constructed, as well as how the classification tasks have been implemented.
-First, the cleaned data (i.e. processed by \textit{data\_preparation.py} ) are imported as \textit{pandas} data frame. For each data set, a dictionary provided the list of names of features that will be used to predict the target feature. Then, we analyse the class balancing of the predicting features; it is possible to decide to apply a balancing procedure before processing further(see Section \ref{sec:balance} for details). The data can now be trained: the splitting of the data into a training and testing set is done differently depending on the chosen methods between "hold out" (by the $model\_selection.train\_test\_split$)  or "kNN-cross validation" (by the $ XXX$); see Section \ref{sec:cross}.
+First, the cleaned data (i.e. processed by \textit{data\_preparation.py} ) are imported as \textit{pandas} data frame. For each data set, a dictionary provided the list of names of features that will be used to predict the target feature. Then, we analyse the class balancing of the predicting features; it is possible to decide to apply a balancing procedure before processing further(see Section \ref{sec:balance} for details). The data can now be trained: the splitting of the data into a training and testing set is done differently depending on the chosen methods between "hold out" (by the $model\_selection.train\_test\_split$)  or "kNN-cross validation" (by the $sklearn.model\_selectionKFold$); see Section \ref{sec:cross}.
 At this point, the classification algorithms are applied to the training and testing sets. The following algorithms have been chosen.
 
 \paragraph{Decision Three} We use the \textit{DecisionTreeClassifier} module, where we try two implementation of the "Gini" and "entropy" (parameter $criterion$) criteria for the Gini impurity and for the information gain,respectively, to measure the quality of a split.
@@ -186,8 +185,7 @@ At this point, the classification algorithms are applied to the training and tes
 
 
 \section{Data Exploration and Pre-processing}
-In this section we describe the necessary preliminary steps to import and prepare the data to make them suitable for the learning algorithms.
-The steps are handled by the script \textit{data\_preparation.py} which includes dedicated function to pre-process each data set.
+In this section we describe the necessary preliminary steps to import and prepare the data to make them suitable for the learning algorithms. The steps are handled by the script \textit{data\_preparation.py} which includes dedicated function to pre-process each data set.
 
 \paragraph{Drug consumption}
 Since this dataset was already preprocessed (transformation of the nominal features) and cleaned of missing values or outliers by the providers of the dataset \cite{fehrman2017factor}, the data preparation is not given. As can be seen in Fig.\ref{fig:imbalance} we deal with heavily imbalanced data. Normally, the approach would be to resample the data (see Sec.\ref{sec:balance}) but with our later on discussed approach we would run into problems due to low statistics - we decided to keep the dataset as it is.
@@ -203,9 +201,7 @@ In the dataset we have both nominal and ordinal data.
 An example of nominal attribute is the Browser where is specified the browser used by the user in that observation.
 An example of ordinal data is the "Inmarket\_realestate" which indicates the tendency of an user to bid (1) or not to bid (0) on a real estate. In this dataset there are 12500 observations and 65 attributes.
 In the dataset there are missing values in particular the $4\%$ of the rows has the URL attribute missing and the 38% of the rows has of the UserID missing.
-This dataset is characterized by the presence of several attributes with low information, for example the attribute "Inmarket\_sportsitem" has $98\%$ of the observations with value 1(yes)  or the attribute "Inmarket\_outdoor" with the percentage above the $99\%$,
-
- this is solved thanks at the balancing process that we will perform before splitting the dataset.
+This dataset is characterized by the presence of several attributes with low information, for example the attribute "Inmarket\_sportsitem" has $98\%$ of the observations with value 1(yes)  or the attribute "Inmarket\_outdoor" with the percentage above the $99\%$, this is solved thanks at the balancing process that we will perform before splitting the dataset.
 
 The following columns have been removed under the assumption that they depends only on the single observation and consequently generate noise without bringing additional information.
 the columns are: "RowID", "UserID", "BidID", "IP" , "Domain", "URL", "Time\_Bid", "AdslotID".
@@ -222,7 +218,7 @@ There are no missing values and we did not preprocesse any attribute. Due the do
 
 \section{Performance Tests}
 \subsection{Model Training Parameters}
-We remind here the definition of the metric parameters we will used to quantify the performance of our classifiers i.e. precision ($P$), recall ($R$) and accuracy ($A$):
+We remind here the definition of the parameters we will used to quantify the performance of our classifiers i.e. precision ($P$), recall ($R$) and accuracy ($A$):
 \\
 
 \begin{equation}
@@ -230,7 +226,7 @@ P = \frac{TP}{TP + FP} \ \ \ \ \ \ \ \  R = \frac{TP}{TP + FN} \ \ \ \ \ \ \ \  
 \end{equation}
 \\
 
-It is straightforward to calculate these parameters for binary classification tasks out of the confusion matrix. In case of multiple labels, we need to calculate these parameter for each class, given that:
+It is straightforward to calculate these parameters for binary classification tasks out of the confusion matrix. In case of multiple labels, the parameters are calculated as:
 \begin{itemize}
 	\item  $TPs$ are the values in the diagonal; \
 	\item  $FNs$ for a certain class are the sum of values in the corresponding row excluding the $TP$; \
@@ -249,33 +245,8 @@ f1 = 2 \times \frac{P \cdot R }{P + R }
 For each classifier, we produce a confusion matrix where each entry $i,j$ corresponds to the number of observations in group $i$, but predicted to be in group $j$. We chose to normalize the entries according to the sum of each row.
 In case of binary classification, the matrix reduces to the number of true negatives ($TN$), false positives ($FP$), false negatives ($FN$) and true positives ($TP$).
 
-Examples can be see in Fig. \ref{confusion_matrices}.
-
-
-
-
-
-\begin{figure}[h!]
-	\centering
-	\begin{minipage}[b]{0.49\textwidth}
-		\includegraphics[width=\textwidth]{Plots/m2.png}
-
-	\end{minipage}
-	\begin{minipage}[b]{0.49\textwidth}
-		\includegraphics[width=\textwidth]{Plots/m1.png}
-
-	\end{minipage}
-
-	\caption{Example confusion matrices for {\color{red} REDO, just an example }  }
-	\label{confusion_matrices}
-\end{figure}
-
-
-{\color{red} Describe micro averaging and macro averaging, will we report both ? }
-
-
 \subsection{Holdout and Cross Validation}\label{sec:cross}
-Here we describe briefly the techniques of "holdout" and "cross validation" that are used to evaluate a model. The \textbf{holdout} method is essentially based on the splitting on the input data set into two subset, one used for training the model, and one used for testing the model, for example in $80\%-20\%$ proportion, although there is not fix recipe for this split. Once the model is trained, the evaluation can be performed on the test data set, and this is therefore possible to check if the prediction of the model match the data. One big issue of this model is that the training strongly depend on the splitting of the initial data set, for example if the characteristic of the training data set are not representative of the whole data set.
+Here we describe briefly the techniques of "holdout" and "cross validation" that are used to evaluate a model. The \textbf{holdout} method is essentially based on the splitting on the input data set into two subset, one used for training the model, and one used for testing the model, for example in $80\%-20\%$ proportion, although there is not fix recipe for this split. Once the model is trained, the evaluation can be performed on the test data set, and this is therefore possible to check if the prediction of the model predict well the data. One big issue of this model is that the training strongly depend on the splitting of the initial data set, for example if the characteristic of the training data set are not representative of the whole data set.
 
 A more powerful method is the \textbf{cross-validation} or "k-fold cross validation". Form the full dataset, a test is held out for final evaluation, but the validation set is no longer needed. For this, the training set is split into $k$ sets, so that the model is trained using $k-1$ folds as training data, and the remaining one is used for the validation as a test set (to compute the interesting metric of the model).
 Once we obtain such $k$ number of metrics, the final result is the average of these parameters, obtained for each iteration of the cross-validation on each distinct fold.
@@ -287,7 +258,7 @@ Fig. \ref{fig:imbalance} shows the distribution of the various class attributes 
 ($37,5\%$- $62,5\%$) recurrence events vs non recurrence, while the imbalance is more pronounced for the other dataset, in particular we see
 ($17\%$-$83\%$) hazardous vs non hazardous, and ($2\%$-$98\%$) buy vs  non buy classes.
 
-In the case of the drug consumption dataset, the situation it is more complicated to analyse since it varies largely depending on the considered drug.
+In the case of the drug consumption dataset, the situation it is more complicated to analyse since it varies largely depending on the considered drug. For this reason, we decided not to try to balance this dataset. 
 
 \begin{figure}[h!]
 	\centering
@@ -307,21 +278,19 @@ In the case of the drug consumption dataset, the situation it is more complicate
 	\label{fig:imbalance}
 \end{figure}
 
-In order to balance the dataset, we implemented and algorithm that performs the following steps.
+In order to balance the dataset for the binary classification, we implemented and algorithm that performs the following steps.
 First, it extracts the number of entries in the under-represented class (which by chance is always class "True" for the three binary classification tasks). Then we randomly select a number of rows from the remaining data of where class is equal to "False", adding an extra $10\%$ to this total. Then, we create a final dataset combining the rows with the class "True" and the randomly selected "False".
 This step is done at a preliminary phase before any splitting into the training and testing subsets.
 
 
-
-
-\section{Comparison}
-
+\section{Analysis}
+In this section we finally present the results of our classification tasks.
 
 \subsection{Drug consumption}
 
-Overall the performance of the classification is not well. Looking at the confusion matrices we can see the expected influence of the datas imbalance (Fig.\ref{fig:conf_matr_alcohol} App.\ref{app:drug_conf_matr}). The overall fitting strategy is towards the most dominant class whereas the decision tree seems to be the most resistant against this bias when looking at the distribution around the main diagonal. \\
+Overall the performance of the classification is rather insufficient. Looking at the confusion matrices we can see the expected influence of the data imbalance (Fig.\ref{fig:conf_matr_alcohol} App.\ref{app:drug_conf_matr}). The overall fitting strategy is towards the most dominant class whereas the decision tree seems to be the most resistant against this bias when looking at the distribution around the main diagonal. \\
 
-This bias can also influence the performance metrics (P,R,A) - looking at Eqs.\ref{eq:model_training_parameters} one can see that guessing the major class will give values closer and closer to 1 the bigger the imbalance is. This is illustrated in Tab.\ref{tab:accuracy_kNN_selection} where we look at the accuracies under the kNN classifier of a selection of drugs. Together with the class distribution (Fig.\ref{fig:imbalance}) one can observe a positive correlation between the accuracy and the imbalance of the data - this will make it hard to compare drugs to each other using the accuracy as the metric. The influence on the accuracy is also given within the same drug. The kNN classifier shows the same behavior for all drugs, that is, to fixate on the major class(es) with increasing number $k$ of considered neighbors. By comparison of the confusion matrices the kNN classfier isn't only showing this behavior the most out of all classifiers, it also always has the highest accuracy out of all. This gives reason enough to drop the accuracy as the performance metric for this dataset. \\
+This bias can also influence the performance metrics (P,R,A) - looking at Eqs.\ref{eq:model_training_parameters} one can see that guessing the major class will give values closer and closer to 1 the bigger the imbalance is. This is illustrated in Tab.\ref{tab:accuracy_kNN_selection} where we look at the accuracies under the kNN classifier of a selection of drugs. Together with the class distribution (Fig.\ref{fig:imbalance}) one can observe a positive correlation between the accuracy and the imbalance of the data - this will make it hard to compare drugs to each other using the accuracy as the metric. The influence on the accuracy is also given within the same drug. The kNN classifier shows the same behavior for all drugs, that is, to fixate on the major class(es) with increasing number $k$ of considered neighbors. By comparison of the confusion matrices the kNN classifier isn't only showing this behavior the most out of all classifiers, it also always has the highest accuracy out of all.\\
 
 \begin{figure}[h!]
 	\centering
@@ -365,7 +334,7 @@ This bias can also influence the performance metrics (P,R,A) - looking at Eqs.\r
 \end{table}
 
 The remaining metrics in general didn't show any such monotonic behavior. Since the precision and recall were very case-sensitive and an opposing behavior (one high, one low) was observed frequently, we decided to use the $f1$-score as the performance. Tab.\ref{tab:drugs_performance_overview} shows the best performing classifier for each drug and the achieved $f1$-score.
-The early assumption that the decision tree is the most resistant and therefore best performing classifier can not be confirmed. Overall we see all classifiers equally represented - the k=50 variant is never best performing and the k=10 only once. In the 4 least imbalanced datasets (alcohol, cannabis, chocolate and nicotine) is no dominant classfier (2x DT, 1x GNB, 1x kNN).
+The early assumption that the decision tree is the most resistant and therefore best performing classifier can not be confirmed. Overall we see all classifiers equally represented - the k=50 variant is never best performing and the k=10 only once. In the 4 least imbalanced datasets (alcohol, cannabis, chocolate and nicotine) is no dominant classifier (2x DT, 1x GNB, 1x kNN).
 
 \begin{table}[H]
 		\centering
@@ -397,7 +366,25 @@ The early assumption that the decision tree is the most resistant and therefore 
 		\label{tab:drugs_performance_overview}
 \end{table}
 
-As already mentioned, the results aren't good. The imbalance of the data made it hard for the classifiers to find non-trivial patterns in the data and only glimpses could be made. Deeper preprocessing of the data with special attention on single drugs is needed and it could possibly help to drop certain classes, since the drugs can be (apart from few exceptions) splitted in the two categories "everyday drug" with a big majority in class "Used last day" and the "marginal drugs" with a big majority in "Never used". Focusing on the classes CL1-CL5.
+As already mentioned, the results aren't good. The imbalance of the data made it hard for the classifiers to find non-trivial patterns in the data and only glimpses could be made. Deeper preprocessing of the data with special attention on single drugs is needed and it could possibly help to drop certain classes, since the drugs can be (apart from few exceptions) split in the two categories "everyday drug" with a big majority in class "Used last day" and the "marginal drugs" with a big majority in "Never used". Focusing on the classes CL1-CL5.
+
+
+As a final comparison, we show in Fig. \ref{fig:drugs_comparison} the values for the precision and recall for the naive Bayes, the decision trees(Gini) and the kNN(k=10) algorithms. 
+
+
+\begin{figure}[h!]
+	\centering
+	\begin{minipage}[b]{0.32\textwidth}
+		\includegraphics[width=1.1\textwidth]{Plots/precision_comparison_drugs.png}
+	\end{minipage}
+	\begin{minipage}[b]{0.32\textwidth}
+		\includegraphics[width=1.1\textwidth]{Plots/recall_comparison_drugs.png}
+	\end{minipage}
+	\label{fig:drugs_comparison}
+\end{figure}
+
+
+
 
 
 
@@ -405,9 +392,9 @@ As already mentioned, the results aren't good. The imbalance of the data made it
 
 \subsection{Asteroids}
 
-For the asteroids dataset we had 4 comparisons - combinations of balancing (yes/no) and holdout/cross-validation. The comparison on whether to balance the datasets or not, goes in favor of the balanced dataset for the kNN and Gaussian Naive Bayes classifier (see Fig.\ref{fig:conf_matr_asteroids_bal_vs_nonbal} as example) whereas the Decision Tree worked very well in both cases (see below). Holdout and cross-validation dont give a significant improvement over each other. \\
+For the asteroids dataset we had 4 comparisons - combinations of balancing (yes/no) and holdout/cross-validation. The comparison on whether to balance the datasets or not, goes in favour of the balanced dataset for the kNN and Gaussian Naive Bayes classifier (see Fig.\ref{fig:conf_matr_asteroids_bal_vs_nonbal} as example) whereas the Decision Tree worked very well in both cases (see below). Holdout and cross-validation dont give a significant improvement over each other. \\
 
-This dataset has a big dicrepancy between the classifiers. While both GNB and kNN benefit of reducing the imbalance to avoid a trivial classification, they both don't converge on an acceptable solution. Fig.\ref{fig:conf_matr_asteroids_bal_vs_nonbal} shows how after resampling the best guess seems to be a random one. This is true for all combinations in kNN and GNB - with a single execption for GNB on the balanced dataset with holdout (see appendix \ref{app:asteroids_conf_matr}). \\
+This dataset has a big discrepancy between the classifiers. While both GNB and kNN benefit of reducing the imbalance to avoid a trivial classification, they both don't converge on an acceptable solution. Fig.\ref{fig:conf_matr_asteroids_bal_vs_nonbal} shows how after resampling the best guess seems to be a random one. This is true for all combinations in kNN and GNB - with a single exception for GNB on the balanced dataset with holdout (see appendix \ref{app:asteroids_conf_matr}). \\
 This also shows in the performance metrics. With this single exception, accuracy, precision, recall and therefore also $f1$ are apart from small fluctuation the same when looking at the balanced data set (the unbalanced dataset suffers from the same problem as with the drug consumption dataset). For the balanced dataset the metrics for are in the range 0.5-0.55 - the one outlier fluctuates similar to the unbalanced dataset.
 
 \begin{figure}[H]
@@ -427,7 +414,7 @@ This also shows in the performance metrics. With this single exception, accuracy
 \end{figure}
 
 
-Very well performing is the Decision Tree. Not only does it seem to achieve exelent results (Fig.), it also does this independent of the imbalancement of the data. Since this result is also achieved with 10-fold cross-validation we are sure that this is not the result of overfitting to the data. With very small fluctuations we achieve scores in the regime of 0.99-1 - the full list can be seen in Tab.\ref{tab:dec_tree_perf_ast}.
+Very well performing is the Decision Tree. Not only does it seem to achieve excellent results (Fig.), it also does this independent of the imbalance of the data. Since this result is also achieved with 10-fold cross-validation we are sure that this is not the result of overfitting to the data. With very small fluctuations we achieve scores in the regime of 0.99-1 - the full list can be seen in Tab.\ref{tab:dec_tree_perf_ast}.
 
 
 \begin{figure}[h!]
@@ -474,7 +461,7 @@ Understanding the origin of the classification (e.g. all asteroids within close 
 \paragraph{kNN algorithm }
 
 If we apply the kNN algorithm in order to classify the online advertisement bidding without balancing the data we obtain a clear case of overfitting.
-No matter what paramenter we use or if we do holdout or cross validation every instance is placed in the majority class.
+No matter what parameter we use or if we do holdout or cross validation every instance is placed in the majority class.
 
 
 \begin{figure}[H]
@@ -518,8 +505,8 @@ From the experiment we can notice that with cross validation the best accuracy i
 \end{figure}
 
 
-With holdout the best result is  obtained with  k=10 too in fact we have an accuracy of the 66\% while the k=5 and k=50 have accuracy of the 65\% and 64\% respectevely.
-If we look at precision and recall we have for k=10 66\% and 65\% respectevely while for k=5 and k=10 we have lower values.
+With holdout the best result is  obtained with  k=10 too in fact we have an accuracy of the 66\% while the k=5 and k=50 have accuracy of the 65\% and 64\% respectively.
+If we look at precision and recall we have for k=10 66\% and 65\% respectively while for k=5 and k=10 we have lower values.
 
 
 \begin{figure}[H]
