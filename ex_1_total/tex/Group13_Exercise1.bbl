@@ -1,9 +1,34 @@
 \begin{thebibliography}{1}
 
+\bibitem{DrugConsumption}
+Evgeny~M. Mirkes et~al.
+\newblock Uci - drug consumption (quantified) data set.
+\newblock
+  \url{https://archive.ics.uci.edu/ml/datasets/Drug+consumption+%28quantified%29}.
+\newblock Accessed: 25.03.2021.
+
 \bibitem{fehrman2017factor}
 E.~Fehrman, A.~K. Muhammad, E.~M. Mirkes, V.~Egan, and A.~N. Gorban.
 \newblock The five factor model of personality and evaluation of drug
   consumption risk.
 \newblock 2017.
+
+\bibitem{KaggleAsteroidClassification}
+NASA's center for computing~asteroid CNEOS and comet orbits.
+\newblock Kaggle - nasa: Asteroids classification.
+\newblock
+  \url{https://www.kaggle.com/shrutimehta/nasa-asteroids-classification}.
+\newblock Accessed: 23.04.2021.
+
+\bibitem{KaggleBreastCancer}
+Kaggle competition - breast cancer.
+\newblock \url{https://www.kaggle.com/c/184702-tu-ml-ss-21-breast-cancer}.
+\newblock Accessed: 22.04.2021.
+
+\bibitem{KaggleAdvertismentBidding}
+Kaggle competition - online advertising bidding.
+\newblock
+  \url{https://www.kaggle.com/c/184702-tu-ml-ss-21-online-advertising-bidding}.
+\newblock Accessed: 22.04.2021.
 
 \end{thebibliography}

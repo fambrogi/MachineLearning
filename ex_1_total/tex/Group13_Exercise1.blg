@@ -6,45 +6,45 @@ A level-1 auxiliary file: AppDrugs.aux
 A level-1 auxiliary file: AppAsteroids.aux
 Database file #1: literature.bib
 Warning--empty journal in fehrman2017factor
-You've used 1 entry,
+You've used 5 entries,
             1791 wiz_defined-function locations,
-            452 strings with 3824 characters,
-and the built_in function-call counts, 205 in all, are:
-= -- 11
-> -- 17
+            473 strings with 4595 characters,
+and the built_in function-call counts, 726 in all, are:
+= -- 57
+> -- 35
 < -- 0
-+ -- 6
-- -- 5
-* -- 14
-:= -- 44
-add.period$ -- 3
-call.type$ -- 1
-change.case$ -- 1
++ -- 14
+- -- 9
+* -- 17
+:= -- 114
+add.period$ -- 17
+call.type$ -- 5
+change.case$ -- 5
 chr.to.int$ -- 0
-cite$ -- 2
-duplicate$ -- 8
-empty$ -- 15
-format.name$ -- 5
-if$ -- 38
+cite$ -- 6
+duplicate$ -- 28
+empty$ -- 87
+format.name$ -- 9
+if$ -- 168
 int.to.chr$ -- 0
-int.to.str$ -- 1
+int.to.str$ -- 5
 missing$ -- 1
-newline$ -- 8
-num.names$ -- 1
-pop$ -- 5
+newline$ -- 30
+num.names$ -- 3
+pop$ -- 35
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 3
+skip$ -- 15
 stack$ -- 0
 substring$ -- 0
-swap$ -- 0
+swap$ -- 4
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 1
-while$ -- 1
-width$ -- 2
-write$ -- 11
+while$ -- 3
+width$ -- 6
+write$ -- 51
 (There was 1 warning)

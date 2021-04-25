@@ -26,8 +26,7 @@ plot_dir = 'Plots'
 if not os.path.isdir(plot_dir):
     os.system('mkdir ' + plot_dir )
 
-if not os.path.isdir('Results'):
-    os.mkdir('Results')
+
 
 
 """ Dictionary containing the training and prediction features """
@@ -289,6 +288,7 @@ def plot_balance_ds(df, dataset):
              ax.bar (drugs, res[i], width, label=Labels[i], bottom = cum_sum)
              cum_sum += res[i]
 
+
         ax.set_xticklabels(drugs, rotation=35, fontsize=10 )
         ax.legend()
         ax.set_ylabel('Counts', fontsize=fs)
@@ -315,7 +315,7 @@ def plot_balance_ds(df, dataset):
     plt.tight_layout()
     plt.grid(ls=':', color='lightgray')
     plt.savefig('Plots/Inbalance_' + dataset +'.png', dpi=200)
-    plt.close()
+
     print('*** Plotted inbalance distributions drugs ***')
 
 
@@ -416,18 +416,10 @@ balance = True
 # to do ?
 train_test = True
 
-if not os.path.isdir('out_data'):
-    os.mkdir('out_data')
-
-
-# Will hold data for plotting
-results = {}
 
 def main():
 
     for dataset in datasets:
-        results[dataset] = {}
-
         # Loading the data frames
         if dataset in ['asteroids', 'drugs']:
             ds = importDataset(dataset)
@@ -447,8 +439,6 @@ def main():
              ds = balance_ds(ds, dataset)
 
         for target in features[dataset]['target']:
-            if target not in results[dataset].keys():
-                results[dataset][target] = {}
 
             # In case of cv the x and y will be used and the rest overwritten
             if dataset == 'drugs':
@@ -463,19 +453,8 @@ def main():
                 print('*** I Split dataset ' , dataset , ' ***')
 
                 for classifier in classifiers:
-                    if classifier not in results[dataset][target].keys():
-                       results[dataset][target][classifier] = {}
-
                     if classifier == 'DecisionTree' : # Run DecisionTreeClassifier
                         for param in ['gini','entropy'] :  # run the classifier with two different parameter
-                            if param not in results[dataset][target][classifier].keys():
-                                results[dataset][target][classifier][param] = {}
-
-                            for i in ['accuracy', 'precision', 'f1', 'recall']:
-
-                                if i not in results[dataset][target][classifier][param].keys():
-                                    results[dataset][target][classifier][param][i] = []
-
                             #for param in ['gini', 'entropy']:  # run the classifier with two different parameter
                             print("\n\nResults of " + classifier + " " + param + ". Index for " + target )
                             cf = Classifier(x_train,y_train, classifier=classifier, criterion=param )
@@ -486,24 +465,11 @@ def main():
                             print("Precision (macro avg):", report['macro avg']['precision'])
                             print("Recall (macro avg):", report['macro avg']['recall'])
                             print("F1-score (macro avg):", report['macro avg']['f1-score'])
-
-                            results[dataset][target][classifier][param]['accuracy'].append(accuracy)
-                            results[dataset][target][classifier][param]['precision'].append(report['macro avg']['precision'])
-                            results[dataset][target][classifier][param]['recall'].append(report['macro avg']['recall'])
-                            results[dataset][target][classifier][param]['f1'].append(report['macro avg']['f1-score'])
-
                             printMatrix(target, confusion_m, classifier, param, dataset,
                                         balance = balance, validation = validation)
 
                     if classifier == 'KNeighbors':
                         for param in [5, 10 , 50]:
-                            if param not in results[dataset][target][classifier].keys():
-                                results[dataset][target][classifier][param] = {}
-
-                            for i in ['accuracy', 'precision', 'f1', 'recall']:
-                                if i not in results[dataset][target][classifier][param].keys():
-                                    results[dataset][target][classifier][param][i] = []
-
                             print("\n\nResults of " + classifier + " with k=" + str(param) + ". Index for " + target )
                             cf = Classifier(x_train, y_train, classifier=classifier, n_neighbors = param )
 
@@ -516,22 +482,8 @@ def main():
                             printMatrix(target, confusion_m, classifier, param, dataset,
                                         balance = balance, validation = validation)
 
-                            results[dataset][target][classifier][param]['accuracy'].append(accuracy)
-                            results[dataset][target][classifier][param]['precision'].append(report['macro avg']['precision'])
-                            results[dataset][target][classifier][param]['recall'].append(report['macro avg']['recall'])
-                            results[dataset][target][classifier][param]['f1'].append(report['macro avg']['f1-score'])
-
-
                     if classifier == 'GaussianNB':
                         for param in ['naiveB']:
-                            if param not in results[dataset][target][classifier].keys():
-                                results[dataset][target][classifier][param] = {}
-
-
-                            for i in ['accuracy', 'precision', 'f1', 'recall']:
-                                if i not in results[dataset][target][classifier][param].keys():
-                                    results[dataset][target][classifier][param][i] = []
-
                             print("\n\nResults of " + classifier + " " + param + ". Index for " + target )
                             cf = Classifier(x_train, y_train, classifier=classifier)
 
@@ -543,12 +495,6 @@ def main():
                             print("F1-score (macro avg):", report['macro avg']['f1-score'])
                             printMatrix(target, confusion_m, classifier, param, dataset,
                                         balance = balance, validation = validation)
-
-                            results[dataset][target][classifier][param]['accuracy'].append(accuracy)
-                            results[dataset][target][classifier][param]['precision'].append(report['macro avg']['precision'])
-                            results[dataset][target][classifier][param]['recall'].append(report['macro avg']['recall'])
-                            results[dataset][target][classifier][param]['f1'].append(report['macro avg']['f1-score'])
-
 
             elif validation == 'crossvalidation':
                 if dataset == "drugs":  # will not run cross validation on drug dataset
@@ -674,86 +620,21 @@ def main():
                 # TO DO must only test with the given dataset, cancer and bidding
                 print(0)
 
-        dummy = plot_line_results(results, dataset)
-        np.save(dataset + '_results', results, allow_pickle=True )
 
         #dummy = plot_reports(report_summary, classifier, dataset)
 
-
-def plot_line_results(results, dataset):
-
-    if not os.path.isdir('Plots/comparison/'):
-        os.mkdir('Plots/comparison/')
-    fs = 15
-    if dataset == 'drugs':
-        targets = features[dataset]['target']
-
-    to_plot = {}
-
-    for cl in ['KNeighbors', 'DecisionTree', 'GaussianNB']:
-        to_plot[cl] = {'accuracy': [], 'recall': [], 'precision': [], 'f1': []}
-        if cl == 'KNeighbors':
-            param = 10
-        elif cl == 'DecisionTree':
-            param = 'gini'
-        else:
-            param = 'naiveB'
-
-        for t in targets:  # e.g. each drug
-            for i in ['recall','f1','precision']:
-                print(dataset,' ', t, ' ', cl, ' ', param, ' ', i )
-                to_plot[cl][i].append(results[dataset][t][cl][param][i])
-
-    for i in ['recall','f1','precision']:
-
-        fig, ax = plt.subplots(figsize = (12,5))
-
-        plt.scatter(range(1,len(to_plot['KNeighbors'][i])+1), to_plot['KNeighbors'][i] )
-        plt.plot(range(1,len(to_plot['KNeighbors'][i])+1), to_plot['KNeighbors'][i], label = 'KNeighbors [k=10]' )
-
-        plt.scatter(range(1,len(to_plot['KNeighbors'][i])+1), to_plot['DecisionTree'][i] )
-        plt.plot(range(1,len(to_plot['KNeighbors'][i])+1), to_plot['DecisionTree'][i], label = 'DecisionTree [Gini]' )
-
-        plt.scatter(range(1,len(to_plot['KNeighbors'][i])+1), to_plot['GaussianNB'][i] )
-        plt.plot(range(1,len(to_plot['KNeighbors'][i])+1), to_plot['GaussianNB'][i], label = 'GaussianNB' )
-
-        plt.ylim(0,0.4)
-        ax.set_xticks(range(1,len(to_plot['KNeighbors'][i])+1))
-        ax.set_xticklabels(targets, rotation=35, fontsize=10 )
-
-        plt.title( i + ' for ' + dataset + ' dataset ', fontsize = fs )
-        plt.legend()
-        plt.tight_layout()
-        plt.grid(ls=':', color='lightgray')
-        plt.savefig('Plots/comparison/'+ i + '_comparison_'+ dataset + '.png', dpi = 200)
-        plt.close()
-
 if __name__=="__main__":
 
-    """
-    dataset = 'drugs'
-    results = np.load('drugs_results.npy', allow_pickle=True).item()
-    plot_line_results(results, dataset)
-    #datasets = ['asteroids','advertisingBidding' , 'breastCancer', 'drugs' ]
-    """
-
-
-    datasets = ['drugs']
-    classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
-
-
-
-    #datasets = ['asteroids', 'advertisingBidding', 'breastCancer', 'drugs']
-    datasets = [ 'breastCancer']
-
+    classifiers = ['DecisionTree']
+    datasets = ['advertisingBidding']
 
     balance = True
     validation = 'holdout'
-    #main()
+    main()
 
     balance = False
     validation = 'holdout'
-    #main()
+    main()
 
     balance = True
     validation = 'crossvalidation'
@@ -762,5 +643,3 @@ if __name__=="__main__":
     balance = False
     validation = 'crossvalidation'
     main()
-
-    #print('Check')
