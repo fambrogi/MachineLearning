@@ -466,6 +466,10 @@ def main():
 
                             y_prediction=predict(x_test, cf, target)
                             confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                            print("Accuracy:", accuracy)
+                            print("Precision (macro avg):", report['macro avg']['precision'])
+                            print("Recall (macro avg):", report['macro avg']['recall'])
+                            print("F1-score (macro avg):", report['macro avg']['f1-score'])
                             printMatrix(target, confusion_m, classifier, param, dataset,
                                         balance = balance, validation = validation)
 
@@ -476,6 +480,10 @@ def main():
 
                             y_prediction=predict(x_test, cf, target)
                             confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                            print("Accuracy:", accuracy)
+                            print("Precision (macro avg):", report['macro avg']['precision'])
+                            print("Recall (macro avg):", report['macro avg']['recall'])
+                            print("F1-score (macro avg):", report['macro avg']['f1-score'])
                             printMatrix(target, confusion_m, classifier, param, dataset,
                                         balance = balance, validation = validation)
 
@@ -486,6 +494,10 @@ def main():
 
                             y_prediction=predict(x_test, cf, target)
                             confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                            print("Accuracy:", accuracy)
+                            print("Precision (macro avg):", report['macro avg']['precision'])
+                            print("Recall (macro avg):", report['macro avg']['recall'])
+                            print("F1-score (macro avg):", report['macro avg']['f1-score'])
                             printMatrix(target, confusion_m, classifier, param, dataset,
                                         balance = balance, validation = validation)
 
