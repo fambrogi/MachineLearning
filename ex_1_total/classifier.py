@@ -606,13 +606,13 @@ if __name__=="__main__":
     classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
     datasets = ['asteroids', 'advertisingBidding', 'breastCancer', 'drugs']
 
-    #balance = True
-    #validation = 'holdout'
-    #main()
+    balance = True
+    validation = 'holdout'
+    main()
 
-    #balance = False
-    #validation = 'holdout'
-    #main()
+    balance = False
+    validation = 'holdout'
+    main()
 
     balance = True
     validation = 'crossvalidation'
