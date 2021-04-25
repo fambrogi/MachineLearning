@@ -461,7 +461,7 @@ def main():
                     if classifier == 'DecisionTree' : # Run DecisionTreeClassifier
                         for param in ['gini','entropy'] :  # run the classifier with two different parameter
                             #for param in ['gini', 'entropy']:  # run the classifier with two different parameter
-                            print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
+                            print("\n\nResults of " + classifier + " " + param + ". Index for " + target )
                             cf = Classifier(x_train,y_train, classifier=classifier, criterion=param )
 
                             y_prediction=predict(x_test, cf, target)
@@ -475,7 +475,7 @@ def main():
 
                     if classifier == 'KNeighbors':
                         for param in [5, 10 , 50]:
-                            print("\n\n\n\n\nResults of " + classifier + " with k=" + str(param) + ". Index for " + target )
+                            print("\n\nResults of " + classifier + " with k=" + str(param) + ". Index for " + target )
                             cf = Classifier(x_train, y_train, classifier=classifier, n_neighbors = param )
 
                             y_prediction=predict(x_test, cf, target)
@@ -489,7 +489,7 @@ def main():
 
                     if classifier == 'GaussianNB':
                         for param in ['naiveB']:
-                            print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
+                            print("\n\nResults of " + classifier + " " + param + ". Index for " + target )
                             cf = Classifier(x_train, y_train, classifier=classifier)
 
                             y_prediction=predict(x_test, cf, target)
@@ -515,7 +515,7 @@ def main():
                 for classifier in classifiers:
                     if classifier == 'DecisionTree' : # Run DecisionTreeClassifier
                         for param in ['gini','entropy'] :  # run the classifier with two different parameter
-                            print("\n\n\n\n\n")
+                            print("\n\n")
                             for fold, (train_index, test_index) in enumerate(kf.split(x), 1):
                                 x_train = x.iloc[train_index]
                                 y_train = y.iloc[train_index]
@@ -547,7 +547,7 @@ def main():
 
                     if classifier == 'KNeighbors':
                         for param in [5, 10 , 50]:
-                            print("\n\n\n\n\n")
+                            print("\n\n")
                             for fold, (train_index, test_index) in enumerate(kf.split(x), 1):
                                 x_train = x.iloc[train_index]
                                 y_train = y.iloc[train_index]
@@ -578,7 +578,7 @@ def main():
 
                     if classifier == 'GaussianNB':
                         for param in ['naiveB']:
-                            print("\n\n\n\n\n")
+                            print("\n\n")
                             for fold, (train_index, test_index) in enumerate(kf.split(x), 1):
                                 x_train = x.iloc[train_index]
                                 y_train = y.iloc[train_index]
@@ -616,19 +616,19 @@ def main():
 if __name__=="__main__":
 
     classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
-    datasets = ['asteroids', 'advertisingBidding', 'breastCancer', 'drugs']
+    datasets = ['drugs']
 
-    balance = True
-    validation = 'holdout'
-    main()
+    #balance = True
+    #validation = 'holdout'
+    #main()
 
     balance = False
     validation = 'holdout'
     main()
 
-    balance = True
-    validation = 'crossvalidation'
-    main()
+    #balance = True
+    #validation = 'crossvalidation'
+    #main()
 
     balance = False
     validation = 'crossvalidation'

@@ -11,6 +11,7 @@
 \usepackage{colordvi}
 \usepackage{enumerate}
 \usepackage{graphicx}
+\usepackage{here}
 \usepackage{booktabs}
 \usepackage[footnotesize]{caption}
 \usepackage{fancyhdr}
@@ -173,7 +174,7 @@ We implemented our analysis using the \textbf{python3.8} language, with its libr
 
 \subsection{Workflow}
 Without giving particular details on the implementations of the various classifier, which can be read inside the scripts, we summarize here how the workflow is constructed, as well as how the classification tasks have been implemented.
-First, the cleaned data (i.e. processed by \textit{data\_preparation.py} ) are imported as \textit{pandas} data frame. For each data set, a dictionary provided the list of names of features that will be used to predict the target feature. Then, we analyse the class balancing of the predicting features; it is possible to decide to apply a balancing procedure before processing further(see Section \ref{sec:balance} for details). The data can now be trained: the splitting of the data into a training and testing set is done differently depending on the chosen methods between "hold out" (by the $model_selection.train_test_split$)  or "kNN-cross validation" (by the $ XXX$); see Section \ref{sec:cross}.
+First, the cleaned data (i.e. processed by \textit{data\_preparation.py} ) are imported as \textit{pandas} data frame. For each data set, a dictionary provided the list of names of features that will be used to predict the target feature. Then, we analyse the class balancing of the predicting features; it is possible to decide to apply a balancing procedure before processing further(see Section \ref{sec:balance} for details). The data can now be trained: the splitting of the data into a training and testing set is done differently depending on the chosen methods between "hold out" (by the $model\_selection.train\_test\_split$)  or "kNN-cross validation" (by the $ XXX$); see Section \ref{sec:cross}.
 At this point, the classification algorithms are applied to the training and testing sets. The following algorithms have been chosen.
 
 \paragraph{Decision Three} We use the \textit{DecisionTreeClassifier} module, where we try two implementation of the "Gini" and "entropy" (parameter $criterion$) criteria for the Gini impurity and for the information gain,respectively, to measure the quality of a split.
@@ -225,7 +226,7 @@ We remind here the definition of the metric parameters we will used to quantify 
 \\
 
 \begin{equation}
-P = \frac{TP}{TP + FP} \ \ \ \ \ \ \ \  R = \frac{TP}{TP + FN} \ \ \ \ \ \ \ \  A = \frac{TP + TN}{\#all}
+P = \frac{TP}{TP + FP} \ \ \ \ \ \ \ \  R = \frac{TP}{TP + FN} \ \ \ \ \ \ \ \  A = \frac{TP + TN}{\#all} \label{eq:model_training_parameters}
 \end{equation}
 \\
 
@@ -238,9 +239,9 @@ It is straightforward to calculate these parameters for binary classification ta
 \end{itemize}
 
 
-Another convenient metric, particularly because it is calculated directly from the proper \textit{scikit-learn} function, is called $f1-score$, which is defined as the harmonic mean of the precision and recall:
+Another convenient metric, particularly because it is calculated directly from the proper \textit{scikit-learn} function, is called $f1$-score, which is defined as the harmonic mean of the precision and recall:
 \begin{equation}
-f1-score = 2 \times \frac{P \dot R }{P + R }
+f1 = 2 \times \frac{P \cdot R }{P + R }
 \end{equation}
 
 
@@ -317,41 +318,95 @@ This step is done at a preliminary phase before any splitting into the training 
 
 \subsection{Drug consumption}
 
-Overall the performance of the classification is not well. Looking at the confusion matrices we can see the expected influence of the datas imbalance. The overall fitting strategy is towards the most dominant class whereas the decision tree seems to be the most resistant against this bias (looking at the distribution around the main diagonal).
+Overall the performance of the classification is not well. Looking at the confusion matrices we can see the expected influence of the datas imbalance (Fig.\ref{fig:conf_matr_alcohol} App.\ref{app:drug_conf_matr}). The overall fitting strategy is towards the most dominant class whereas the decision tree seems to be the most resistant against this bias when looking at the distribution around the main diagonal. \\
+
+This bias can also influence the performance metrics (P,R,A) - looking at Eqs.\ref{eq:model_training_parameters} one can see that guessing the major class will give values closer and closer to 1 the bigger the imbalance is. This is illustrated in Tab.\ref{tab:accuracy_kNN_selection} where we look at the accuracies under the kNN classifier of a selection of drugs. Together with the class distribution (Fig.\ref{fig:imbalance}) one can observe a positive correlation between the accuracy and the imbalance of the data - this will make it hard to compare drugs to each other using the accuracy as the metric. The influence on the accuracy is also given within the same drug. The kNN classifier shows the same behavior for all drugs, that is, to fixate on the major class(es) with increasing number $k$ of considered neighbors. By comparison of the confusion matrices the kNN classfier isn't only showing this behavior the most out of all classifiers, it also always has the highest accuracy out of all. This gives reason enough to drop the accuracy as the performance metric for this dataset. \\
 
 \begin{figure}[h!]
 	\centering
 	\begin{minipage}[b]{0.32\textwidth}
-		\includegraphics[width=\textwidth]{Plots/alcohol_DecisionTree_entropy.png}
+		\includegraphics[width=1.1\textwidth]{Plots/alcohol_DecisionTree_entropy_balance_False_holdout.png}
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
-		\includegraphics[width=\textwidth]{Plots/alcohol_DecisionTree_gini.png}
+		\includegraphics[width=1.1\textwidth]{Plots/alcohol_DecisionTree_gini_balance_False_holdout.png}
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
-		\includegraphics[width=\textwidth]{Plots/alcohol_GaussianNB_naiveB.png}
+		\includegraphics[width=1.1\textwidth]{Plots/alcohol_GaussianNB_naiveB_balance_False_holdout.png}
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
-		\includegraphics[width=\textwidth]{Plots/alcohol_KNeighbors_5.png}
+		\includegraphics[width=1.1\textwidth]{Plots/alcohol_KNeighbors_5_balance_False_holdout.png}
   \end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
-		\includegraphics[width=\textwidth]{Plots/alcohol_KNeighbors_10.png}
+		\includegraphics[width=1.1\textwidth]{Plots/alcohol_KNeighbors_10_balance_False_holdout.png}
   \end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
-		\includegraphics[width=\textwidth]{Plots/alcohol_KNeighbors_50.png}
+		\includegraphics[width=1.1\textwidth]{Plots/alcohol_KNeighbors_50_balance_False_holdout.png}
   \end{minipage}
-	\caption{Confusion matrices for the used classifiers on the drug cocaine.}
-	\label{fig:conf_matr_cocaine}
+	\caption{Confusion matrices for the used classifiers on the drug alcohol.}
+	\label{fig:conf_matr_alcohol}
 \end{figure}
 
 
+\begin{table}[h!]
+		\centering
+    \begin{tabular}{ l c c c }
+        \toprule
+        \textbf{Drug} & \textbf{k=5 (\%)} & \textbf{k=10 (\%)} & \textbf{k=50 (\%)} \\
+        \toprule
+        Alcohol & 29.51 & 34.45 & 37.63 \\
+        Amyl Nitrite & 66.08 & 68.90 & 70.67 \\
+        Cocaine & 49.65 & 54.77 & 56.18 \\
+        Methadone & 71.91 & 73.50 & 73.32 \\
+        \bottomrule
+    \end{tabular}
+		\caption{Accuracy of the kNN classifier for the used neighborhood sizes and a selection of drugs.}
+		\label{tab:accuracy_kNN_selection}
+\end{table}
 
+The remaining metrics in general didn't show any such monotonic behavior. Since the precision and recall were very case-sensitive and an opposing behavior (one high, one low) was observed frequently, we decided to use the $f1$-score as the performance. Tab.\ref{tab:drugs_performance_overview} shows the best performing classifier for each drug and the achieved $f1$-score.
+The early assumption that the decision tree is the most resistant and therefore best performing classifier can not be confirmed. Overall we see all classifiers equally represented - the k=50 variant is never best performing and the k=10 only once. In the 4 least imbalanced datasets (alcohol, cannabis, chocolate and nicotine) is no dominant classfier (2x DT, 1x GNB, 1x kNN).
 
-\paragraph{Decision Tree}
+\begin{table}[H]
+		\centering
+    \begin{tabular}{ l c c c }
+        \toprule
+        \textbf{Drug} & \textbf{Classifier} & \textbf{$f1$-score} \\
+        \toprule
+        Alcohol & DT (gini) & 0.172 \\
+				Amphetamines & GNB & 0.220 \\
+        Amyl Nitrite & GNB & 0.197 \\
+				Benzodiazepine & GNB & 0.222 \\
+				Caffeine & kNN (k=5) & 0.168 \\
+				Cannabis & GNB & 0.246 \\
+				Chocolate & DT (entropy) & 0.169 \\
+        Cocaine & GNB & 0.219 \\
+				Crack & DT (entropy) & 0.236 \\
+				Ecstasy & kNN (k=5) & 0.202 \\
+				Heroin & kNN (k=5) & 0.181 \\
+				Ketamine & DT (gini) & 0.157 \\
+				Legal & GNB & 0.233 \\
+				LSD & GNB & 0.281 \\
+        Methadone & DT (gini) & 0.164 \\
+				Mushrooms & kNN (k=10) & 0.264 \\
+				Nicotine & kNN (k=5) & 0.204 \\
+				Volatile substance & DT (gini) & 0.190 \\
+        \bottomrule
+    \end{tabular}
+		\caption{Best performing classifier for each drug with the achieved $f1$-score.}
+		\label{tab:drugs_performance_overview}
+\end{table}
+
+As already mentioned, the results aren't good. The imbalance of the data made it hard for the classifiers to find non-trivial patterns in the data and only glimpses could be made. Deeper preprocessing of the data with special attention on single drugs is needed and it could possibly help to drop certain classes, since the drugs can be (apart from few exceptions) splitted in the two categories "everyday drug" with a big majority in class "Used last day" and the "marginal drugs" with a big majority in "Never used". Focusing on the classes CL1-CL5.
 
 
 
 \clearpage
 \bibliography{literature.bib}{}
 \bibliographystyle{unsrt}
+
+\newpage
+
+\appendix
+\include{AppDrugs}
 
 \end{document}
