@@ -194,7 +194,7 @@ Since this dataset was already preprocessed (transformation of the nominal featu
 As can be seen in Fig.\ref{fig:imbalance} the majority of the drugs can be grouped by their imbalance towards either CL0 ("Never used") or CL6 ("Last day") - those two groups give a rough representation of "everyday drugs" like chocolate and "marginal drugs" like heroin. Since the total number of respondents is constant, a vast majority of one class implies a small occurrence of the other classes and equalizing the samples results in low statistics and no usable outcome of the classification - this was the result of our tests. \\
 
 \subsection{Asteroids Data Set}
-The original data set contained 40 columns of different variable types (numeric and categorical). However, some columns were unnecessary, not usable or redundant for classification purposes, or contained constant values.
+The original data set contained 40 columns of different variable types (numeric and categorical). However, some columns were unnecessary, not usable or redundant for classification purposes, or contained constant values. No missing values are present. 
 
 
 \subsection{Advertising Bidding (Kaggle Data Set)}
@@ -340,7 +340,7 @@ The early assumption that the decision tree is the most resistant and therefore 
 As already mentioned, the results aren't good. The imbalance of the data made it hard for the classifiers to find non-trivial patterns in the data and only glimpses could be made. Deeper preprocessing of the data with special attention on single drugs is needed and it could possibly help to drop certain classes, since the drugs can be (apart from few exceptions) split in the two categories "everyday drug" with a big majority in class "Used last day" and the "marginal drugs" with a big majority in "Never used". Focusing on the classes CL1-CL5.
 
 
-As a final comparison, we show in Fig. \ref{fig:drugs_comparison} the values for the precision and recall for the naive Bayes, the decision trees(Gini) and the kNN(k=10) algorithms.
+As a final comparison, we show in Fig. \ref{fig:drugs_comparison} the values for the precision and recall for the naive Bayes, the decision trees(Gini) and the kNN(k=10) algorithms for the various drug consumption in the dataset. 
 
 \begin{table}[H]
 		\centering
@@ -381,7 +381,7 @@ As a final comparison, we show in Fig. \ref{fig:drugs_comparison} the values for
 	\begin{minipage}[b]{0.8\textwidth}
 		\includegraphics[width=1.1\textwidth]{Plots/recall_comparison_drugs.png}
 	\end{minipage}
-	\caption{Precision and recall plot for all classes.}
+	\caption{Precision and recall plot for all classes for the drug consumption dataset.}
 	\label{fig:drugs_comparison}
 \end{figure}
 
