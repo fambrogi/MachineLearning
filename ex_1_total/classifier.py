@@ -247,7 +247,7 @@ def printMatrix(target, matrix, classifier, param, dataset, balance = '', valida
         os.system('mkdir ' + out )
     plt.tight_layout()
 
-    plt.savefig(out + target + '_' + str(classifier) + '_' +
+    plt.savefig(out + dataset + '_' + str(classifier) + '_' +
                 str(param) + '_balance_' + str(balance) + '_' + validation + '.png', dpi=150)
 
     plt.close()
@@ -437,7 +437,6 @@ def main():
 
         a = plot_balance_ds(ds, dataset)
 
-
         # balance the dataset if balance = True
         if balance and dataset != 'drugs':
              ds = balance_ds(ds, dataset)
@@ -451,7 +450,6 @@ def main():
             else:
                 x, y, x_train, x_test, y_train, y_test = splitDataset(dataset=ds, train_features=features[dataset]['features'],
                                                                       target_features=features[dataset]['target'])
-
             if validation == 'holdout' :  # must split the data into train-test
                 # Simple Hold Out
 
@@ -548,7 +546,7 @@ def main():
                             print("Recall (macro avg):", macro_recall)
                             print("F1-score (macro avg):", macro_f1)
                             printMatrix(target, confusion_m, classifier, param, dataset,
-                                        balance = balance, validation = validation)
+                                        balance = balance, validation=validation)
 
                     if classifier == 'KNeighbors':
                         for param in [5, 10 , 50]:
@@ -584,7 +582,7 @@ def main():
                             print("Recall (macro avg):", macro_recall)
                             print("F1-score (macro avg):", macro_f1)
                             printMatrix(target, confusion_m, classifier, param, dataset,
-                                        balance = balance, validation = validation)
+                                        balance=balance, validation=validation)
 
                     if classifier == 'GaussianNB':
                         for param in ['naiveB']:
