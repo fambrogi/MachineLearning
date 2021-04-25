@@ -316,6 +316,7 @@ This step is done at a preliminary phase before any splitting into the training 
 
 \section{Comparison}
 
+
 \subsection{Drug consumption}
 
 Overall the performance of the classification is not well. Looking at the confusion matrices we can see the expected influence of the datas imbalance (Fig.\ref{fig:conf_matr_alcohol} App.\ref{app:drug_conf_matr}). The overall fitting strategy is towards the most dominant class whereas the decision tree seems to be the most resistant against this bias when looking at the distribution around the main diagonal. \\
@@ -325,22 +326,22 @@ This bias can also influence the performance metrics (P,R,A) - looking at Eqs.\r
 \begin{figure}[h!]
 	\centering
 	\begin{minipage}[b]{0.32\textwidth}
-		\includegraphics[width=1.1\textwidth]{Plots/alcohol_DecisionTree_entropy_balance_False_holdout.png}
+		\includegraphics[width=1.1\textwidth]{Plots/drugs/alcohol_DecisionTree_entropy_balance_False_holdout.png}
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
-		\includegraphics[width=1.1\textwidth]{Plots/alcohol_DecisionTree_gini_balance_False_holdout.png}
+		\includegraphics[width=1.1\textwidth]{Plots/drugs/alcohol_DecisionTree_gini_balance_False_holdout.png}
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
-		\includegraphics[width=1.1\textwidth]{Plots/alcohol_GaussianNB_naiveB_balance_False_holdout.png}
+		\includegraphics[width=1.1\textwidth]{Plots/drugs/alcohol_GaussianNB_naiveB_balance_False_holdout.png}
 	\end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
-		\includegraphics[width=1.1\textwidth]{Plots/alcohol_KNeighbors_5_balance_False_holdout.png}
+		\includegraphics[width=1.1\textwidth]{Plots/drugs/alcohol_KNeighbors_5_balance_False_holdout.png}
   \end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
-		\includegraphics[width=1.1\textwidth]{Plots/alcohol_KNeighbors_10_balance_False_holdout.png}
+		\includegraphics[width=1.1\textwidth]{Plots/drugs/alcohol_KNeighbors_10_balance_False_holdout.png}
   \end{minipage}
 	\begin{minipage}[b]{0.32\textwidth}
-		\includegraphics[width=1.1\textwidth]{Plots/alcohol_KNeighbors_50_balance_False_holdout.png}
+		\includegraphics[width=1.1\textwidth]{Plots/drugs/alcohol_KNeighbors_50_balance_False_holdout.png}
   \end{minipage}
 	\caption{Confusion matrices for the used classifiers on the drug alcohol.}
 	\label{fig:conf_matr_alcohol}
@@ -400,6 +401,273 @@ As already mentioned, the results aren't good. The imbalance of the data made it
 
 
 
+
+
+\subsection{Asteroids}
+
+For the asteroids dataset we had 4 comparisons - combinations of balancing (yes/no) and holdout/cross-validation. The comparison on whether to balance the datasets or not, goes in favor of the balanced dataset for the kNN and Gaussian Naive Bayes classifier (see Fig.\ref{fig:conf_matr_asteroids_bal_vs_nonbal} as example) whereas the Decision Tree worked very well in both cases (see below). Holdout and cross-validation dont give a significant improvement over each other. \\
+
+This dataset has a big dicrepancy between the classifiers. While both GNB and kNN benefit of reducing the imbalance to avoid a trivial classification, they both don't converge on an acceptable solution. Fig.\ref{fig:conf_matr_asteroids_bal_vs_nonbal} shows how after resampling the best guess seems to be a random one. This is true for all combinations in kNN and GNB - with a single execption for GNB on the balanced dataset with holdout (see appendix \ref{app:asteroids_conf_matr}). \\
+This also shows in the performance metrics. With this single exception, accuracy, precision, recall and therefore also $f1$ are apart from small fluctuation the same when looking at the balanced data set (the unbalanced dataset suffers from the same problem as with the drug consumption dataset). For the balanced dataset the metrics for are in the range 0.5-0.55 - the one outlier fluctuates similar to the unbalanced dataset.
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_GaussianNB_naiveB_balance_True_crossvalidation.png}
+		\caption{balanced}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_GaussianNB_naiveB_balance_False_crossvalidation.png}
+		\caption{non-balanced}
+	\end{subfigure}
+	\caption{Confusion matrices for the Gaussian Naive Bayes classifier | Effect of balancing the data.}
+	\label{fig:conf_matr_asteroids_bal_vs_nonbal}
+\end{figure}
+
+
+Very well performing is the Decision Tree. Not only does it seem to achieve exelent results (Fig.), it also does this independent of the imbalancement of the data. Since this result is also achieved with 10-fold cross-validation we are sure that this is not the result of overfitting to the data. With very small fluctuations we achieve scores in the regime of 0.99-1 - the full list can be seen in Tab.\ref{tab:dec_tree_perf_ast}.
+
+
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_True_crossvalidation.png}
+		\caption{balanced}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_False_crossvalidation.png}
+		\caption{non-balanced}
+	\end{subfigure}
+	\caption{Confusion matrices for the Decision Tree classifier | Effect of balancing the data.}
+	\label{fig:conf_matr_asteroids_bal_vs_nonbal}
+\end{figure}
+
+\begin{table}[h!]
+		\centering
+    \begin{tabular}{ l l l c }
+        \toprule
+        \textbf{Classfier} & \textbf{Balanced} & \textbf{validation} & \textbf{$f1$-score} \\
+        \toprule
+        DT (gini) & true & holdout & 0.989 \\
+				DT (gini) & true & cv & 0.994 \\
+        DT (gini) & false & holdout & 0.992 \\
+				DT (gini) & false & cv & 0.994 \\
+				DT (entropy) & true & holdout & 0.987 \\
+				DT (entropy) & true & cv & 0.993 \\
+				DT (entropy) & false & holdout & 0.993 \\
+        DT (entropy) & false & cv & 0.993 \\
+        \bottomrule
+    \end{tabular}
+		\caption{$f1$-scores for all Decision Tree combinations.}
+		\label{tab:dec_tree_perf_ast}
+\end{table}
+
+Understanding the origin of the classification (e.g. all asteroids within close proximity and above a certain size) of the dataset could give some insight on why the Decision Tree is performing so well. It is not clear to us why the other classification algorithms underperform compared to the Decision Tree. One could invest more time to check which features are relevant and which can be dropped - this may also help improving the other classifiers. Nice about this dataset was the illustration of the balancing through under-sampling. This is a step that is definitely needed for GNB and kNN to perform good, even with a reduced feature set.
+
+
+\subsection{Online advertisement bidding}
+
+\paragraph{kNN algorithm }
+
+If we apply the kNN algorithm in order to classify the online advertisement bidding without balancing the data we obtain a clear case of overfitting.
+No matter what paramenter we use or if we do holdout or cross validation every instance is placed in the majority class.
+
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_True_crossvalidation.png}
+		\caption{balanced}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_False_crossvalidation.png}
+		\caption{non-balanced}
+	\end{subfigure}
+	\caption{{\color{red} PLACEHOLDER IMAGES. NEED TO BE CHANGED.}}
+\end{figure}
+
+
+In order to use the classifier we have used k equal to 5, 10 and 50.
+From the experiment we can notice that with cross validation the best accuracy is obtained using k=10 (It is close to the 62\% while with k=5 or k=50 it is slightly lower)
+
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_True_crossvalidation.png}
+		\caption{balanced}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_False_crossvalidation.png}
+		\caption{non-balanced}
+	\end{subfigure}
+	\caption{{\color{red} PLACEHOLDER IMAGES. NEED TO BE CHANGED.}}
+\end{figure}
+
+
+With holdout the best result is  obtained with  k=10 too in fact we have an accuracy of the 66\% while the k=5 and k=50 have accuracy of the 65\% and 64\% respectevely.
+If we look at precision and recall we have for k=10 66\% and 65\% respectevely while for k=5 and k=10 we have lower values.
+
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_True_crossvalidation.png}
+		\caption{balanced}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_False_crossvalidation.png}
+		\caption{non-balanced}
+	\end{subfigure}
+	\caption{{\color{red} PLACEHOLDER IMAGES. NEED TO BE CHANGED.}}
+\end{figure}
+
+
+\paragraph{Decision Tree}
+If we build the decision tree we can see that from our experiment we get very good results
+In fact using the entropy for both cross validation and holdout we get Accuracy, precision and recall equal to 1.
+The same results are obtained using the Gini index.
+
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_True_crossvalidation.png}
+		\caption{balanced}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_False_crossvalidation.png}
+		\caption{non-balanced}
+	\end{subfigure}
+	\caption{{\color{red} PLACEHOLDER IMAGES. NEED TO BE CHANGED.}}
+\end{figure}
+
+
+\paragraph{Naive Bayes}
+Also with naive Bayes we get very good results in fact as for the decision tree the accuracy the precision and the recall are 1.
+
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_True_crossvalidation.png}
+		\caption{balanced}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_False_crossvalidation.png}
+		\caption{non-balanced}
+	\end{subfigure}
+	\caption{{\color{red} PLACEHOLDER IMAGES. NEED TO BE CHANGED.}}
+\end{figure}
+
+
+Looking at the experiment results we can notice that for the Online bidding advertisement the decision tree classifier and the Naive Bayes classifier produce better results than the KNN classifier.
+
+
+
+
+
+\subsection{Breast cancer}
+
+
+\paragraph{kNN algorithm }
+
+Considering the hold out balanced data for k=5 we get the values shown in Tab.\ref{tab:perf_kNN_breast}. Using cross-validation increases this values to A=95\%, P=95\% and R=94\% for k=5 and roughly 100\% for k=10 and k=50. \\
+For the kNN classifier the results turn out to be the best for k=10.
+
+\begin{table}[h!]
+		\centering
+    \begin{tabular}{ l c c c }
+        \toprule
+        \textbf{k} & \textbf{Accuracy (\%)} & \textbf{Precision (\%)} & \textbf{Recall (\%)} \\
+        \toprule
+				5 & 89 & 92 & 88 \\
+				10 & 89 & 92 & 88 \\
+				50 & 83 & 88 & 82 \\
+        \bottomrule
+    \end{tabular}
+		\caption{Performance measurements for kNN and holdout.}
+		\label{tab:perf_kNN_breast}
+\end{table}
+
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_True_crossvalidation.png}
+		\caption{balanced}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_False_crossvalidation.png}
+		\caption{non-balanced}
+	\end{subfigure}
+	\caption{{\color{red} PLACEHOLDER IMAGES. NEED TO BE CHANGED.}}
+\end{figure}
+
+
+\paragraph{Naive bayes}
+We can notice that in our experimet there is no relevant difference in balancing the data if we apply a naive bayes classifier.
+The main thing that we can notice is that the result obtained using cross validation is better than the oune obtained using holdout.
+
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_True_crossvalidation.png}
+		\caption{balanced}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_False_crossvalidation.png}
+		\caption{non-balanced}
+	\end{subfigure}
+	\caption{{\color{red} PLACEHOLDER IMAGES. NEED TO BE CHANGED.}}
+\end{figure}
+
+
+\paragraph{Decision trees}
+When we compute the decision tree we can notice that the  accuracy value for a tree computed with the Gini index and the entropy  with cross validation are the same. Using the entropy we have a better outcome in the true positive while we do errors in the true negatives while we obtain the opposite while using the Gini index.
+
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_True_crossvalidation.png}
+		\caption{balanced}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_False_crossvalidation.png}
+		\caption{non-balanced}
+	\end{subfigure}
+	\caption{{\color{red} PLACEHOLDER IMAGES. NEED TO BE CHANGED.}}
+\end{figure}
+
+
+Using the holdout approach we can notice that we get better results using the entropy instead of the Gini index. If we train the classifier using balanced data from the experiment we can notice that we get better results. Looking at the results of the experiments we can notice that a good classifier is obtained using cross validation and the decision tree that uses the Gini index.
+
+
+
+
+
 \clearpage
 \bibliography{literature.bib}{}
 \bibliographystyle{unsrt}
@@ -408,5 +676,6 @@ As already mentioned, the results aren't good. The imbalance of the data made it
 
 \appendix
 \include{AppDrugs}
+\include{AppAsteroids}
 
 \end{document}

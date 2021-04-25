@@ -3,11 +3,12 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: Group13_Exercise1.aux
 The style file: unsrt.bst
 A level-1 auxiliary file: AppDrugs.aux
+A level-1 auxiliary file: AppAsteroids.aux
 Database file #1: literature.bib
 Warning--empty journal in fehrman2017factor
 You've used 1 entry,
             1791 wiz_defined-function locations,
-            451 strings with 3808 characters,
+            452 strings with 3824 characters,
 and the built_in function-call counts, 205 in all, are:
 = -- 11
 > -- 17

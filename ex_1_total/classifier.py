@@ -143,17 +143,14 @@ def splitDataset(dataset = '', train_features = [], target_features = [] ):
     return train_set, target_set, x_train, x_test, y_train, y_test
 
 
-def Classifier(x_train,y_train, classifier = 'tree', criterion = "gini" , n_neighbors = 4  ):
+def Classifier(x_train,y_train, classifier='tree', criterion="gini",  n_neighbors=4):
     """ Run a DecisionTreeClassifier algorithm, with the specified criterion
     input  ::   classifier:  tree   DecisionTreeClassifier
                              kNN    KNeighborsClassifier
                              naive  GaussianNB
-
                 criterion: gini
                            entropy     valid only for DecisionTreeClassifier
-
                 n_neighbors : (4)      valid only for KNeighborsClassifier
-
     """
 
     if classifier == 'DecisionTree':
@@ -209,7 +206,7 @@ def printMatrix(target, matrix, classifier, param, dataset, balance = '', valida
         plt.text(j, i, '{0:.2f}'.format(matrix[i, j]) , horizontalalignment="center",
                  color="white" if matrix[i, j] > thresh else "black")
 
-    ticks = { 'asteroids' : ['Hazardous' , 'Non Hazardous'],
+    ticks = { 'asteroids' : ['Non Hazardous' , 'Hazardous'],
               'drugs': ["Never", ">10 Years Ago", "Last Decade", "Last Year", "Last Month",
               "Last Week", "Last Day"],
               'breastCancer' :  ['Reccurence' , 'No recurrence'] ,
@@ -247,7 +244,7 @@ def printMatrix(target, matrix, classifier, param, dataset, balance = '', valida
         os.system('mkdir ' + out )
     plt.tight_layout()
 
-    plt.savefig(out + target + '_' + str(classifier) + '_' +
+    plt.savefig(out + dataset + '_' + str(classifier) + '_' +
                 str(param) + '_balance_' + str(balance) + '_' + validation + '.png', dpi=150)
 
     plt.close()
@@ -437,7 +434,6 @@ def main():
 
         a = plot_balance_ds(ds, dataset)
 
-
         # balance the dataset if balance = True
         if balance and dataset != 'drugs':
              ds = balance_ds(ds, dataset)
@@ -451,7 +447,6 @@ def main():
             else:
                 x, y, x_train, x_test, y_train, y_test = splitDataset(dataset=ds, train_features=features[dataset]['features'],
                                                                       target_features=features[dataset]['target'])
-
             if validation == 'holdout' :  # must split the data into train-test
                 # Simple Hold Out
 
@@ -548,7 +543,7 @@ def main():
                             print("Recall (macro avg):", macro_recall)
                             print("F1-score (macro avg):", macro_f1)
                             printMatrix(target, confusion_m, classifier, param, dataset,
-                                        balance = balance, validation = validation)
+                                        balance = balance, validation=validation)
 
                     if classifier == 'KNeighbors':
                         for param in [5, 10 , 50]:
@@ -584,7 +579,7 @@ def main():
                             print("Recall (macro avg):", macro_recall)
                             print("F1-score (macro avg):", macro_f1)
                             printMatrix(target, confusion_m, classifier, param, dataset,
-                                        balance = balance, validation = validation)
+                                        balance=balance, validation=validation)
 
                     if classifier == 'GaussianNB':
                         for param in ['naiveB']:
@@ -631,7 +626,7 @@ def main():
 if __name__=="__main__":
 
     classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
-    datasets = ['asteroids']
+    datasets = ['asteroids', 'advertisingBidding', 'breastCancer', 'drugs']
 
     balance = True
     validation = 'holdout'
