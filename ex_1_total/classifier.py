@@ -369,13 +369,12 @@ def balance_ds(ds, dataset):
         length = int( len(t) + 0.1* len(t) )
 
         f = ds.loc[ds[target] == False]
-        f = f.sample(frac=1) # shuffling the majority class
+        f = f.sample(frac=1).reset_index() # shuffling the majority class. Resetting indices for accessing it below
 
     randomlist = []
     for i in range(0, length):
-        n = random.randint(1,len(f))
+        n = random.randint(1,len(f)-1)
         randomlist.append(n)
-        print(randomlist)
 
     random_f = f.iloc[randomlist]
 
@@ -405,10 +404,10 @@ datasets = ['asteroids','advertisingBidding' , 'breastCancer', 'drugs' ]
 datasets = ['asteroids','advertisingBidding' , 'breastCancer', 'drugs' ]
 
 train_test = True
-balance = False
+balance = True
 
 datasets = ['asteroids','advertisingBidding' , 'breastCancer' ]
-datasets = ['drugs']
+datasets = ['breastCancer']
 
 def main():
 
@@ -457,9 +456,8 @@ def main():
                 if classifier == 'DecisionTree' : # Run DecisionTreeClassifier
                     for param in ['gini','entropy'] :  # run the classifier with two different parameter
                     #for param in ['gini', 'entropy']:  # run the classifier with two different parameter
-
-                        cf = Classifier(x_train,y_train, classifier=classifier, criterion=param )
                         print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
+                        cf = Classifier(x_train,y_train, classifier=classifier, criterion=param )
                         y_prediction=predict(x_test,cf,target)
                         confusion_m, accuracy, report = evaluation(y_test, y_prediction )
                         printMatrix(target, confusion_m, classifier, param, dataset, balance = balance)
@@ -467,16 +465,16 @@ def main():
 
                 if classifier == 'KNeighbors':
                     for param in [5, 10 , 50]:
-                        cf = Classifier(x_train, y_train, classifier=classifier, n_neighbors = param )
                         print("\n\n\n\n\nResults of " + classifier + " with k=" + str(param) + ". Index for " + target )
+                        cf = Classifier(x_train, y_train, classifier=classifier, n_neighbors = param )
                         y_prediction=predict(x_test,cf,target)
                         confusion_m, accuracy, report = evaluation(y_test, y_prediction )
                         printMatrix(target, confusion_m, classifier, param, dataset,balance = balance)
 
                 if classifier == 'GaussianNB':
                     for param in ['naiveB']:
-                        cf = Classifier(x_train, y_train, classifier=classifier)
                         print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
+                        cf = Classifier(x_train, y_train, classifier=classifier)
                         y_prediction=predict(x_test, cf, target)
                         confusion_m, accuracy, report = evaluation(y_test, y_prediction )
                         printMatrix(target, confusion_m, classifier, param, dataset, balance = balance)
