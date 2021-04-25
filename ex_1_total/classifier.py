@@ -186,7 +186,7 @@ def evaluation(y_test,y_pred, normalize='true'):
 
     return confusion_m, accuracy, report
 
-def printMatrix(target, matrix, classifier, param, dataset, balance = ''):
+def printMatrix(target, matrix, classifier, param, dataset, balance = '', validation = ''):
     """ Creates a confusion matrix """
     fs = 12
     plt.figure(figsize=(6,5))
@@ -223,10 +223,8 @@ def printMatrix(target, matrix, classifier, param, dataset, balance = ''):
     classes = range(0,len(matrix))
     tick_marks = np.arange(len(classes))
 
-
     plt.xticks(tick_marks, ticks[dataset], rotation = 20,  fontsize = 8)
     plt.yticks(tick_marks, ticks[dataset], rotation = 20 , va="center", fontsize = 8)
-
 
     titles = { 'drugs' : target ,
                'asteroids': 'Asteroids',
@@ -234,9 +232,7 @@ def printMatrix(target, matrix, classifier, param, dataset, balance = ''):
                'advertisingBidding': 'Advertising Bidding'}
 
     plt.title(str(classifier) + '[' + str(param) + ']' +
-              '  Confusion Matrix - '
-
-              + titles[dataset] , y = -0.2 , fontsize = fs-1 )
+              ' Confusion Matrix - ' +validation+ ' ('+titles[dataset]+')', y=-0.2, fontsize=fs-1)
 
     plt.ylabel('True label', size=fs)
     plt.xlabel('Predicted label', size=fs)
@@ -252,7 +248,7 @@ def printMatrix(target, matrix, classifier, param, dataset, balance = ''):
     plt.tight_layout()
 
     plt.savefig(out + target + '_' + str(classifier) + '_' +
-                str(param) + '_balance_' + str(balance) + '.png', dpi=150)
+                str(param) + '_balance_' + str(balance) + '_' + validation + '.png', dpi=150)
 
     plt.close()
 
@@ -395,21 +391,33 @@ def clean_fast():
     return ds
 
 
-""" Main input parameters to choose """
+###################################
+# Main input parameters to choose #
+###################################
 
+""" Choose validation type [string]
+    validation = "holdout", "crossvalidation"
+    For cross validation, choose the number of splits [int]
+    cv_splits = 10 (default) """
 
 validation = 'holdout'
-cv_splits = 3
+cv_splits = 10
 
+""" Choose the types of classifier [list]
+    classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB'] """
 classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
-datasets = ['asteroids','advertisingBidding' , 'breastCancer', 'drugs' ]
+
+""" Choose the datasets [list]
+    datasets = ['asteroids','advertisingBidding' , 'breastCancer', 'drugs' ] """
 datasets = ['asteroids','advertisingBidding' , 'breastCancer', 'drugs' ]
 
+""" Choose if the target features of the datasets should be balanced before classification 
+    balance = True,False """
+balance = True
+
+# to do ?
 train_test = True
-balance = False
 
-datasets = ['asteroids','advertisingBidding' , 'breastCancer' ]
-datasets = ['asteroids']
 
 def main():
 
@@ -425,13 +433,9 @@ def main():
 
         # reshuffle data
         ds = ds.sample(frac=1).reset_index()
-        #report_summary = []
-
-        # loop over the possible features (number of drugs)
-        # for the other datasets it is only one iteration
 
         a = plot_balance_ds(ds, dataset)
-        #continue
+
 
         # balance the dataset if balance = True
         if balance and dataset != 'drugs':
@@ -441,9 +445,11 @@ def main():
 
             # In case of cv the x and y will be used and the rest overwritten
             if dataset == 'drugs':
-                x, y, x_train, x_test, y_train, y_test = splitDataset(dataset= ds, train_features= features[dataset]['features'], target_features= target )
+                x, y, x_train, x_test, y_train, y_test = splitDataset(dataset= ds, train_features= features[dataset]['features'],
+                                                                      target_features= target )
             else:
-                x, y, x_train, x_test, y_train, y_test = splitDataset(dataset=ds, train_features=features[dataset]['features'], target_features=features[dataset]['target'])
+                x, y, x_train, x_test, y_train, y_test = splitDataset(dataset=ds, train_features=features[dataset]['features'],
+                                                                      target_features=features[dataset]['target'])
 
             if validation == 'holdout' :  # must split the data into train-test
                 # Simple Hold Out
@@ -456,28 +462,26 @@ def main():
                             #for param in ['gini', 'entropy']:  # run the classifier with two different parameter
                             print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
                             cf = Classifier(x_train,y_train, classifier=classifier, criterion=param )
-                            y_prediction=predict(x_test,cf,target)
-                            confusion_m, accuracy, report = evaluation(y_test, y_prediction )
-                            printMatrix(target, confusion_m, classifier, param, dataset, balance = balance)
-                            #tree = plot_t(target, dataset, cf)
 
                     if classifier == 'KNeighbors':
                         for param in [5, 10 , 50]:
                             print("\n\n\n\n\nResults of " + classifier + " with k=" + str(param) + ". Index for " + target )
                             cf = Classifier(x_train, y_train, classifier=classifier, n_neighbors = param )
-                            y_prediction=predict(x_test,cf,target)
-                            confusion_m, accuracy, report = evaluation(y_test, y_prediction )
-                            printMatrix(target, confusion_m, classifier, param, dataset,balance = balance)
 
                     if classifier == 'GaussianNB':
                         for param in ['naiveB']:
                             print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
                             cf = Classifier(x_train, y_train, classifier=classifier)
-                            y_prediction=predict(x_test, cf, target)
-                            confusion_m, accuracy, report = evaluation(y_test, y_prediction )
-                            printMatrix(target, confusion_m, classifier, param, dataset, balance = balance)
+
+                    y_prediction=predict(x_test, cf, target)
+                    confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                    printMatrix(target, confusion_m, classifier, param, dataset,
+                                balance = balance, validation = validation)
 
             elif validation == 'crossvalidation':
+                if dataset == "drugs":  # will not run cross validation on drug dataset
+                    continue
+
                 confusion_m = np.zeros((2,2))
                 accuracy = 0
 
@@ -501,8 +505,8 @@ def main():
                             row_sums = confusion_m.sum(axis=1)
                             confusion_m = confusion_m / row_sums[:, np.newaxis]
                             accuracy /= cv_splits
-                            printMatrix(target, confusion_m, classifier, param, dataset, balance = balance)
-                            #tree = plot_t(target, dataset, cf)
+                            printMatrix(target, confusion_m, classifier, param, dataset,
+                                        balance = balance, validation = validation)
 
                     if classifier == 'KNeighbors':
                         for param in [5, 10 , 50]:
@@ -521,7 +525,8 @@ def main():
                             row_sums = confusion_m.sum(axis=1)
                             confusion_m = confusion_m / row_sums[:, np.newaxis]
                             accuracy /= cv_splits
-                            printMatrix(target, confusion_m, classifier, param, dataset,balance = balance)
+                            printMatrix(target, confusion_m, classifier, param, dataset,
+                                        balance = balance, validation = validation)
 
                     if classifier == 'GaussianNB':
                         for param in ['naiveB']:
@@ -540,10 +545,8 @@ def main():
                             row_sums = confusion_m.sum(axis=1)
                             confusion_m = confusion_m / row_sums[:, np.newaxis]
                             accuracy /= cv_splits
-                            printMatrix(target, confusion_m, classifier, param, dataset, balance = balance)
-
-
-
+                            printMatrix(target, confusion_m, classifier, param, dataset,
+                                        balance = balance, validation = validation)
             else:
                 # TO DO must only test with the given dataset, cancer and bidding
                 print(0)
@@ -552,4 +555,22 @@ def main():
         #dummy = plot_reports(report_summary, classifier, dataset)
 
 if __name__=="__main__":
+
+    classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
+    datasets = ['asteroids', 'advertisingBidding', 'breastCancer', 'drugs']
+
+    balance = True
+    validation = 'holdout'
+    main()
+
+    balance = False
+    validation = 'holdout'
+    main()
+
+    balance = True
+    validation = 'crossvalidation'
+    main()
+
+    balance = False
+    validation = 'crossvalidation'
     main()

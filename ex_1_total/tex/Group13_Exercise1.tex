@@ -135,7 +135,6 @@ ccc
 \end{itemize}
 
 \paragraph{Advertising Bidding (Kaggle Data Set)}
-ccc
 
 In detail:
 \begin{itemize}
@@ -174,7 +173,7 @@ We implemented our analysis using the \textbf{python3.8} language, with its libr
 
 \subsection{Workflow}
 Without giving particular details on the implementations of the various classifier, which can be read inside the scripts, we summarize here how the workflow is constructed, as well as how the classification tasks have been implemented.
-First, the cleaned data (i.e. processed by \textit{data\_preparation.py} ) are imported as \textit{pandas} data frame. For each data set, a dictionary provided the list of names of features that will be used to predict the target feature. Then, we analyse the class balancing of the predicting features; it is possible to decide to apply a balacing procedure before processing further(see Section \ref{sec:balance} for details). The data can now be trained: the splitting of the data into a training and testing set is done differently depending on the chosen methods between "hold out" (by the $model_selection.train_test_split$)  or "kNN-cross validation" (by the $ XXX$); see Section \ref{sec:cross}.
+First, the cleaned data (i.e. processed by \textit{data\_preparation.py} ) are imported as \textit{pandas} data frame. For each data set, a dictionary provided the list of names of features that will be used to predict the target feature. Then, we analyse the class balancing of the predicting features; it is possible to decide to apply a balancing procedure before processing further(see Section \ref{sec:balance} for details). The data can now be trained: the splitting of the data into a training and testing set is done differently depending on the chosen methods between "hold out" (by the $model_selection.train_test_split$)  or "kNN-cross validation" (by the $ XXX$); see Section \ref{sec:cross}.
 At this point, the classification algorithms are applied to the training and testing sets. The following algorithms have been chosen.
 
 \paragraph{Decision Three} We use the \textit{DecisionTreeClassifier} module, where we try two implementation of the "Gini" and "entropy" (parameter $criterion$) criteria for the Gini impurity and for the information gain,respectively, to measure the quality of a split.
@@ -192,11 +191,31 @@ The steps are handled by the script \textit{data\_preparation.py} which includes
 \paragraph{Drug consumption}
 Since this dataset was already preprocessed (transformation of the nominal features) and cleaned of missing values or outliers by the providers of the dataset \cite{fehrman2017factor}, the data preparation is not given. As can be seen in Fig.\ref{fig:imbalance} we deal with heavily imbalanced data. Normally, the approach would be to resample the data (see Sec.\ref{sec:balance}) but with our later on discussed approach we would run into problems due to low statistics - we decided to keep the dataset as it is.
 
- As can be seen in Fig.\ref{fig:imbalance} the majority of the drugs can be grouped by their imbalance towards either CL0 ("Never used") or CL6 ("Last day") - those two groups give a rough representation of "everyday drugs" like chocolate and "marginal drugs" like heroin. Since the total number of respondents is constant, a vast majority of one class implies a small occurences of the other classes and equalizing the samples results in low statistics and no usable outcome of the classification - this was the result of our tests. \\
+As can be seen in Fig.\ref{fig:imbalance} the majority of the drugs can be grouped by their imbalance towards either CL0 ("Never used") or CL6 ("Last day") - those two groups give a rough representation of "everyday drugs" like chocolate and "marginal drugs" like heroin. Since the total number of respondents is constant, a vast majority of one class implies a small occurrence of the other classes and equalizing the samples results in low statistics and no usable outcome of the classification - this was the result of our tests. \\
 
 \subsection{Asteroids Data Set}
 The original data set contained 40 columns of different variable types (numeric and categorical). However, some columns were unnecessary, not usable or redundant for classification purposes, or contained constant values.
 
+
+\subsection{Advertising Bidding (Kaggle Data Set)}
+In the dataset we have both nominal and ordinal data.
+An example of nominal attribute is the Browser where is specified the browser used by the user in that observation.
+An example of ordinal data is the "Inmarket\_realestate" which indicates the tendency of an user to bid (1) or not to bid (0) on a real estate. In this dataset there are 12500 observations and 65 attributes.
+In the dataset there are missing values in particular the $4\%$ of the rows has the URL attribute missing and the 38% of the rows has of the UserID missing.
+This dataset is characterized by the presence of several attributes with low information, for example the attribute "Inmarket\_sportsitem" has $98\%$ of the observations with value 1(yes)  or the attribute "Inmarket\_outdoor" with the percentage above the $99\%$,
+
+ this is solved thanks at the balancing process that we will perform before splitting the dataset.
+
+The following columns have been removed under the assumption that they depends only on the single observation and consequently generate noise without bringing additional information.
+the columns are: "RowID", "UserID", "BidID", "IP" , "Domain", "URL", "Time\_Bid", "AdslotID".
+In the dataset the columns "Browser", "Adslotvisibility' , "Adslotformat" have been converted using a label encoder.
+
+
+\subsection{Breast Cancer (Kaggle Data Set)}
+In this dataset every attribute is a measurement done during a medical exam.
+The attributes are all numerical.
+Examples of the attributes are: "concavePointsMean", "symmetryMean","fractalDimensionMean", "radiusStdErr", "textureStdErr".
+There are no missing values and we did not preprocesse any attribute. Due the domain of the attributes there are no low information columns so we have used them all in order to fit the classifiers.
 
 
 
@@ -267,7 +286,7 @@ Fig. \ref{fig:imbalance} shows the distribution of the various class attributes 
 ($37,5\%$- $62,5\%$) recurrence events vs non recurrence, while the imbalance is more pronounced for the other dataset, in particular we see
 ($17\%$-$83\%$) hazardous vs non hazardous, and ($2\%$-$98\%$) buy vs  non buy classes.
 
-In the case of the drug consumption dataset, the situation it is more complicated to analyze since it varies largely depending on the considered drug.
+In the case of the drug consumption dataset, the situation it is more complicated to analyse since it varies largely depending on the considered drug.
 
 \begin{figure}[h!]
 	\centering
