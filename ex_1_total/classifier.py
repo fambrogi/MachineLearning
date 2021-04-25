@@ -740,19 +740,20 @@ if __name__=="__main__":
 
     datasets = ['drugs']
     classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
-<<<<<<< HEAD
 
-=======
-    datasets = ['asteroids', 'advertisingBidding', 'breastCancer', 'drugs']
->>>>>>> f4a2576de0e1d00a9997002fc1de1b4b1640d1fa
+
+
+    #datasets = ['asteroids', 'advertisingBidding', 'breastCancer', 'drugs']
+    datasets = [ 'breastCancer']
+
 
     balance = True
     validation = 'holdout'
-    main()
+    #main()
 
     balance = False
     validation = 'holdout'
-    main()
+    #main()
 
     balance = True
     validation = 'crossvalidation'

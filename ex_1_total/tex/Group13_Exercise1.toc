@@ -24,11 +24,11 @@
 \contentsline {subsection}{\numberline {4.2}Asteroids}{8}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}Online advertisement bidding}{10}{subsection.4.3}%
 \contentsline {paragraph}{kNN algorithm }{10}{section*.18}%
-\contentsline {paragraph}{Decision Tree}{11}{section*.22}%
+\contentsline {paragraph}{Decision Tree}{12}{section*.22}%
 \contentsline {paragraph}{Naive Bayes}{12}{section*.24}%
-\contentsline {subsection}{\numberline {4.4}Breast cancer}{12}{subsection.4.4}%
-\contentsline {paragraph}{kNN algorithm }{12}{section*.26}%
-\contentsline {paragraph}{Naive bayes}{13}{section*.29}%
-\contentsline {paragraph}{Decision trees}{13}{section*.31}%
-\contentsline {section}{\numberline {A}Drug consumption - Confusion matrices}{16}{appendix.A}%
-\contentsline {section}{\numberline {B}Asteroids classification - Confusion matrices}{25}{appendix.B}%
+\contentsline {subsection}{\numberline {4.4}Breast cancer}{13}{subsection.4.4}%
+\contentsline {paragraph}{kNN algorithm }{13}{section*.26}%
+\contentsline {paragraph}{Naive bayes}{14}{section*.29}%
+\contentsline {paragraph}{Decision trees}{14}{section*.31}%
+\contentsline {section}{\numberline {A}Drug consumption - Confusion matrices}{17}{appendix.A}%
+\contentsline {section}{\numberline {B}Asteroids classification - Confusion matrices}{26}{appendix.B}%

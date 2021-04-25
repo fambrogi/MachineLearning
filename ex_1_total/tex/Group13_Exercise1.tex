@@ -481,15 +481,15 @@ No matter what paramenter we use or if we do holdout or cross validation every i
 	\centering
 	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_True_crossvalidation.png}
+		\includegraphics[width=1.1\textwidth]{Plots/conv_KNeighbors_5_balance_False_holdout.png}
 		\caption{balanced}
 	\end{subfigure}%
 	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_False_crossvalidation.png}
+		\includegraphics[width=1.1\textwidth]{Plots/conv_KNeighbors_10_balance_False_holdout.png}
 		\caption{non-balanced}
 	\end{subfigure}
-	\caption{{\color{red} PLACEHOLDER IMAGES. NEED TO BE CHANGED.}}
+	\caption{{\color{red} Examples of non balanced datasets.}}
 \end{figure}
 
 
@@ -501,15 +501,20 @@ From the experiment we can notice that with cross validation the best accuracy i
 	\centering
 	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_True_crossvalidation.png}
+		\includegraphics[width=1.1\textwidth]{Plots/conv_KNeighbors_5_balance_True_crossvalidation}
 		\caption{balanced}
 	\end{subfigure}%
 	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_False_crossvalidation.png}
+		\includegraphics[width=1.1\textwidth]{Plots/conv_KNeighbors_10_balance_True_crossvalidation}
 		\caption{non-balanced}
 	\end{subfigure}
-	\caption{{\color{red} PLACEHOLDER IMAGES. NEED TO BE CHANGED.}}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=1.1\textwidth]{Plots/conv_KNeighbors_50_balance_True_crossvalidation}
+		\caption{non-balanced}
+	\end{subfigure}
+	\caption{{\color{red}NKK with Cross validation for k=5;10;50}}
 \end{figure}
 
 
@@ -543,15 +548,15 @@ The same results are obtained using the Gini index.
 	\centering
 	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_True_crossvalidation.png}
+		\includegraphics[width=1.1\textwidth]{Plots/advertisingBidding_DecisionTree_gini_balance_True_holdout.png}
 		\caption{balanced}
 	\end{subfigure}%
 	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_False_crossvalidation.png}
+		\includegraphics[width=1.1\textwidth]{Plots/advertisingBidding_DecisionTree_entropy_balance_True_holdout.png}
 		\caption{non-balanced}
 	\end{subfigure}
-	\caption{{\color{red} PLACEHOLDER IMAGES. NEED TO BE CHANGED.}}
+	\caption{{\color{red} Decision trees using Gini index and Entropy}}
 \end{figure}
 
 
@@ -563,15 +568,10 @@ Also with naive Bayes we get very good results in fact as for the decision tree 
 	\centering
 	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_True_crossvalidation.png}
+		\includegraphics[width=1.1\textwidth]{Plots/advertisingBidding_GaussianNB_naiveB_balance_True_holdout.png}
 		\caption{balanced}
 	\end{subfigure}%
-	\begin{subfigure}{.5\textwidth}
-		\centering
-		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_False_crossvalidation.png}
-		\caption{non-balanced}
-	\end{subfigure}
-	\caption{{\color{red} PLACEHOLDER IMAGES. NEED TO BE CHANGED.}}
+	\caption{{\color{red} Naive Bayes classifier result.}}
 \end{figure}
 
 
@@ -630,15 +630,15 @@ The main thing that we can notice is that the result obtained using cross valida
 	\centering
 	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_True_crossvalidation.png}
+		\includegraphics[width=1.1\textwidth]{Plots/breastCancer_GaussianNB_naiveB_balance_True_crossvalidation.png}
 		\caption{balanced}
 	\end{subfigure}%
 	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_False_crossvalidation.png}
+		\includegraphics[width=1.1\textwidth]{Plots/breastCancer_GaussianNB_naiveB_balance_True_holdout.png}
 		\caption{non-balanced}
 	\end{subfigure}
-	\caption{{\color{red} PLACEHOLDER IMAGES. NEED TO BE CHANGED.}}
+	\caption{{\color{red} Comparison between Naive Bayes using cross validation and holdout.}}
 \end{figure}
 
 
@@ -650,15 +650,15 @@ When we compute the decision tree we can notice that the  accuracy value for a t
 	\centering
 	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_True_crossvalidation.png}
+		\includegraphics[width=1.1\textwidth]{Plots/breastCancer_DecisionTree_entropy_balance_True_crossvalidation.png}
 		\caption{balanced}
 	\end{subfigure}%
 	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[width=1.1\textwidth]{Plots/asteroids/asteroids_DecisionTree_gini_balance_False_crossvalidation.png}
+		\includegraphics[width=1.1\textwidth]{Plots/breastCancer_DecisionTree_gini_balance_True_crossvalidation.png}
 		\caption{non-balanced}
 	\end{subfigure}
-	\caption{{\color{red} PLACEHOLDER IMAGES. NEED TO BE CHANGED.}}
+	\caption{{\color{red} Decision tree using entropy and Gini index .}}
 \end{figure}
 
 
