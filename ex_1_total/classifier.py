@@ -143,7 +143,7 @@ def splitDataset(dataset = '', train_features = [], target_features = [] ):
     return train_set, target_set, x_train, x_test, y_train, y_test
 
 
-def Classifier(x_train,y_train, classifier = 'tree', criterion = "gini" , n_neighbors = 4  ):
+def Classifier(x_train,y_train, classifier='tree', criterion="gini",  n_neighbors=4):
     """ Run a DecisionTreeClassifier algorithm, with the specified criterion
     input  ::   classifier:  tree   DecisionTreeClassifier
                              kNN    KNeighborsClassifier
@@ -209,7 +209,7 @@ def printMatrix(target, matrix, classifier, param, dataset, balance = '', valida
         plt.text(j, i, '{0:.2f}'.format(matrix[i, j]) , horizontalalignment="center",
                  color="white" if matrix[i, j] > thresh else "black")
 
-    ticks = { 'asteroids' : ['Hazardous' , 'Non Hazardous'],
+    ticks = { 'asteroids' : ['Non Hazardous' , 'Hazardous'],
               'drugs': ["Never", ">10 Years Ago", "Last Decade", "Last Year", "Last Month",
               "Last Week", "Last Day"],
               'breastCancer' :  ['Reccurence' , 'No recurrence'] ,
