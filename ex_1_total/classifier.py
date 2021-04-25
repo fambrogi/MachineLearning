@@ -180,8 +180,8 @@ def evaluation(y_test,y_pred, normalize='true'):
     report = classification_report(y_test, y_pred, output_dict= True)
     #print("Confusion matrix: ", confusion_m)
     #print("accuracy: ", accuracy)
-    for i in report:
-        print(i, ":", report[i])
+    #for i in report:
+    #    print(i, ":", report[i])
     #print("Report: ", report)
 
     return confusion_m, accuracy, report
@@ -400,7 +400,7 @@ def clean_fast():
     For cross validation, choose the number of splits [int]
     cv_splits = 10 (default) """
 
-validation = 'holdout'
+validation = 'crossvalidation'
 cv_splits = 10
 
 """ Choose the types of classifier [list]
@@ -410,8 +410,9 @@ classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
 """ Choose the datasets [list]
     datasets = ['asteroids','advertisingBidding' , 'breastCancer', 'drugs' ] """
 datasets = ['asteroids','advertisingBidding' , 'breastCancer', 'drugs' ]
+datasets = ['asteroids' ]
 
-""" Choose if the target features of the datasets should be balanced before classification 
+""" Choose if the target features of the datasets should be balanced before classification
     balance = True,False """
 balance = True
 
@@ -463,20 +464,30 @@ def main():
                             print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
                             cf = Classifier(x_train,y_train, classifier=classifier, criterion=param )
 
+                            y_prediction=predict(x_test, cf, target)
+                            confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                            printMatrix(target, confusion_m, classifier, param, dataset,
+                                        balance = balance, validation = validation)
+
                     if classifier == 'KNeighbors':
                         for param in [5, 10 , 50]:
                             print("\n\n\n\n\nResults of " + classifier + " with k=" + str(param) + ". Index for " + target )
                             cf = Classifier(x_train, y_train, classifier=classifier, n_neighbors = param )
+
+                            y_prediction=predict(x_test, cf, target)
+                            confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                            printMatrix(target, confusion_m, classifier, param, dataset,
+                                        balance = balance, validation = validation)
 
                     if classifier == 'GaussianNB':
                         for param in ['naiveB']:
                             print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
                             cf = Classifier(x_train, y_train, classifier=classifier)
 
-                    y_prediction=predict(x_test, cf, target)
-                    confusion_m, accuracy, report = evaluation(y_test, y_prediction )
-                    printMatrix(target, confusion_m, classifier, param, dataset,
-                                balance = balance, validation = validation)
+                            y_prediction=predict(x_test, cf, target)
+                            confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                            printMatrix(target, confusion_m, classifier, param, dataset,
+                                        balance = balance, validation = validation)
 
             elif validation == 'crossvalidation':
                 if dataset == "drugs":  # will not run cross validation on drug dataset
@@ -484,67 +495,103 @@ def main():
 
                 confusion_m = np.zeros((2,2))
                 accuracy = 0
+                macro_precision = 0
+                macro_recall = 0
+                macro_f1 = 0
 
                 kf = KFold(n_splits=cv_splits)
                 for classifier in classifiers:
                     if classifier == 'DecisionTree' : # Run DecisionTreeClassifier
                         for param in ['gini','entropy'] :  # run the classifier with two different parameter
+                            print("\n\n\n\n\n")
                             for fold, (train_index, test_index) in enumerate(kf.split(x), 1):
                                 x_train = x.iloc[train_index]
                                 y_train = y.iloc[train_index]
                                 x_test = x.iloc[test_index]
                                 y_test = y.iloc[test_index]
                                 #for param in ['gini', 'entropy']:  # run the classifier with two different parameter
-                                print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
+                                print("Results of " + classifier + " " + param + ". Index for " + target )
                                 cf = Classifier(x_train,y_train, classifier=classifier, criterion=param )
                                 y_prediction=predict(x_test,cf,target)
                                 confusion_mT, accuracyT, report = evaluation(y_test, y_prediction, None)
                                 confusion_m += confusion_mT
                                 accuracy += accuracyT
+                                macro_precision += report['macro avg']['precision']
+                                macro_recall += report['macro avg']['recall']
+                                macro_f1 += report['macro avg']['f1-score']
                             # after all folds, rescale the matrix and the accuracy and print it
                             row_sums = confusion_m.sum(axis=1)
                             confusion_m = confusion_m / row_sums[:, np.newaxis]
                             accuracy /= cv_splits
+                            macro_precision /= cv_splits
+                            macro_recall /= cv_splits
+                            macro_f1 /= cv_splits
+                            print("Accuracy:", accuracy)
+                            print("Precision (macro avg):", macro_precision)
+                            print("Recall (macro avg):", macro_recall)
+                            print("F1-score (macro avg):", macro_f1)
                             printMatrix(target, confusion_m, classifier, param, dataset,
                                         balance = balance, validation = validation)
 
                     if classifier == 'KNeighbors':
                         for param in [5, 10 , 50]:
+                            print("\n\n\n\n\n")
                             for fold, (train_index, test_index) in enumerate(kf.split(x), 1):
                                 x_train = x.iloc[train_index]
                                 y_train = y.iloc[train_index]
                                 x_test = x.iloc[test_index]
                                 y_test = y.iloc[test_index]
-                                print("\n\n\n\n\nResults of " + classifier + " with k=" + str(param) + ". Index for " + target )
+                                print("Results of " + classifier + " with k=" + str(param) + ". Index for " + target )
                                 cf = Classifier(x_train, y_train, classifier=classifier, n_neighbors = param )
                                 y_prediction=predict(x_test,cf,target)
                                 confusion_mT, accuracyT, report = evaluation(y_test, y_prediction, None)
                                 confusion_m += confusion_mT
                                 accuracy += accuracyT
+                                macro_precision += report['macro avg']['precision']
+                                macro_recall += report['macro avg']['recall']
+                                macro_f1 += report['macro avg']['f1-score']
                             # after all folds, rescale the matrix and the accuracy and print it
                             row_sums = confusion_m.sum(axis=1)
                             confusion_m = confusion_m / row_sums[:, np.newaxis]
                             accuracy /= cv_splits
+                            macro_precision /= cv_splits
+                            macro_recall /= cv_splits
+                            macro_f1 /= cv_splits
+                            print("Accuracy:", accuracy)
+                            print("Precision (macro avg):", macro_precision)
+                            print("Recall (macro avg):", macro_recall)
+                            print("F1-score (macro avg):", macro_f1)
                             printMatrix(target, confusion_m, classifier, param, dataset,
                                         balance = balance, validation = validation)
 
                     if classifier == 'GaussianNB':
                         for param in ['naiveB']:
+                            print("\n\n\n\n\n")
                             for fold, (train_index, test_index) in enumerate(kf.split(x), 1):
                                 x_train = x.iloc[train_index]
                                 y_train = y.iloc[train_index]
                                 x_test = x.iloc[test_index]
                                 y_test = y.iloc[test_index]
-                                print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
+                                print("Results of " + classifier + " " + param + ". Index for " + target )
                                 cf = Classifier(x_train, y_train, classifier=classifier)
                                 y_prediction=predict(x_test, cf, target)
                                 confusion_mT, accuracyT, report = evaluation(y_test, y_prediction, None )
                                 confusion_m += confusion_mT
                                 accuracy += accuracyT
+                                macro_precision += report['macro avg']['precision']
+                                macro_recall += report['macro avg']['recall']
+                                macro_f1 += report['macro avg']['f1-score']
                             # after all folds, rescale the matrix and the accuracy and print it
                             row_sums = confusion_m.sum(axis=1)
                             confusion_m = confusion_m / row_sums[:, np.newaxis]
                             accuracy /= cv_splits
+                            macro_precision /= cv_splits
+                            macro_recall /= cv_splits
+                            macro_f1 /= cv_splits
+                            print("Accuracy:", accuracy)
+                            print("Precision (macro avg):", macro_precision)
+                            print("Recall (macro avg):", macro_recall)
+                            print("F1-score (macro avg):", macro_f1)
                             printMatrix(target, confusion_m, classifier, param, dataset,
                                         balance = balance, validation = validation)
             else:
@@ -559,13 +606,13 @@ if __name__=="__main__":
     classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
     datasets = ['asteroids', 'advertisingBidding', 'breastCancer', 'drugs']
 
-    balance = True
-    validation = 'holdout'
-    main()
+    #balance = True
+    #validation = 'holdout'
+    #main()
 
-    balance = False
-    validation = 'holdout'
-    main()
+    #balance = False
+    #validation = 'holdout'
+    #main()
 
     balance = True
     validation = 'crossvalidation'
