@@ -149,12 +149,9 @@ def Classifier(x_train,y_train, classifier='tree', criterion="gini",  n_neighbor
     input  ::   classifier:  tree   DecisionTreeClassifier
                              kNN    KNeighborsClassifier
                              naive  GaussianNB
-
                 criterion: gini
                            entropy     valid only for DecisionTreeClassifier
-
                 n_neighbors : (4)      valid only for KNeighborsClassifier
-
     """
 
     if classifier == 'DecisionTree':
@@ -743,7 +740,11 @@ if __name__=="__main__":
 
     datasets = ['drugs']
     classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
+<<<<<<< HEAD
 
+=======
+    datasets = ['asteroids', 'advertisingBidding', 'breastCancer', 'drugs']
+>>>>>>> f4a2576de0e1d00a9997002fc1de1b4b1640d1fa
 
     balance = True
     validation = 'holdout'
