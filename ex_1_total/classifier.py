@@ -463,20 +463,28 @@ def main():
                             print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
                             cf = Classifier(x_train,y_train, classifier=classifier, criterion=param )
 
+                            y_prediction=predict(x_test, cf, target)
+                            confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                            printMatrix(target, confusion_m, classifier, param, dataset,
+                                        balance = balance, validation = validation)
                     if classifier == 'KNeighbors':
                         for param in [5, 10 , 50]:
                             print("\n\n\n\n\nResults of " + classifier + " with k=" + str(param) + ". Index for " + target )
                             cf = Classifier(x_train, y_train, classifier=classifier, n_neighbors = param )
 
+                            y_prediction=predict(x_test, cf, target)
+                            confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                            printMatrix(target, confusion_m, classifier, param, dataset,
+                                        balance = balance, validation = validation)
                     if classifier == 'GaussianNB':
                         for param in ['naiveB']:
                             print("\n\n\n\n\nResults of " + classifier + " " + param + ". Index for " + target )
                             cf = Classifier(x_train, y_train, classifier=classifier)
 
-                    y_prediction=predict(x_test, cf, target)
-                    confusion_m, accuracy, report = evaluation(y_test, y_prediction )
-                    printMatrix(target, confusion_m, classifier, param, dataset,
-                                balance = balance, validation = validation)
+                            y_prediction=predict(x_test, cf, target)
+                            confusion_m, accuracy, report = evaluation(y_test, y_prediction )
+                            printMatrix(target, confusion_m, classifier, param, dataset,
+                                        balance = balance, validation = validation)
 
             elif validation == 'crossvalidation':
                 if dataset == "drugs":  # will not run cross validation on drug dataset
