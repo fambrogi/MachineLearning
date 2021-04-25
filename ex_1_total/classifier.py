@@ -515,6 +515,11 @@ def main():
                 for classifier in classifiers:
                     if classifier == 'DecisionTree' : # Run DecisionTreeClassifier
                         for param in ['gini','entropy'] :  # run the classifier with two different parameter
+                            confusion_m = np.zeros((2,2))
+                            accuracy = 0
+                            macro_precision = 0
+                            macro_recall = 0
+                            macro_f1 = 0
                             print("\n\n")
                             for fold, (train_index, test_index) in enumerate(kf.split(x), 1):
                                 x_train = x.iloc[train_index]
@@ -547,6 +552,11 @@ def main():
 
                     if classifier == 'KNeighbors':
                         for param in [5, 10 , 50]:
+                            confusion_m = np.zeros((2,2))
+                            accuracy = 0
+                            macro_precision = 0
+                            macro_recall = 0
+                            macro_f1 = 0
                             print("\n\n")
                             for fold, (train_index, test_index) in enumerate(kf.split(x), 1):
                                 x_train = x.iloc[train_index]
@@ -578,6 +588,11 @@ def main():
 
                     if classifier == 'GaussianNB':
                         for param in ['naiveB']:
+                            confusion_m = np.zeros((2,2))
+                            accuracy = 0
+                            macro_precision = 0
+                            macro_recall = 0
+                            macro_f1 = 0
                             print("\n\n")
                             for fold, (train_index, test_index) in enumerate(kf.split(x), 1):
                                 x_train = x.iloc[train_index]
@@ -616,19 +631,19 @@ def main():
 if __name__=="__main__":
 
     classifiers = ['KNeighbors', 'DecisionTree', 'GaussianNB']
-    datasets = ['drugs']
+    datasets = ['asteroids']
 
-    #balance = True
-    #validation = 'holdout'
-    #main()
+    balance = True
+    validation = 'holdout'
+    main()
 
     balance = False
     validation = 'holdout'
     main()
 
-    #balance = True
-    #validation = 'crossvalidation'
-    #main()
+    balance = True
+    validation = 'crossvalidation'
+    main()
 
     balance = False
     validation = 'crossvalidation'
