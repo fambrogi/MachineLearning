@@ -67,9 +67,3 @@ def getSplitAttribute(dataframe,target):
     indexMax=reductionList.index(maxReduction)
     return dataframe.columns[indexMax]
 
-def main():
-    print(getSplitAttribute(dataset,'G1'))
-
-
-if __name__ == '__main__':
-    main()
