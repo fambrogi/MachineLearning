@@ -1,14 +1,27 @@
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, RepeatedKFold
 import utilities as util
 import pandas as pd
 import numpy as np
 import regressionTree as tree
+from sklearn.model_selection import KFold
 
 
 #the method splits the dataset in train set and test set
 def split(dataset):
     train,test=train_test_split(dataset,test_size=0.3,shuffle=True)
     return train,test
+
+#the method implements the cross validation split
+def crossSplit(dataset,folds):
+    trainSets=[]
+    testSets=[]
+    kfold=RepeatedKFold(n_splits=folds,n_repeats=1, random_state=None)
+    for train_index, test_index in kfold.split(dataset):
+       trainSets.append(dataset.iloc[train_index, :])
+       testSets.append(dataset.iloc[test_index, :])
+    return trainSets,testSets
+
+
 
 #given the train set the regression tree is created
 def train(dataset,target):
@@ -54,16 +67,15 @@ def test(testSet,target,treeHead):
         for node in treeHead.childList:
             if(assigned == -1):
                 assigned=assignValue(row,node,assigned,target)
-                if assigned != -1:
-                    if assigned== None:
-                        results.append(0)
-                    else:
+                if(assigned == None):
+                    assigned=node.avg
+                if assigned != -1 and assigned != None:
                         results.append(assigned)
-                    assigned=-1
-                    break
+                        assigned=-1
+                        break
             else:
                 assigned=-1
-                break
+
     return results
 
 def rootMeanSquaredError(testCol,solutionCol):
@@ -81,15 +93,21 @@ def rootMeanSquaredError(testCol,solutionCol):
 
 def main():
     dataset = pd.read_csv("data/" + 'student-mat.csv')
-    target = 'G3'
-    trainSet,testSet=split(dataset)
-    print('training')
-    root = train(trainSet, target)
-    solCol,testSet=prepareTest(testSet,target)
-    print('testing')
-    results=test(testSet,target,root)
-    rmsq=rootMeanSquaredError(results,solCol)
-    print(rmsq)
+    target = 'G1'
+    folds=5
+    trainList,testList=crossSplit(dataset,5)
+    rmsqList=[]
+    for i in range(len(trainList)):
+        print('training fold '+str(i))
+        root = train(trainList[i], target)
+        solCol,testSet=prepareTest(testList[i],target)
+        print('testing fold ' + str(i))
+        results=test(testSet,target,root)
+        rmsq=rootMeanSquaredError(results,solCol)
+        rmsqList.append(rmsq)
+    print(rmsqList)
+    rmsqAvg=sum(rmsqList)/folds
+    print(rmsqAvg)
 
 if __name__ == '__main__':
     main()

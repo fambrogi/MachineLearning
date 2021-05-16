@@ -34,13 +34,12 @@ class Node:
                 self.childList.append(Node(util.getValues(self.dataset,splitAttribute,value),splitAttribute,value,self.target))
 
     def print(self):
-        temp=self.attribute+'-'+str(self.value)+'-'+str(self.avg)
+        print(self.attribute+" "+str(self.value))
         if(len(self.childList)!=0):
             for child in self.childList:
-                temp+='\t'+child.print()
+                child.print()
         else:
-            temp+=' LEAF NODE'+'\n\n'
-        return temp
+            print("END")
 
 
 class Root:
@@ -65,9 +64,9 @@ class Root:
                 self.childList.append(Node(util.getValues(self.dataset,splitAttribute,value), splitAttribute, value, self.target))
 
     def print(self):
-        temp='Root'+'-'+str(self.avg)
+
         for child in self.childList:
-            temp+=child.print()+'\n'
+            child.print()
         return temp
 
 
@@ -76,7 +75,6 @@ def main():
     target = 'G1'
     print('creating tree')
     root=Root(dataset,target)
-
     print(root.print())
 
 
