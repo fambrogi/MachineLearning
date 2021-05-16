@@ -91,27 +91,50 @@ def rootMeanSquaredError(testCol,solutionCol):
     return np.sqrt(mean)
 
 
-def main():
-    dataset = pd.read_csv("data/" + 'student-mat.csv')
-    target = 'G1'
-    folds=5
-    trainList,testList=crossSplit(dataset,5)
-    rmsqList=[]
-    for i in range(len(trainList)):
-        print('training fold '+str(i))
-        root = train(trainList[i], target)
-        solCol,testSet=prepareTest(testList[i],target)
-        print('testing fold ' + str(i))
-        results=test(testSet,target,root)
-        rmsq=rootMeanSquaredError(results,solCol)
-        rmsqList.append(rmsq)
-    print(rmsqList)
-    rmsqAvg=sum(rmsqList)/folds
-    print(rmsqAvg)
+def run(dataset, targets, folds):
+    """ Wrapper function to train the model on the input dataset and target feature """
+    # todo  here it goes the data cleaning !!!
+
+    """ Reading, cleaning, splitting the data """
+    print('*** Reading and preparing the dataset: ' , dataset )
+
+    dataset = pd.read_csv(dataset)
+    trainSet, testSet = split(dataset)
+
+    for target in targets:
+
+        print('*** Training the dataset: ', dataset, ' on the target: ', target , ' using ' , folds , ' folds cross-validation ')
+        trainList, testList = crossSplit(dataset, 5)
+        rmsqList = []
+
+        for i in range(len(trainList)):
+
+            print('*** Fold: ', i )
+            root = train(trainList[i], target)
+            solCol,testSet = prepareTest(testList[i], target)
+            results = test(testSet, target, root)
+            rmsq = rootMeanSquaredError(results,solCol)
+            rmsqList.append(rmsq)
+            print('*** Partial root mean square: ', rmsq )
+
+        print('*** ')
+        rmsqAvg=np.mean(rmsqList)
+        print("*** Global root mean square: ",rmsqAvg)
+
+
+""" Dictionary of the datasets """
+data = {'data/student-mat.csv': ['G1', 'G2', 'G3'], }
+
+""" Folds for cross-validation """
+folds = 5
+data = {'data/student-mat.csv': ['G1', 'G2', 'G3'], }
+
 
 if __name__ == '__main__':
-    main()
 
+    """ Selecting the datasets and respective targets """
+    for ds in data.keys():
+        run(ds, data[ds], folds)
 
 
 
