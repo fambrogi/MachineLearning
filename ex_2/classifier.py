@@ -123,10 +123,14 @@ def run(dataset, targets, folds):
 
 
 """ Dictionary of the datasets """
-data = {'data/student-mat.csv': ['G1', 'G2', 'G3'], }
+data = { 'data/student-mat.csv': ['G1', 'G2', 'G3'],
+         'data/Life_Expectancy_Data.csv': ['boh'],
+         'data/Fish.csv': ['weight'],
+}
 
 """ Folds for cross-validation """
 folds = 5
+
 data = {'data/student-mat.csv': ['G1', 'G2', 'G3'], }
 
 
