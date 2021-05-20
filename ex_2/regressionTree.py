@@ -1,3 +1,5 @@
+from sklearn.model_selection import cross_val_score
+
 import utilities as util
 import pandas as pd
 import numpy as np
@@ -27,10 +29,17 @@ class Node:
             return
         else:
             splitAttribute=util.getSplitAttribute(self.dataset,self.target)
+            valueAverage=sum(self.dataset[splitAttribute])/self.numberOfRows
+            left=Node(self.dataset.loc[self.dataset[splitAttribute]<valueAverage],splitAttribute,valueAverage,self.target)
+            right=Node(self.dataset.loc[self.dataset[splitAttribute]>valueAverage],splitAttribute,valueAverage,self.target)
+            '''
             dictionary=util.getAttributesValues(self.dataset)
             values=dictionary.get(splitAttribute)
             for value in values:
                 self.childList.append(Node(util.getValues(self.dataset,splitAttribute,value),splitAttribute,value,self.target))
+            '''
+            self.childList.append(left)
+            self.childList.append(right)
 
     def print(self):
         print(self.attribute+" "+str(self.value))
@@ -57,16 +66,25 @@ class Root:
             return
         else:
             splitAttribute = util.getSplitAttribute(self.dataset, self.target)
-            dictionary = util.getAttributesValues(self.dataset)
-            values = dictionary.get(splitAttribute)
+
+            valueAverage = sum(self.dataset[splitAttribute]) / self.numberOfRows
+            left = Node(self.dataset.loc[self.dataset[splitAttribute] < valueAverage], splitAttribute, valueAverage, self.target)
+            right = Node(self.dataset.loc[self.dataset[splitAttribute] >= valueAverage], splitAttribute, valueAverage, self.target)
+
+            '''
+            dictionary=util.getAttributesValues(self.dataset)
+            values=dictionary.get(splitAttribute)
             for value in values:
-                self.childList.append(Node(util.getValues(self.dataset,splitAttribute,value), splitAttribute, value, self.target))
+                self.childList.append(Node(util.getValues(self.dataset,splitAttribute,value),splitAttribute,value,self.target))
+            '''
+            self.childList.append(left)
+            self.childList.append(right)
 
     def print(self):
 
         for child in self.childList:
             child.print()
-        return temp
+
 
 
 """

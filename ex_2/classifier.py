@@ -125,11 +125,14 @@ def run(ds, folds):
         for i in range(len(trainList)):
 
             print('*** Calculating Fold: ', i )
+            print('training')
             root = train(trainList[i], target)
             solCol,testSet = prepareTest(testList[i], target)
+            print('testing')
             results = test(testSet, target, root)
-
+            print(results)
             """ Saving the errors for plotting """
+
             mse_rmse_mae = regressionErrors(results,solCol)
             errors.append(mse_rmse_mae)
 
