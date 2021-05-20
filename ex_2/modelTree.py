@@ -25,26 +25,28 @@ class Node:
         self.numberOfRows=dataset.shape[0]
         #creating the model and computing the loss of the node
         self.model=util.getLinearClassifier()
-        self.train, self.test = train_test_split(dataset, test_size=0.3, shuffle=True)
-        util.fitLinearRegressor(dataset,target,self.model)
-        self.prediction=util.predict(self.model,self.test)
-        self.loss=util.loss(dataset[target],self.prediction)
+        X_train, X_test, y_train, y_test = train_test_split(dataset, dataset[target], test_size=0.3, shuffle=True)
+        util.fitLinearRegressor(X_train, y_train, self.model)
+        self.prediction = util.predict(self.model, X_test)
+        self.loss = util.loss(y_test, self.prediction)
         self.split()
 
     def split(self):
         if (self.numberOfRows<8 or self.cof< 0.1):
             return
         else:
-            splitAttribute=util.getSplitAttribute(self.dataset,self.target)
-            dictionary=util.getAttributesValues(self.dataset)
-            values=dictionary.get(splitAttribute)
-            for value in values:
-                child=Node(util.getValues(self.dataset,splitAttribute,value),splitAttribute,value,self.target)
-                lossSplit=child.numberOfRows*child.loss
-                self.childList.append(child)
-            lossSplit=lossSplit/self.numberOfRows
-            if(lossSplit>=self.loss):
-                self.childList=[]
+            splitAttribute = util.getSplitAttribute(self.dataset, self.target)
+            valueAverage = sum(self.dataset[splitAttribute]) / self.numberOfRows
+            left = Node(self.dataset.loc[self.dataset[splitAttribute] < valueAverage], splitAttribute, valueAverage,
+                        self.target)
+            right = Node(self.dataset.loc[self.dataset[splitAttribute] >= valueAverage], splitAttribute,
+                         valueAverage, self.target)
+            lossSplit = (left.numberOfRows * left.loss) + (right.numberOfRows * right.loss)
+            self.childList.append(right)
+            self.childList.append(left)
+            lossSplit = lossSplit / self.numberOfRows
+            if (lossSplit >= self.loss):
+                self.childList = []
 
     def print(self):
         print(self.attribute+" "+str(self.value))
@@ -67,7 +69,6 @@ class Root:
         self.numberOfRows = dataset.shape[0]
         # creating the model and computing the loss of the node
         self.model = util.getLinearClassifier()
-        print(dataset[target])
         X_train, X_test, y_train, y_test = train_test_split(dataset,dataset[target], test_size=0.3, shuffle=True)
         util.fitLinearRegressor(X_train, y_train, self.model)
         self.prediction = util.predict(self.model, X_test)
@@ -78,16 +79,18 @@ class Root:
         if (self.numberOfRows < 8 or self.cof < 0.1):
             return
         else:
-            splitAttribute = util.getSplitAttribute(self.dataset, self.target)
-            dictionary = util.getAttributesValues(self.dataset)
-            values = dictionary.get(splitAttribute)
-            for value in values:
-                child = Node(util.getValues(self.dataset, splitAttribute, value), splitAttribute, value, self.target)
-                lossSplit = child.numberOfRows * child.loss
-                self.childList.append(child)
-            lossSplit = lossSplit / self.numberOfRows
-            if (lossSplit >= self.loss):
-                self.childList = []
+           splitAttribute = util.getSplitAttribute(self.dataset, self.target)
+           valueAverage = sum(self.dataset[splitAttribute]) / self.numberOfRows
+           left = Node(self.dataset.loc[self.dataset[splitAttribute] < valueAverage], splitAttribute, valueAverage,
+                            self.target)
+           right = Node(self.dataset.loc[self.dataset[splitAttribute] >= valueAverage], splitAttribute,
+                             valueAverage, self.target)
+           lossSplit = (left.numberOfRows * left.loss )+(right.numberOfRows*right.loss)
+           self.childList.append(right)
+           self.childList.append(left)
+           lossSplit = lossSplit / self.numberOfRows
+           if (lossSplit >= self.loss):
+               self.childList = []
 
     def print(self):
 
@@ -96,16 +99,6 @@ class Root:
 
 
 
-def main():
-    dataset = pd.read_csv("data/" + 'student-mat.csv')
-    target = 'G1'
-    print('creating tree')
-    root=Root(dataset,target)
-    print(root.print())
-
-
-if __name__ == '__main__':
-    main()
 
 
 

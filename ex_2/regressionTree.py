@@ -29,6 +29,7 @@ class Node:
             return
         else:
             splitAttribute=util.getSplitAttribute(self.dataset,self.target)
+
             valueAverage=sum(self.dataset[splitAttribute])/self.numberOfRows
             left=Node(self.dataset.loc[self.dataset[splitAttribute]<valueAverage],splitAttribute,valueAverage,self.target)
             right=Node(self.dataset.loc[self.dataset[splitAttribute]>valueAverage],splitAttribute,valueAverage,self.target)
@@ -66,7 +67,6 @@ class Root:
             return
         else:
             splitAttribute = util.getSplitAttribute(self.dataset, self.target)
-
             valueAverage = sum(self.dataset[splitAttribute]) / self.numberOfRows
             left = Node(self.dataset.loc[self.dataset[splitAttribute] < valueAverage], splitAttribute, valueAverage, self.target)
             right = Node(self.dataset.loc[self.dataset[splitAttribute] >= valueAverage], splitAttribute, valueAverage, self.target)

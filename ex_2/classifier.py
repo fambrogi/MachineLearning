@@ -5,6 +5,7 @@ from utilities import *
 import pandas as pd
 import numpy as np
 import regressionTree as tree
+import modelTree
 from sklearn.model_selection import KFold
 import os
 import matplotlib.pyplot as plt
@@ -127,17 +128,22 @@ def run(ds, folds):
             print('*** Calculating Fold: ', i )
             print('training')
             root = train(trainList[i], target)
+            modelTreeRoot=modelTree.Root(trainList[i],target)
             solCol,testSet = prepareTest(testList[i], target)
             print('testing')
             results = test(testSet, target, root)
-            print(results)
+            resultsModelTree=test(testSet,target,modelTreeRoot)
+            #print(results)
+            #print(resultsModelTree)
             """ Saving the errors for plotting """
 
-            mse_rmse_mae = regressionErrors(results,solCol)
-            errors.append(mse_rmse_mae)
+            mse_rmse_mae_regressionTree = regressionErrors(results,solCol)
+            mse_rmse_mae_modelTree = regressionErrors(resultsModelTree, solCol)
+            errors.append(mse_rmse_mae_regressionTree)
+            errors.append(mse_rmse_mae_modelTree)
 
-
-            print('*** Fold MSE, RMSE, MAE: ', mse_rmse_mae )
+            print('*** Fold MSE, RMSE, MAE regression tree: ', mse_rmse_mae_regressionTree )
+            print('*** Fold MSE, RMSE, MAE model tree: ', mse_rmse_mae_modelTree)
 
         dummy_make_plot = plot_rms(errors, ds, target)
 
