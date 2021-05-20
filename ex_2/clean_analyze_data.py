@@ -1,19 +1,41 @@
 """ Module for cleaning and analyzing the data sets """
 
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-data = { 'data/student-mat.csv': ['G1', 'G2', 'G3'],
-         'data/Life_Expectancy_Data.csv': ['boh'],
-         'data/Fish.csv': ['weight'],
-}
 
+""" Storing the information of all datasets.
+    Column names as they appear after data cleaning. """
 
-ds_names = ['math', 'fish', 'life', 'wind']
-ds_path= ['data/student-mat.csv', 'data/Fish.csv', 'data/Life_Expectancy_Data.csv', 'data/wind_train_data.csv']
+data = {'math': {'path': 'data/student-mat.csv',
+                 'features': [],
+                 'drop': [],
+                 'targets' : ['G1', 'G2', 'G3']},
 
+        'life': { 'path': 'data/Life_Expectancy_Data.csv',
+                  'features': ['AdultMortality',
+                               'infantdeaths', 'Alcohol', 'percentageexpenditure', 'HepatitisB',
+                               'Measles', 'BMI', 'under-fivedeaths', 'Polio', 'Totalexpenditure',
+                               'Diphtheria', 'HIV/AIDS', 'GDP', 'Population', 'thinness1-19years',
+                               'thinness5-9years', 'Incomecompositionofresources', 'Schooling' ],
+                  'drop': [],
+                  'targets' : ['Lifeexpectancy']},
+
+        'wind': {'path': 'data/wind_train_data.csv',
+                  'features': ['wind_speed(m/s)',
+                               'atmospheric_temperature(°C)', 'shaft_temperature(°C)',
+                               'blades_angle(°)', 'gearbox_temperature(°C)', 'engine_temperature(°C)',
+                               'motor_torque(N-m)', 'generator_temperature(°C)',
+                               'atmospheric_pressure(Pascal)', 'area_temperature(°C)',
+                               'windmill_body_temperature(°C)', 'wind_direction(°)', 'resistance(ohm)',
+                               'rotor_torque(N-m)', 'blade_length(m)',
+                               'blade_breadth(m)', 'windmill_height(m)' ],
+
+                  'drop': ['turbine_status', 'cloud_level', 'tracking_id', 'datetime'],
+                  'targets': ['windmill_generated_power(kW_h)']},
+
+        }
 
 def histo(name='', column='' , df = '' ):
     os.system('mkdir Plots/')
@@ -29,17 +51,43 @@ def histo(name='', column='' , df = '' ):
     plt.close()
 
 
-def clean(name, df):
 
-    if name=='life': # removing "/" character from column name
-        df.rename(columns= {' HIV/AIDS': 'HIV_AIDS'}, inplace=True)
-        print(0)
+""" Main modules to clean the df before training """
 
-    df = df.dropna() # removing nans from dataframe
+def load_clean_data(name):
+    """ Main utility to clean and prepare the data """
 
+    df = pd.read_csv(data[name]['path'])
+
+    # Dropping empty space in column names
+    for c in df.columns: #
+        if c != c.replace(' ','_'):
+            df.rename(columns={c: c.replace(' ','')}, inplace=True)
+        if '/' in c:
+            df.rename(columns={c: c.replace('/','_')}, inplace=True)
+
+    # Clean values from nans
+    df = df.dropna()
+
+    # Shuffling data
+    df = df.sample(frac=1)
+
+    # Print general information on the dataset
+    df.describe()
+
+    # Dropping not used columns
+    if data[name]['drop']:
+        df = df.drop(columns=data[name]['drop'])
     return df
 
 
+
+ds = 'wind'
+a = load_clean_data(ds)
+
+
+"""
+# to fix, later 
 for n,p in zip(ds_names, ds_path):
     df = pd.read_csv(p)
     df = clean(n,df)
@@ -48,6 +96,6 @@ for n,p in zip(ds_names, ds_path):
         if 'id' in c or 'time' in c:
             continue
         dummy = histo(name=n, column= c , df = df )
-
+"""
 
 

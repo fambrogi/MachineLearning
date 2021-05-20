@@ -1,15 +1,14 @@
 import utilities as util
 import pandas as pd
 import numpy as np
-
-
-
-
+from sklearn.tree import export_graphviz
+from sklearn.tree import DecisionTreeRegressor
 
 #A node is initialized given its version of the dataset the attribute and value associated with that node
 #computed by the father node
 #given the values that it computes cof and number of rows it will decide if split again and generate new nodes or became
 #a leaf
+
 class Node:
     def __init__(self,dataset,attribute,value,target):
         self.dataset=dataset
@@ -35,7 +34,7 @@ class Node:
 
     def print(self):
         print(self.attribute+" "+str(self.value))
-        if(len(self.childList)!=0):
+        if len(self.childList) != 0:
             for child in self.childList:
                 child.print()
         else:
@@ -70,15 +69,29 @@ class Root:
         return temp
 
 
+"""
 def main():
     dataset = pd.read_csv("data/" + 'student-mat.csv')
     target = 'G1'
     print('creating tree')
     root=Root(dataset,target)
     print(root.print())
-
-
+    
 if __name__ == '__main__':
     main()
+    
+"""
+
+
+
+def sk_regression(df, kfolds, train_df, test_df):
+    """ Trains the model using the DecisionTreeRegressor from sklearn """
+    for c in ['mse','mae','poisson']: # different crtieria for splitting
+        regressor = DecisionTreeRegressor(random_state=0, criterion=c)
+        cross_val_score(regressor, X, y, cv=kfolds)
+
+    return 0
+
+
 
 

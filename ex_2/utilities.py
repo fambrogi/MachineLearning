@@ -35,7 +35,6 @@ def getDatasetInfo(dataframe,target):
     return numRows,std
 
 #given the attribute compute the weighted standard deviation
-
 def getStandardDeviationReduction(dataframe,attribute,values,target):
     genNumberOfRows=getDatasetInfo(dataframe,target)[0]
     genStd=getDatasetInfo(dataframe,target)[1]
@@ -51,7 +50,6 @@ def getStandardDeviationReduction(dataframe,attribute,values,target):
     return genStd-weightedSum
 
 #the method computes for each attribute the standard deviation reduction and puts them in a list
-
 def getReductions(dataframe,target):
     valuesDictionary = getAttributesValues(dataframe)
     reductionsList=[]
@@ -67,3 +65,42 @@ def getSplitAttribute(dataframe,target):
     indexMax=reductionList.index(maxReduction)
     return dataframe.columns[indexMax]
 
+
+
+
+
+def regressionErrors(testCol,solutionCol):
+    """ Calculate MSE (mean squared error), RMSE (roor-MSE), MAE(mean absolute error) """
+
+    differences = (solutionCol.values - testCol )
+    MSE = np.mean(differences**2)
+    RMSE = np.sqrt(np.mean(differences**2))
+    MAE = np.mean(np.absolute(differences) )
+
+
+    """ # manual formula for checking     
+    sum=0
+    for s,t in zip(solutionCol.values, testCol) :
+        difference= s -t
+        squaredDiff=difference**2
+        sum+=squaredDiff
+    mean2=sum/solutionCol.shape[0]
+
+    # wrong due to pop removing last item in the array
+    for i in solutionCol.index:
+        regressorResult=testCol.pop()
+        realResult=solutionCol.loc[i]
+        #observed-predicted
+        difference=realResult-regressorResult
+        squaredDiff=difference**2
+        sum+=squaredDiff
+    mean=sum/solutionCol.shape[0]
+    """
+
+    return [MSE, RMSE, MAE]
+
+
+
+"""
+For Plotting
+"""
