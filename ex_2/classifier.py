@@ -1,14 +1,36 @@
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, RepeatedKFold
 import utilities as util
+from utilities import *
+
 import pandas as pd
 import numpy as np
 import regressionTree as tree
+import modelTree
+from sklearn.model_selection import KFold
+import os
+import matplotlib.pyplot as plt
+from clean_analyze_data import load_clean_data, data
 
 
 #the method splits the dataset in train set and test set
 def split(dataset):
+<<<<<<< HEAD
     train,test= train_test_split(dataset, test_size=0.3, shuffle=True )
+=======
+    train,test=train_test_split(dataset, test_size=0.3,shuffle=True)
+>>>>>>> 084dc0cba846c8a783196ae177f9f9043fb4294c
     return train,test
+
+#the method implements the cross validation split
+def crossSplit(dataset,folds):
+    trainSets=[]
+    testSets=[]
+    kfold=RepeatedKFold(n_splits=folds, n_repeats=1, random_state=None)
+    for train_index, test_index in kfold.split(dataset):
+       trainSets.append(dataset.iloc[train_index, :])
+       testSets.append(dataset.iloc[test_index, :])
+    return trainSets,testSets
+
 
 #given the train set the regression tree is created
 def train(dataset,target):
@@ -54,18 +76,18 @@ def test(testSet,target,treeHead):
         for node in treeHead.childList:
             if(assigned == -1):
                 assigned=assignValue(row,node,assigned,target)
-                if assigned != -1:
-                    if assigned== None:
-                        results.append(0)
-                    else:
+                if(assigned == None):
+                    assigned=node.avg
+                if assigned != -1 and assigned != None:
                         results.append(assigned)
-                    assigned=-1
-                    break
+                        assigned=-1
+                        break
             else:
                 assigned=-1
-                break
+
     return results
 
+<<<<<<< HEAD
 def rootMeanSquaredError(testCol,solutionCol):
     sum=0
     for i in solutionCol.index:
@@ -81,10 +103,38 @@ def rootMeanSquaredError(testCol,solutionCol):
 
 
 def run(dataset, targets):
+=======
+
+
+def plot_rms(errors, ds_name, target):
+    """ Plot punctual and averaged errors for each fold """
+
+    os.system('mkdir Plots/results/')
+    fs = 15
+    for l,i,c in zip(['MSE', 'RMSE', 'MAE'], [0,1,2], ['lime', 'gold', 'blue']):
+
+        plt.scatter(range(1,len(errors)+1), [f[i] for f in errors], label=l, color = c )
+        plt.plot(range(1,len(errors)+1), np.full(len(errors), np.mean([g[i] for g in errors])),
+                 label='Average', ls='--', color = c )
+
+    plt.xlabel('K-fold')
+    plt.legend(fontsize=7)
+    plt.grid(ls=':', color='lightgray')
+    plt.title('Dataset ' + ds_name + ' - Target feature: ' + target, fontsize=fs)
+
+    plt.xticks(np.arange(1, len(errors)+1, 1.0))
+
+    plt.savefig('Plots/results/' + ds_name + '_' + target + '.png', dpi=150 )
+    plt.close()
+
+
+def run(ds, folds):
+>>>>>>> 084dc0cba846c8a783196ae177f9f9043fb4294c
     """ Wrapper function to train the model on the input dataset and target feature """
     # todo  here it goes the data cleaning !!!
 
     """ Reading, cleaning, splitting the data """
+<<<<<<< HEAD
     print('*** Reading and preparing the dataset: ' , dataset )
 
     dataset = pd.read_csv(dataset)
@@ -112,7 +162,78 @@ if __name__ == '__main__':
     """ Selecting the datasets and respective targets """
     for ds in data.keys():
         run(ds, data[ds])
+=======
+    dataset = load_clean_data(ds)
 
+    trainSet, testSet = split(dataset)
+
+    for target in data[ds]['targets']:
+
+        print('*** Training the dataset on the target: ', target , ' using ' , folds , ' folds cross-validation ')
+        trainList, testList = crossSplit(dataset, folds)
+
+        errors = []
+
+        for i in range(len(trainList)):
+
+            print('*** Calculating Fold: ', i )
+            print('training')
+            root = train(trainList[i], target)
+            modelTreeRoot=modelTree.Root(trainList[i],target)
+            solCol,testSet = prepareTest(testList[i], target)
+            print('testing')
+            results = test(testSet, target, root)
+            resultsModelTree=test(testSet,target,modelTreeRoot)
+            #print(results)
+            #print(resultsModelTree)
+            """ Saving the errors for plotting """
+
+            mse_rmse_mae_regressionTree = regressionErrors(results,solCol)
+            mse_rmse_mae_modelTree = regressionErrors(resultsModelTree, solCol)
+            errors.append(mse_rmse_mae_regressionTree)
+            errors.append(mse_rmse_mae_modelTree)
+
+            print('*** Fold MSE, RMSE, MAE regression tree: ', mse_rmse_mae_regressionTree )
+            print('*** Fold MSE, RMSE, MAE model tree: ', mse_rmse_mae_modelTree)
+
+        dummy_make_plot = plot_rms(errors, ds, target)
+
+        print('*** Done Fold: ', i)
+
+
+
+
+
+
+""" # data as imported from clean_analyze_data
+
+data = {'math': {'path': 'data/student-mat.csv',
+                 'features': [],
+                 'targets' : ['G1', 'G2', 'G3']},
+
+        'life': { 'path': 'data/Life_Expectancy_Data.csv',
+                  'features': ['AdultMortality',
+                               'infantdeaths', 'Alcohol', 'percentageexpenditure', 'HepatitisB',
+                               'Measles', 'BMI', 'under-fivedeaths', 'Polio', 'Totalexpenditure',
+                               'Diphtheria', 'HIV/AIDS', 'GDP', 'Population', 'thinness1-19years',
+                               'thinness5-9years', 'Incomecompositionofresources', 'Schooling' ],
+                  'targets' : ['Lifeexpectancy']},
+        }
+
+"""
+
+
+""" Folds for cross-validation """
+folds = 5
+datasets = ['wind']
+
+
+if __name__ == '__main__':
+>>>>>>> 084dc0cba846c8a783196ae177f9f9043fb4294c
+
+    """ Selecting the datasets and respective targets """
+    for ds in datasets: # these are the keys of the data dictionary i.e. names of the datasets
+        run(ds, folds)
 
 
 

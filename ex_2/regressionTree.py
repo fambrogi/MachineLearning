@@ -1,11 +1,24 @@
+from sklearn.model_selection import cross_val_score
+
 import utilities as util
 import pandas as pd
 import numpy as np
+<<<<<<< HEAD
 
 # A node is initialized given its version of the dataset the attribute and value associated with that node
 # computed by the father node
 # given the values that it computes cof and number of rows it will decide if split again and generate new nodes or became
 # a leaf
+=======
+from sklearn.tree import export_graphviz
+from sklearn.tree import DecisionTreeRegressor
+
+#A node is initialized given its version of the dataset the attribute and value associated with that node
+#computed by the father node
+#given the values that it computes cof and number of rows it will decide if split again and generate new nodes or became
+#a leaf
+
+>>>>>>> 084dc0cba846c8a783196ae177f9f9043fb4294c
 class Node:
     def __init__(self,dataset,attribute,value,target):
         self.dataset=dataset
@@ -24,19 +37,26 @@ class Node:
             return
         else:
             splitAttribute=util.getSplitAttribute(self.dataset,self.target)
+
+            valueAverage=sum(self.dataset[splitAttribute])/self.numberOfRows
+            left=Node(self.dataset.loc[self.dataset[splitAttribute]<valueAverage],splitAttribute,valueAverage,self.target)
+            right=Node(self.dataset.loc[self.dataset[splitAttribute]>valueAverage],splitAttribute,valueAverage,self.target)
+            '''
             dictionary=util.getAttributesValues(self.dataset)
             values=dictionary.get(splitAttribute)
             for value in values:
                 self.childList.append(Node(util.getValues(self.dataset,splitAttribute,value),splitAttribute,value,self.target))
+            '''
+            self.childList.append(left)
+            self.childList.append(right)
 
     def print(self):
-        temp=self.attribute+'-'+str(self.value)+'-'+str(self.avg)
-        if(len(self.childList)!=0):
+        print(self.attribute+" "+str(self.value))
+        if len(self.childList) != 0:
             for child in self.childList:
-                temp+='\t'+child.print()
+                child.print()
         else:
-            temp+=' LEAF NODE'+'\n\n'
-        return temp
+            print("END")
 
 
 class Root:
@@ -55,30 +75,57 @@ class Root:
             return
         else:
             splitAttribute = util.getSplitAttribute(self.dataset, self.target)
-            dictionary = util.getAttributesValues(self.dataset)
-            values = dictionary.get(splitAttribute)
+            valueAverage = sum(self.dataset[splitAttribute]) / self.numberOfRows
+            left = Node(self.dataset.loc[self.dataset[splitAttribute] < valueAverage], splitAttribute, valueAverage, self.target)
+            right = Node(self.dataset.loc[self.dataset[splitAttribute] >= valueAverage], splitAttribute, valueAverage, self.target)
+
+            '''
+            dictionary=util.getAttributesValues(self.dataset)
+            values=dictionary.get(splitAttribute)
             for value in values:
-                self.childList.append(Node(util.getValues(self.dataset,splitAttribute,value), splitAttribute, value, self.target))
+                self.childList.append(Node(util.getValues(self.dataset,splitAttribute,value),splitAttribute,value,self.target))
+            '''
+            self.childList.append(left)
+            self.childList.append(right)
 
     def print(self):
-        temp='Root'+'-'+str(self.avg)
+
         for child in self.childList:
-            temp+=child.print()+'\n'
-        return temp
+            child.print()
 
 
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 084dc0cba846c8a783196ae177f9f9043fb4294c
 """
 def main():
     dataset = pd.read_csv("data/" + 'student-mat.csv')
     target = 'G1'
     print('creating tree')
     root=Root(dataset,target)
-
     print(root.print())
-
-
+    
 if __name__ == '__main__':
     main()
+<<<<<<< HEAD
 """
+=======
+    
+"""
+
+
+
+def sk_regression(df, kfolds, train_df, test_df):
+    """ Trains the model using the DecisionTreeRegressor from sklearn """
+    for c in ['mse','mae','poisson']: # different crtieria for splitting
+        regressor = DecisionTreeRegressor(random_state=0, criterion=c)
+        cross_val_score(regressor, X, y, cv=kfolds)
+
+    return 0
+
+
+
+>>>>>>> 084dc0cba846c8a783196ae177f9f9043fb4294c
 

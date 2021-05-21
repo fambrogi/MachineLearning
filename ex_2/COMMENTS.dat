@@ -1,0 +1,21 @@
+Data Sources:
+
+https://www.kaggle.com/kumarajarshi/life-expectancy-who
+https://www.kaggle.com/aungpyaeap/fish-market
+https://www.kaggle.com/janiobachmann/math-students
+
+https://www.kaggle.com/synergystud/a-fine-windy-day-hackerearth-ml-challenge
+
+The principle behind the algorithm is this:
+The split is computed on the attribute that has the biggest standard deviation reduction
+I compute it on every attribute in the dataset.
+In order to get it consider An attribute at a time and split the dataset according to the average value of the elements
+in the attribute column.
+ the steps are:
+ - for every attribute:
+    -compute the avg of dataset[attribute]
+    -split the dataset according to: dataset[attribute]<avg
+    -on those splits compute the standard deviation of the split
+ -I choose the split attribute according the biggest standard deviation reduction
+
+
