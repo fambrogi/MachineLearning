@@ -2,14 +2,10 @@ import utilities as util
 import pandas as pd
 import numpy as np
 
-
-
-
-
-#A node is initialized given its version of the dataset the attribute and value associated with that node
-#computed by the father node
-#given the values that it computes cof and number of rows it will decide if split again and generate new nodes or became
-#a leaf
+# A node is initialized given its version of the dataset the attribute and value associated with that node
+# computed by the father node
+# given the values that it computes cof and number of rows it will decide if split again and generate new nodes or became
+# a leaf
 class Node:
     def __init__(self,dataset,attribute,value,target):
         self.dataset=dataset
@@ -71,6 +67,8 @@ class Root:
         return temp
 
 
+
+"""
 def main():
     dataset = pd.read_csv("data/" + 'student-mat.csv')
     target = 'G1'
@@ -82,5 +80,5 @@ def main():
 
 if __name__ == '__main__':
     main()
-
+"""
 

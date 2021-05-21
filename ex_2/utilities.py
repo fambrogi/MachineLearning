@@ -35,7 +35,6 @@ def getDatasetInfo(dataframe,target):
     return numRows,std
 
 #given the attribute compute the weighted standard deviation
-
 def getStandardDeviationReduction(dataframe,attribute,values,target):
     genNumberOfRows=getDatasetInfo(dataframe,target)[0]
     genStd=getDatasetInfo(dataframe,target)[1]
@@ -51,7 +50,6 @@ def getStandardDeviationReduction(dataframe,attribute,values,target):
     return genStd-weightedSum
 
 #the method computes for each attribute the standard deviation reduction and puts them in a list
-
 def getReductions(dataframe,target):
     valuesDictionary = getAttributesValues(dataframe)
     reductionsList=[]

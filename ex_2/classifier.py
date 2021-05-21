@@ -7,7 +7,7 @@ import regressionTree as tree
 
 #the method splits the dataset in train set and test set
 def split(dataset):
-    train,test=train_test_split(dataset,test_size=0.3,shuffle=True)
+    train,test= train_test_split(dataset, test_size=0.3, shuffle=True )
     return train,test
 
 #given the train set the regression tree is created
@@ -79,20 +79,39 @@ def rootMeanSquaredError(testCol,solutionCol):
     return np.sqrt(mean)
 
 
-def main():
-    dataset = pd.read_csv("data/" + 'student-mat.csv')
-    target = 'G3'
-    trainSet,testSet=split(dataset)
-    print('training')
-    root = train(trainSet, target)
-    solCol,testSet=prepareTest(testSet,target)
-    print('testing')
-    results=test(testSet,target,root)
-    rmsq=rootMeanSquaredError(results,solCol)
-    print(rmsq)
+
+def run(dataset, targets):
+    """ Wrapper function to train the model on the input dataset and target feature """
+    # todo  here it goes the data cleaning !!!
+
+    """ Reading, cleaning, splitting the data """
+    print('*** Reading and preparing the dataset: ' , dataset )
+
+    dataset = pd.read_csv(dataset)
+    trainSet, testSet = split(dataset)
+
+    for target in targets:
+        print('*** Training the dataset: ', dataset, ' on the target: ', target)
+        root = train(trainSet, target)
+
+        print('*** Testing the dataset: ', dataset, ' on the target: ', target)
+        solCol,testSet = prepareTest(testSet,target)
+        results = test(testSet,target,root)
+        rmsq = rootMeanSquaredError(results,solCol)
+        print('*** Root mean square: ', rmsq )
+
+
+""" Dictionary of the datasets """
+data = {'data/student-mat.csv': ['G1', 'G2', 'G3'], }
+
+""" Folds for cross-validation """
+folds = 5
+data = {'data/student-mat.csv': ['G1', 'G2', 'G3'], }
 
 if __name__ == '__main__':
-    main()
+    """ Selecting the datasets and respective targets """
+    for ds in data.keys():
+        run(ds, data[ds])
 
 
 
