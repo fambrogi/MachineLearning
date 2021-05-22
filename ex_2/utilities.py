@@ -107,13 +107,6 @@ def loss(y, y_pred):
         return mean_squared_error(y, y_pred)
 
 
-
-
-
-
-
-
-
 def regressionErrors(y_test, y_pred):
     """ Calculate MSE (mean squared error), RMSE (roor-MSE), MAE(mean absolute error) """
 

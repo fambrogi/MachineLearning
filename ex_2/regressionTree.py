@@ -87,6 +87,7 @@ class Root:
 
 
 
+
 """
 def main():
     dataset = pd.read_csv("data/" + 'student-mat.csv')
@@ -94,12 +95,7 @@ def main():
     print('creating tree')
     root=Root(dataset,target)
     print(root.print())
-    
-if __name__ == '__main__':
-    main()
-    
 """
-
 
 
 def sk_regression(train_df, test_df, target):
@@ -122,7 +118,6 @@ def sk_regression(train_df, test_df, target):
 
     # returns test_df_y, predictions, ['mse','mae','poisson']
     return test_df_y, predictions, criteria
-
 
 
 
