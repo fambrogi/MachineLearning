@@ -25,7 +25,7 @@ class Node:
         self.numberOfRows=dataset.shape[0]
         #creating the model and computing the loss of the node
         self.model=util.getLinearClassifier()
-        X_train, X_test, y_train, y_test = train_test_split(dataset, dataset[target], test_size=0.3, shuffle=True)
+        X_train, X_test, y_train, y_test = train_test_split(dataset, dataset[target], test_size=0.3,train_size=0.7,shuffle=True)
         util.fitLinearRegressor(X_train, y_train, self.model)
         self.prediction = util.predict(self.model, X_test)
         self.loss = util.loss(y_test, self.prediction)
@@ -76,13 +76,16 @@ class Root:
         self.split()
 
     def split(self):
-        if (self.numberOfRows < 8 or self.cof < 0.1):
+        if (self.numberOfRows < 10 or self.cof < 0.1):
             return
         else:
            splitAttribute = util.getSplitAttribute(self.dataset, self.target)
            valueAverage = sum(self.dataset[splitAttribute]) / self.numberOfRows
+
+
            left = Node(self.dataset.loc[self.dataset[splitAttribute] < valueAverage], splitAttribute, valueAverage,
                             self.target)
+           print(self.dataset.loc[self.dataset[splitAttribute] >=valueAverage])
            right = Node(self.dataset.loc[self.dataset[splitAttribute] >= valueAverage], splitAttribute,
                              valueAverage, self.target)
            lossSplit = (left.numberOfRows * left.loss )+(right.numberOfRows*right.loss)
