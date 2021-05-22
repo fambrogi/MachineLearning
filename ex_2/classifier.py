@@ -5,6 +5,7 @@ from utilities import *
 import pandas as pd
 import numpy as np
 import regressionTree as tree
+from regressionTree import sk_regression
 import modelTree
 from sklearn.model_selection import KFold
 import os
@@ -12,10 +13,13 @@ import matplotlib.pyplot as plt
 from clean_analyze_data import load_clean_data, data
 
 
+
 #the method splits the dataset in train set and test set
+"""
 def split(dataset):
-    train,test=train_test_split(dataset, test_size=0.3,shuffle=True)
+    train,test = train_test_split(dataset, test_size=0.3,shuffle=True)
     return train,test
+"""
 
 #the method implements the cross validation split
 def crossSplit(dataset,folds):
@@ -28,14 +32,16 @@ def crossSplit(dataset,folds):
     return trainSets,testSets
 
 
+def prepareTest(dataset, target):
+    targetCol = dataset[target]
+    return targetCol, dataset
+
 #given the train set the regression tree is created
 def train(dataset,target):
     root=tree.Root(dataset,target)
     return root
 
-def prepareTest(dataset,target):
-    targetCol=dataset[target]
-    return targetCol,dataset
+
 
 #for every node in the child list of the node
 #I search for the corrisponding value in the list
@@ -85,26 +91,7 @@ def test(testSet,target,treeHead):
 
 
 
-def plot_rms(errors, ds_name, target):
-    """ Plot punctual and averaged errors for each fold """
 
-    os.system('mkdir Plots/results/')
-    fs = 15
-    for l,i,c in zip(['MSE', 'RMSE', 'MAE'], [0,1,2], ['lime', 'gold', 'blue']):
-
-        plt.scatter(range(1,len(errors)+1), [f[i] for f in errors], label=l, color = c )
-        plt.plot(range(1,len(errors)+1), np.full(len(errors), np.mean([g[i] for g in errors])),
-                 label='Average', ls='--', color = c )
-
-    plt.xlabel('K-fold')
-    plt.legend(fontsize=7)
-    plt.grid(ls=':', color='lightgray')
-    plt.title('Dataset ' + ds_name + ' - Target feature: ' + target, fontsize=fs)
-
-    plt.xticks(np.arange(1, len(errors)+1, 1.0))
-
-    plt.savefig('Plots/results/' + ds_name + '_' + target + '.png', dpi=150 )
-    plt.close()
 
 
 def run(ds, folds):
@@ -114,38 +101,55 @@ def run(ds, folds):
     """ Reading, cleaning, splitting the data """
     dataset = load_clean_data(ds)
 
-    trainSet, testSet = split(dataset)
-
     for target in data[ds]['targets']:
 
         print('*** Training the dataset on the target: ', target , ' using ' , folds , ' folds cross-validation ')
         trainList, testList = crossSplit(dataset, folds)
 
-        errors = []
+        errors_tree = []
+        errors_model = []
+
+        y_test_sk_all, y_pred_sk_all = [], []
+        y_pred_tree, y_pred_model = [], []
 
         for i in range(len(trainList)):
 
             print('*** Calculating Fold: ', i )
-            print('training')
+            print(' - training ')
             root = train(trainList[i], target)
             modelTreeRoot=modelTree.Root(trainList[i],target)
-            solCol,testSet = prepareTest(testList[i], target)
-            print('testing')
-            results = test(testSet, target, root)
-            resultsModelTree=test(testSet,target,modelTreeRoot)
-            #print(results)
-            #print(resultsModelTree)
-            """ Saving the errors for plotting """
 
-            mse_rmse_mae_regressionTree = regressionErrors(results,solCol)
-            mse_rmse_mae_modelTree = regressionErrors(resultsModelTree, solCol)
-            errors.append(mse_rmse_mae_regressionTree)
-            errors.append(mse_rmse_mae_modelTree)
+            #solCol, testSet = prepareTest(testList[i], target) # prepareTest func is useless?
+            y_test, testSet = testList[i][target].values, testList[i]
+
+            print(' - testing')
+            y_pred = test(testSet, target, root)
+            y_pred_ModelTree=test(testSet,target, modelTreeRoot)
+
+            y_pred_tree.extend(y_pred)
+            y_pred_model.extend(y_pred_ModelTree) # sono costanti ???
+
+            """ Saving the errors for plotting """
+            mse_rmse_mae_regressionTree = regressionErrors(y_pred, y_test)
+            mse_rmse_mae_modelTree = regressionErrors(y_pred_ModelTree, y_test)
+
+            errors_tree.append(mse_rmse_mae_regressionTree)
+            errors_model.append(mse_rmse_mae_modelTree)
 
             print('*** Fold MSE, RMSE, MAE regression tree: ', mse_rmse_mae_regressionTree )
-            print('*** Fold MSE, RMSE, MAE model tree: ', mse_rmse_mae_modelTree)
+            print('*** Fold MSE, RMSE, MAE model tree: '     , mse_rmse_mae_modelTree)
 
-        dummy_make_plot = plot_rms(errors, ds, target)
+            """ Using skregression """
+            # returns test_df_y, predictions, ['mse','mae','poisson']
+            y_test_sk, predictions_sk, criteria = sk_regression(trainList[i], testList[i], target)
+            for p,c in zip(predictions_sk,criteria): # differnet criteria for splitting in sklearn
+                mse_rmse_mae_sk = regressionErrors(y_test_sk, p)
+                print('*** Fold MSE, RMSE, MAE sklearn for ', c , ' :', mse_rmse_mae_sk)
+            y_test_sk_all.extend(y_test_sk)
+            y_pred_sk_all.extend(predictions_sk[0])
+
+        dummy_make_plot = plot_rms(errors_tree, errors_model, ds, target)
+        dummy_diff = plot_diff(y_test_sk_all, y_pred_sk_all, y_pred_tree, criteria[0], ds, target)
 
         print('*** Done Fold: ', i)
 
@@ -173,12 +177,12 @@ data = {'math': {'path': 'data/student-mat.csv',
 
 
 """ Folds for cross-validation """
-folds = 5
+folds = 2
 datasets = ['wind']
 
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     """ Selecting the datasets and respective targets """
     for ds in datasets: # these are the keys of the data dictionary i.e. names of the datasets
         run(ds, folds)

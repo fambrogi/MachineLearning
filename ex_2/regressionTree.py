@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 from sklearn.tree import export_graphviz
 from sklearn.tree import DecisionTreeRegressor
+from utilities import regressionErrors
 
 #A node is initialized given its version of the dataset the attribute and value associated with that node
 #computed by the father node
@@ -81,7 +82,6 @@ class Root:
             self.childList.append(right)
 
     def print(self):
-
         for child in self.childList:
             child.print()
 
@@ -102,13 +102,26 @@ if __name__ == '__main__':
 
 
 
-def sk_regression(df, kfolds, train_df, test_df):
+def sk_regression(train_df, test_df, target):
     """ Trains the model using the DecisionTreeRegressor from sklearn """
-    for c in ['mse','mae','poisson']: # different crtieria for splitting
-        regressor = DecisionTreeRegressor(random_state=0, criterion=c)
-        cross_val_score(regressor, X, y, cv=kfolds)
+    train_df_x = train_df.drop(columns = [target])
+    train_df_y = train_df[target]
+    test_df_x = test_df.drop(columns = [target])
+    test_df_y = test_df[target]
 
-    return 0
+    predictions = []
+    criteria = ['mse','mae']
+
+    for c in criteria: # different criteria for splitting
+        regressor = DecisionTreeRegressor(random_state=0, criterion=c)
+        regressor.fit(train_df_x, train_df_y)
+
+        y_pred = regressor.predict(test_df_x)
+        predictions.append(y_pred)
+        #cross_val_score(regressor, test_df_x, test_df_y, cv=kfolds)
+
+    # returns test_df_y, predictions, ['mse','mae','poisson']
+    return test_df_y, predictions, criteria
 
 
 

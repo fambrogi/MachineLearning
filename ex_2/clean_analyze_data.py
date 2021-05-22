@@ -19,8 +19,8 @@ data = {'math': {'path': 'data/student-mat.csv',
                                'Measles', 'BMI', 'under-fivedeaths', 'Polio', 'Totalexpenditure',
                                'Diphtheria', 'HIV/AIDS', 'GDP', 'Population', 'thinness1-19years',
                                'thinness5-9years', 'Incomecompositionofresources', 'Schooling' ],
-                  'drop': [],
-                  'targets' : ['Lifeexpectancy']},
+                  'drop': ['Country', 'Year', 'Status'],
+                  'targets': ['Lifeexpectancy']},
 
         'wind': {'path': 'data/wind_train_data.csv',
                   'features': ['wind_speed(m/s)',
@@ -82,8 +82,9 @@ def load_clean_data(name):
 
 
 
-ds = 'wind'
-a = load_clean_data(ds)
+
+#ds = 'life'
+#a = load_clean_data(ds)
 
 
 """
