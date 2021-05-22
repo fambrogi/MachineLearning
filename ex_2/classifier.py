@@ -56,14 +56,14 @@ def assignValue(row,node,assigned,target):
 
     #given a node I check if i'm in the right branch in this case I go deep
     for attribute in row.index:
-        if attribute == node.attribute and row[attribute]==node.value:
+        if attribute == node.attribute:
             if (len(node.childList) == 0):
                 return node.avg
             else:
-                for child in node.childList:
-                    assigned= assignValue(row, child, assigned,target)
-                    if assigned != -1 and assigned != None:
-                        break
+                if row[attribute] < node.value:
+                    assigned = assignValue(row, node.childList["left"], assigned, target)
+                else:
+                    assigned = assignValue(row, node.childList["right"], assigned, target)
         if assigned != -1 and assigned != None:
             return assigned
 
@@ -75,15 +75,17 @@ def test(testSet,target,treeHead):
     results=[]
     for i in testSet.index:
         row=testSet.loc[i]
-        for node in treeHead.childList:
+        # print("length: ", len(treeHead.childList))
+        for nodeKey in treeHead.childList:
+            node = treeHead.childList[nodeKey]
             if(assigned == -1):
                 assigned=assignValue(row,node,assigned,target)
-                if(assigned == None):
+                if assigned == None:
                     assigned=node.avg
-                if assigned != -1 and assigned != None:
-                        results.append(assigned)
-                        assigned=-1
-                        break
+                elif assigned != -1:
+                    results.append(assigned)
+                    assigned=-1
+                    break
             else:
                 assigned=-1
 
@@ -131,7 +133,7 @@ def run(ds, folds):
 
 """ data as imported from clean_analyze_data
 data = {'math': {'path': 'data/student-mat.csv',
-                 'features': [],
+                 'features': ['age', 'Medu', 'Fedu'],
                  'drop': [],
                  'targets' : ['G1', 'G2', 'G3']},
 
@@ -163,7 +165,7 @@ data = {'math': {'path': 'data/student-mat.csv',
 
 """ Folds for cross-validation """
 folds = 2
-datasets = ['wind']
+datasets = ['life']
 
 
 
@@ -198,10 +200,20 @@ if __name__ == '__main__':
 
                 print(' - testing')
                 y_pred = test(testSet, target, root)
-                y_pred_ModelTree=test(testSet,target, modelTreeRoot)
+                print("hihihihihihihi")
+                y_pred_ModelTree=test(testSet, target, modelTreeRoot)
+                print("hihihihihihihi2")
 
                 y_pred_tree.extend(y_pred)
                 y_pred_model.extend(y_pred_ModelTree) # sono costanti ???
+
+                print("###############")
+                print("###############")
+                print(len(y_pred_ModelTree))
+                print(len(y_pred))
+                print(len(y_test))
+                print("###############")
+                print("###############")
 
                 """ Saving the errors for plotting """
                 mse_rmse_mae_regressionTree = regressionErrors(y_pred, y_test)
@@ -213,7 +225,7 @@ if __name__ == '__main__':
                 print('*** Fold MSE, RMSE, MAE regression tree: ', mse_rmse_mae_regressionTree )
                 print('*** Fold MSE, RMSE, MAE model tree: '     , mse_rmse_mae_modelTree)
 
-                
+
                 """ Using skregression """
                 # returns test_df_y, predictions, ['mse','mae','poisson']
                 y_test_sk, predictions_sk, criteria = sk_regression(trainList[i], testList[i], target)
@@ -227,18 +239,3 @@ if __name__ == '__main__':
             dummy_diff = plot_diff(y_test_sk_all, y_pred_sk_all, y_pred_tree, criteria[0], ds, target)
 
             print('*** Done Fold: ', i)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
