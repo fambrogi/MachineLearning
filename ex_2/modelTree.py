@@ -39,18 +39,17 @@ class Node:
             self.split()
 
     def split(self):
-        if (self.numberOfRows<10 or self.cof< 0.05):
+        if (self.numberOfRows<20 or self.cof< 0.1):
             self.loss = util.loss(np.array(self.dataset[self.target]), np.repeat([self.avg], self.dataset[self.target].shape[0]))
             return
         else:
-            splitAttribute = util.getSplitAttribute(self.dataset, self.target)
-            self.attribute = splitAttribute
-            valueAverage = sum(self.dataset[splitAttribute]) / self.numberOfRows
-            self.value = valueAverage
-            if self.dataset.loc[self.dataset[splitAttribute]<valueAverage].shape[0] == 0 or self.dataset.loc[self.dataset[splitAttribute]>=valueAverage].shape[0] == 0:
+            bestSplit = util.getSplitAttribute2(self.dataset,self.target)
+            self.attribute = bestSplit["attribute"]
+            self.value = bestSplit["value"]
+            if self.dataset.loc[self.dataset[self.attribute]<self.value].shape[0] == 0 or self.dataset.loc[self.dataset[self.attribute]>=self.value].shape[0] == 0:
                 return
-            left = Node(self.dataset.loc[self.dataset[splitAttribute] < valueAverage], self.target)
-            right = Node(self.dataset.loc[self.dataset[splitAttribute] >= valueAverage], self.target)
+            left = Node(self.dataset.loc[self.dataset[self.attribute] < self.value], self.target)
+            right = Node(self.dataset.loc[self.dataset[self.attribute] >= self.value], self.target)
             # build up the subtree error (depth first approach of the tree build makes left.loss and right.loss already contain the errors of deeper levels)
             lossSplit = (left.numberOfRows * left.loss + right.numberOfRows * right.loss) / self.numberOfRows
             self.childList["left"] = left

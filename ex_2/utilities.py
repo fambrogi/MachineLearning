@@ -69,6 +69,71 @@ def getStandardDeviationReduction(dataframe,attribute,avg,target):
     for i in range(len(stdList)):
         weightedSum+=(numRows[i]/genNumberOfRows)*stdList[i]
     return genStd-weightedSum
+
+#the method computes for each attribute the standard deviation reduction and puts them in a list
+def getReductions2(dataframe,target):
+   '''
+    valuesDictionary = getAttributesValues(dataframe)
+    reductionsList=[]
+    for attribute in valuesDictionary.keys():
+        values = valuesDictionary.get(attribute)
+        reductionsList.append(getStandardDeviationReduction(dataframe, attribute, values, target))
+    return reductionsList
+    '''
+
+   reductionsList = []
+   for attribute in dataframe.columns:
+       valueAverage = np.average(dataframe[attribute])
+       reductionsList.append(getStandardDeviationReduction(dataframe, attribute, valueAverage, target))
+   return reductionsList
+
+# calculates the value and SSR for the best split and returns them in a dictionary
+def getBestSplit(df, column, target):
+    bestValue = 0
+    bestSSR = 999999999999
+
+    # loop through all values of the column and calculate SSR. Only keep the best.
+    for v in df[column].values:
+        # split data
+        lower = df.loc[df[column]<v]
+        upper = df.loc[df[column]>=v]
+
+        # if one of the dataframes is empty, continue
+        if lower.shape[0] == 0 or upper.shape[0] == 0:
+            continue
+
+        # calculate the respective means
+        lower_mean = np.mean(lower[target].values)
+        upper_mean = np.mean(upper[target].values)
+
+        # calculate residues
+        lower_residues = lower[target].values - lower_mean
+        upper_residues = upper[target].values - upper_mean
+
+        # calculate SSR
+        vSSR = np.sum(lower_residues**2) + np.sum(upper_residues**2)
+
+        # check if this is a new best
+        if vSSR < bestSSR:
+            bestSSR = vSSR
+            bestValue = v
+
+    return {"attribute":column, "value":bestValue, "SSR":bestSSR}
+
+# the method returns the attribute-value on which we have to split the dataset
+def getSplitAttribute2(df,target):
+    bestSplit = {"attribute":"", "value":0, "SSR":999999999999}
+
+    # loop through all attributes and get the best split for each. Only keep the best.
+    for col in df.columns:
+        if col == target:
+            continue
+        curr_bestSplit = getBestSplit(df, col, target)
+        if curr_bestSplit["SSR"] < bestSplit["SSR"]:
+            bestSplit = curr_bestSplit
+
+    return bestSplit
+
 #the method computes for each attribute the standard deviation reduction and puts them in a list
 def getReductions(dataframe,target):
    '''
@@ -119,9 +184,9 @@ def loss(y, y_pred):
 def regressionErrors(y_test, y_pred):
     """ Calculate MSE (mean squared error), RMSE (roor-MSE), MAE(mean absolute error) """
 
-    print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
-    print('Mean Squared Error:', metrics.mean_squared_error(y_test, y_pred))
-    print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
+    # print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
+    # print('Mean Squared Error:', metrics.mean_squared_error(y_test, y_pred))
+    # print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
 
 
     MAE = metrics.mean_absolute_error(y_test, y_pred)

@@ -189,21 +189,10 @@ if __name__ == '__main__':
 
                 print(' - testing')
                 y_pred = test(testSet, target, root)
-                # print("hihihihihihihi")
                 y_pred_ModelTree=test(testSet, target, modelTreeRoot)
-                # print("hihihihihihihi2")
 
                 y_pred_tree.extend(y_pred)
                 y_pred_model.extend(y_pred_ModelTree)
-                '''
-                print("###############")
-                print("###############")
-                #print(len(y_pred_ModelTree))
-                print(len(y_pred))
-                print(len(y_test))
-                print("###############")
-                print("###############")
-                '''
                 """ Saving the errors for plotting """
                 mse_rmse_mae_regressionTree = regressionErrors(y_pred, y_test)
                 mse_rmse_mae_modelTree = regressionErrors(y_pred_ModelTree, y_test)

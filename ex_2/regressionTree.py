@@ -27,23 +27,22 @@ class Node:
         self.split()
 
     def split(self):
-        if (self.numberOfRows<10 or self.cof< 0.05):
+        if (self.numberOfRows<20 or self.cof< 0.1):
             return
         else:
-            splitAttribute=util.getSplitAttribute(self.dataset,self.target)
-            self.attribute = splitAttribute
-            valueAverage=sum(self.dataset[splitAttribute])/self.numberOfRows
-            self.value = valueAverage
+            bestSplit = util.getSplitAttribute2(self.dataset,self.target)
+            self.attribute = bestSplit["attribute"]
+            self.value = bestSplit["value"]
             # check if split would be redundant
-            if self.dataset.loc[self.dataset[splitAttribute]<valueAverage].shape[0] == 0 or self.dataset.loc[self.dataset[splitAttribute]>=valueAverage].shape[0] == 0:
+            if self.dataset.loc[self.dataset[self.attribute]<self.value].shape[0] == 0 or self.dataset.loc[self.dataset[self.attribute]>=self.value].shape[0] == 0:
                 return
-            left = Node(self.dataset.loc[self.dataset[splitAttribute]<valueAverage],self.target)
-            right = Node(self.dataset.loc[self.dataset[splitAttribute]>=valueAverage],self.target)
+            left = Node(self.dataset.loc[self.dataset[self.attribute]<self.value],self.target)
+            right = Node(self.dataset.loc[self.dataset[self.attribute]>=self.value],self.target)
             '''
             dictionary=util.getAttributesValues(self.dataset)
-            values=dictionary.get(splitAttribute)
+            values=dictionary.get(self.attribute)
             for value in values:
-                self.childList.append(Node(util.getValues(self.dataset,splitAttribute,value),splitAttribute,value,self.target))
+                self.childList.append(Node(util.getValues(self.dataset,self.attribute,value),self.attribute,value,self.target))
             '''
             self.childList["left"] = left
             self.childList["right"] = right
