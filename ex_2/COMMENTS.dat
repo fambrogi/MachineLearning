@@ -19,3 +19,19 @@ in the attribute column.
  -I choose the split attribute according the biggest standard deviation reduction
 
 
+From: https://www.youtube.com/watch?v=g9c66TUylZ4
+
+1. set a minimum number of items per split e.g. 10? 20? to prevent overfitting
+   I.e. if a possible leaf contains lees than this minimum number, I do not split further
+
+2. for every attribute:
+     - calculate RMS or RSS (residual sum squared)
+       - find the split that minimizes the RSS
+	 - this becomes the candidate split for the attirbute
+
+3. compare the RSS that minimize the RSS of each attribute:
+   - the final choice for the root is the split of the attribute chosen among all, that minimizes the RSS.
+
+4. This fixes the root number 1
+
+5. repeat again until all nodes are leaves i.e. cant be split anymore due to low number of items inside 
