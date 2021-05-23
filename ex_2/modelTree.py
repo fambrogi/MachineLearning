@@ -39,7 +39,7 @@ class Node:
             self.split()
 
     def split(self):
-        if (self.numberOfRows<20 or self.cof< 0.1):
+        if (self.numberOfRows<10 or self.cof< 0.05):
             self.loss = util.loss(np.array(self.dataset[self.target]), np.repeat([self.avg], self.dataset[self.target].shape[0]))
             return
         else:
@@ -47,6 +47,8 @@ class Node:
             self.attribute = splitAttribute
             valueAverage = sum(self.dataset[splitAttribute]) / self.numberOfRows
             self.value = valueAverage
+            if self.dataset.loc[self.dataset[splitAttribute]<valueAverage].shape[0] == 0 or self.dataset.loc[self.dataset[splitAttribute]>=valueAverage].shape[0] == 0:
+                return
             left = Node(self.dataset.loc[self.dataset[splitAttribute] < valueAverage], self.target)
             right = Node(self.dataset.loc[self.dataset[splitAttribute] >= valueAverage], self.target)
             # build up the subtree error (depth first approach of the tree build makes left.loss and right.loss already contain the errors of deeper levels)

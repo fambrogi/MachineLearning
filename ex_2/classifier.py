@@ -154,7 +154,7 @@ data = {'math': {'path': 'data/student-mat.csv',
 
 """ Folds for cross-validation """
 folds = 5
-datasets = ['wind']
+datasets = ['life']
 
 
 

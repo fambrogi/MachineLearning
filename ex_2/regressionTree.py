@@ -27,13 +27,16 @@ class Node:
         self.split()
 
     def split(self):
-        if (self.numberOfRows<20 or self.cof< 0.1):
+        if (self.numberOfRows<10 or self.cof< 0.05):
             return
         else:
             splitAttribute=util.getSplitAttribute(self.dataset,self.target)
             self.attribute = splitAttribute
             valueAverage=sum(self.dataset[splitAttribute])/self.numberOfRows
             self.value = valueAverage
+            # check if split would be redundant
+            if self.dataset.loc[self.dataset[splitAttribute]<valueAverage].shape[0] == 0 or self.dataset.loc[self.dataset[splitAttribute]>=valueAverage].shape[0] == 0:
+                return
             left = Node(self.dataset.loc[self.dataset[splitAttribute]<valueAverage],self.target)
             right = Node(self.dataset.loc[self.dataset[splitAttribute]>=valueAverage],self.target)
             '''

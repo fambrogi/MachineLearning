@@ -100,8 +100,6 @@ def load_clean_data(name):
     if name == "math":
         df = mathCleaning(df)
 
-    print(df.head())
-
     # Shuffling data
     df = df.sample(frac=1)
 
