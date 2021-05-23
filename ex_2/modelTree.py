@@ -29,18 +29,17 @@ class Node:
         # check if train test split would actually result in usable data sets (if not set loss to minimal and return)
         if 0.3*dataset.shape[0] < 1:
             self.loss = 0
-            print("Endnode average: ", self.avg)
-            print("Endnode data point values: ", self.dataset[target])
-            return
-
-        X_train, X_test, y_train, y_test = train_test_split(dataset, dataset[target], test_size=0.3,train_size=0.7,shuffle=True)
-        util.fitLinearRegressor(X_train, y_train, self.model)
-        self.prediction = util.predict(self.model, X_test)
-        self.loss = util.loss(y_test, self.prediction)
-        self.split()
+            #print("Endnode average: ", self.avg)
+            #print("Endnode data point values: ", self.dataset[target])
+        else:
+            X_train, X_test, y_train, y_test = train_test_split(dataset, dataset[target], test_size=0.3,train_size=0.7,shuffle=True)
+            util.fitLinearRegressor(X_train, y_train, self.model)
+            self.prediction = util.predict(self.model, X_test)
+            self.loss = util.loss(y_test, self.prediction)
+            self.split()
 
     def split(self):
-        if (self.numberOfRows<8 or self.cof< 0.1):
+        if (self.numberOfRows<20 or self.cof< 0.1):
             return
         else:
             splitAttribute = util.getSplitAttribute(self.dataset, self.target)
@@ -84,7 +83,7 @@ class Root:
         self.split()
 
     def split(self):
-        if (self.numberOfRows < 10 or self.cof < 0.1):
+        if (self.numberOfRows < 20 or self.cof < 0.1):
             return
         else:
            splitAttribute = util.getSplitAttribute(self.dataset, self.target)
@@ -97,10 +96,12 @@ class Root:
            lossSplit = (left.numberOfRows * left.loss + right.numberOfRows*right.loss) / self.numberOfRows
            self.childList["left"] = left
            self.childList["right"] = right
+           '''
            if (lossSplit >= self.loss):
                self.childList = {}
            else:
                self.loss = lossSplit
+            '''
 
     def print(self):
 

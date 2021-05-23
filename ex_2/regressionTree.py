@@ -7,6 +7,7 @@ from sklearn.tree import export_graphviz
 from sklearn.tree import DecisionTreeRegressor
 from utilities import regressionErrors
 
+
 #A node is initialized given its version of the dataset the attribute and value associated with that node
 #computed by the father node
 #given the values that it computes cof and number of rows it will decide if split again and generate new nodes or became
@@ -26,7 +27,7 @@ class Node:
         self.split()
 
     def split(self):
-        if (self.numberOfRows<8 or self.cof< 0.1):
+        if (self.numberOfRows<20 or self.cof< 0.1):
             return
         else:
             splitAttribute=util.getSplitAttribute(self.dataset,self.target)
@@ -63,7 +64,7 @@ class Root:
         self.split()
 
     def split(self):
-        if (self.numberOfRows < 8 or self.cof < 0.1):
+        if (self.numberOfRows < 20 or self.cof < 0.1):
             return
         else:
             splitAttribute = util.getSplitAttribute(self.dataset, self.target)

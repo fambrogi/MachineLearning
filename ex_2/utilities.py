@@ -89,12 +89,19 @@ def getReductions(dataframe,target):
 
 # the method returns the attribute on which we have to split the dataset
 def getSplitAttribute(dataframe,target):
+
     targetIndex= dataframe.columns.get_loc(target)
     reductionList=getReductions(dataframe, target)
     del reductionList[targetIndex]
     maxReduction=max(reductionList)
     indexMax=reductionList.index(maxReduction)
-    return dataframe.columns[indexMax]
+    if(indexMax<targetIndex):
+        toRet = dataframe.columns[indexMax]
+        return toRet
+    else:
+        toRet = dataframe.columns[indexMax+1]
+        return toRet
+
 
 def getLinearClassifier():
     return LinearRegression()
