@@ -54,40 +54,30 @@ def train(dataset,target):
 #the current node is a leaf so we assign the value
 def assignValue(row,node,assigned,target):
 
+    # if it is the end node, return its avgerage
+    if (len(node.childList) == 0):
+        return node.avg
     #given a node I check if i'm in the right branch in this case I go deep
     for attribute in row.index:
         if attribute == node.attribute:
-            if (len(node.childList) == 0):
-                return node.avg
+            if row[attribute] < node.value:
+                assigned = assignValue(row, node.childList["left"], assigned, target)
             else:
-                if row[attribute] < node.value:
-                    assigned = assignValue(row, node.childList["left"], assigned, target)
-                else:
-                    assigned = assignValue(row, node.childList["right"], assigned, target)
-        if assigned != -1 and assigned != None:
+                assigned = assignValue(row, node.childList["right"], assigned, target)
+        if assigned != -1:
             return assigned
 
 
 
 #for each row in the testset the method calls assignValue
 def test(testSet,target,treeHead):
-    assigned=-1
     results=[]
     for i in testSet.index:
+        assigned=-1
         row=testSet.loc[i]
         # print("length: ", len(treeHead.childList))
-        for nodeKey in treeHead.childList:
-            node = treeHead.childList[nodeKey]
-            if(assigned == -1):
-                assigned=assignValue(row,node,assigned,target)
-                if assigned == None:
-                    assigned=node.avg
-                elif assigned != -1:
-                    results.append(assigned)
-                    assigned=-1
-                    break
-            else:
-                assigned=-1
+        assigned=assignValue(row,treeHead,assigned,target)
+        results.append(assigned)
     return results
 
 """ to remove
@@ -164,7 +154,7 @@ data = {'math': {'path': 'data/student-mat.csv',
 
 """ Folds for cross-validation """
 folds = 5
-datasets = ['wind','life']
+datasets = ['wind']
 
 
 
@@ -189,8 +179,8 @@ if __name__ == '__main__':
 
                 print('*** Calculating Fold: ', i )
                 print(' - training ')
-                root = train(trainList[i], target)
-                modelTreeRoot=modelTree.Root(trainList[i],target)
+                root = tree.Node(trainList[i],target)
+                modelTreeRoot = modelTree.Node(trainList[i],target)
 
 
 
@@ -199,9 +189,9 @@ if __name__ == '__main__':
 
                 print(' - testing')
                 y_pred = test(testSet, target, root)
-                #print("hihihihihihihi")
+                # print("hihihihihihihi")
                 y_pred_ModelTree=test(testSet, target, modelTreeRoot)
-                #print("hihihihihihihi2")
+                # print("hihihihihihihi2")
 
                 y_pred_tree.extend(y_pred)
                 y_pred_model.extend(y_pred_ModelTree)

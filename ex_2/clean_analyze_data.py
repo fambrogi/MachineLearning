@@ -51,6 +51,33 @@ def histo(name='', column='' , df = '' ):
     plt.close()
 
 
+# perform cleaning on the "math" data set
+# One-Hot encoding of multi-categorical-columns
+# Replacing yes/no with 1/0
+def mathCleaning(df):
+    # replace "yes" with 1 and "no" with 0
+    df = df.replace(["yes", "no"], [1, 0])
+
+    # replace sex "F" with 1 and "M" with 0
+    df["sex"] = df["sex"].replace(["F", "M"], [1, 0])
+
+    # replace Pstatus "A" with 1 and "T" with 0
+    df["Pstatus"] = df["Pstatus"].replace(["A", "T"], [1, 0])
+
+    # replace famsize "GT3" with 1 and "LT3" with 0
+    df["famsize"] = df["famsize"].replace(["GT3", "LT3"], [1, 0])
+
+    # replace address "U" with 1 and "R" with 0
+    df["address"] = df["address"].replace(["U", "R"], [1, 0])
+
+    # replace school "GP" with 1 and "MS" with 0
+    df["school"] = df["school"].replace(["GP", "MS"], [1, 0])
+
+    # perform one-hot-encoding for the rest
+    df = pd.get_dummies(df)
+
+    return df
+
 
 """ Main modules to clean the df before training """
 
@@ -68,6 +95,12 @@ def load_clean_data(name):
 
     # Clean values from nans
     df = df.dropna()
+
+    # for the "math" data set apply special changes
+    if name == "math":
+        df = mathCleaning(df)
+
+    print(df.head())
 
     # Shuffling data
     df = df.sample(frac=1)
@@ -88,7 +121,7 @@ def load_clean_data(name):
 
 
 """
-# to fix, later 
+# to fix, later
 for n,p in zip(ds_names, ds_path):
     df = pd.read_csv(p)
     df = clean(n,df)
@@ -98,5 +131,3 @@ for n,p in zip(ds_names, ds_path):
             continue
         dummy = histo(name=n, column= c , df = df )
 """
-
-

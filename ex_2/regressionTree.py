@@ -14,11 +14,11 @@ from utilities import regressionErrors
 #a leaf
 
 class Node:
-    def __init__(self,dataset,attribute,value,target):
+    def __init__(self,dataset,target):
         self.dataset=dataset
-        self.attribute=attribute
-        self.value=value
         self.target=target
+        self.attribute=""
+        self.value=0
         self.avg=util.getAvg(dataset,target)
         self.standardDeviation=util.standardDeviation(dataset,target)
         self.childList={}
@@ -31,9 +31,11 @@ class Node:
             return
         else:
             splitAttribute=util.getSplitAttribute(self.dataset,self.target)
+            self.attribute = splitAttribute
             valueAverage=sum(self.dataset[splitAttribute])/self.numberOfRows
-            left = Node(self.dataset.loc[self.dataset[splitAttribute]<valueAverage],splitAttribute,valueAverage,self.target)
-            right = Node(self.dataset.loc[self.dataset[splitAttribute]>=valueAverage],splitAttribute,valueAverage,self.target)
+            self.value = valueAverage
+            left = Node(self.dataset.loc[self.dataset[splitAttribute]<valueAverage],self.target)
+            right = Node(self.dataset.loc[self.dataset[splitAttribute]>=valueAverage],self.target)
             '''
             dictionary=util.getAttributesValues(self.dataset)
             values=dictionary.get(splitAttribute)
@@ -52,38 +54,38 @@ class Node:
             print("END")
 
 
-class Root:
-    def __init__(self,dataset,target):
-        self.dataset=dataset
-        self.target=target
-        self.avg=util.getAvg(dataset,target)
-        self.standardDeviation=util.standardDeviation(dataset,target)
-        self.childList={}
-        self.cof=self.standardDeviation/self.avg
-        self.numberOfRows=dataset.shape[0]
-        self.split()
-
-    def split(self):
-        if (self.numberOfRows < 20 or self.cof < 0.1):
-            return
-        else:
-            splitAttribute = util.getSplitAttribute(self.dataset, self.target)
-            valueAverage = sum(self.dataset[splitAttribute]) / self.numberOfRows
-            left = Node(self.dataset.loc[self.dataset[splitAttribute] < valueAverage], splitAttribute, valueAverage, self.target)
-            right = Node(self.dataset.loc[self.dataset[splitAttribute] >= valueAverage], splitAttribute, valueAverage, self.target)
-
-            '''
-            dictionary=util.getAttributesValues(self.dataset)
-            values=dictionary.get(splitAttribute)
-            for value in values:
-                self.childList.append(Node(util.getValues(self.dataset,splitAttribute,value),splitAttribute,value,self.target))
-            '''
-            self.childList["left"] = left
-            self.childList["right"] = right
-
-    def print(self):
-        for child in self.childList:
-            self.childList[child].print()
+# class Root:
+#     def __init__(self,dataset,target):
+#         self.dataset=dataset
+#         self.target=target
+#         self.avg=util.getAvg(dataset,target)
+#         self.standardDeviation=util.standardDeviation(dataset,target)
+#         self.childList={}
+#         self.cof=self.standardDeviation/self.avg
+#         self.numberOfRows=dataset.shape[0]
+#         self.split()
+#
+#     def split(self):
+#         if (self.numberOfRows < 20 or self.cof < 0.1):
+#             return
+#         else:
+#             splitAttribute = util.getSplitAttribute(self.dataset, self.target)
+#             valueAverage = sum(self.dataset[splitAttribute]) / self.numberOfRows
+#             left = Node(self.dataset.loc[self.dataset[splitAttribute] < valueAverage], self.target)
+#             right = Node(self.dataset.loc[self.dataset[splitAttribute] >= valueAverage], self.target)
+#
+#             '''
+#             dictionary=util.getAttributesValues(self.dataset)
+#             values=dictionary.get(splitAttribute)
+#             for value in values:
+#                 self.childList.append(Node(util.getValues(self.dataset,splitAttribute,value),splitAttribute,value,self.target))
+#             '''
+#             self.childList["left"] = left
+#             self.childList["right"] = right
+#
+#     def print(self):
+#         for child in self.childList:
+#             self.childList[child].print()
 
 
 
