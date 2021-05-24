@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
 import os
 from sklearn import metrics
@@ -244,6 +245,9 @@ def getSplitAttribute(dataframe,target):
 
 def getLinearClassifier():
     return LinearRegression()
+
+def getRandomForestRegressor():
+    return RandomForestRegressor()
 
 def fitLinearRegressor(x,y,regressor):
     regressor.fit(x,y)

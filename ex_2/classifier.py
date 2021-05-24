@@ -154,7 +154,7 @@ data = {'math': {'path': 'data/student-mat.csv',
 
 """ Folds for cross-validation """
 folds = 5
-datasets = ['math']
+datasets = ['life']
 
 
 
@@ -212,6 +212,24 @@ if __name__ == '__main__':
                     print('*** Fold MSE, RMSE, MAE sklearn for ', c , ' :', mse_rmse_mae_sk)
                 y_test_sk_all.extend(y_test_sk)
                 y_pred_sk_all.extend(predictions_sk[0])
+
+                """ Using linear regressor """
+                X_train, X_test = trainList[i].loc[:, trainList[i].columns != target], testList[i].loc[:, testList[i].columns != target]
+                y_train, y_test = trainList[i][target], testList[i][target]
+                linear_regressor = util.getLinearClassifier()
+                util.fitLinearRegressor(X_train, y_train, linear_regressor)
+                prediction = util.predict(linear_regressor, X_test)
+                mse_rmse_mae_linear = regressionErrors(y_test, prediction)
+                print('*** Fold MSE, RMSE, MAE sklearn for linear regressor :', mse_rmse_mae_linear)
+
+                """ Using random forest regressor """
+                # X_train, X_test = trainList[i].loc[:, trainList[i].columns != target], testList[i].loc[:, testList[i].columns != target]
+                # y_train, y_test = trainList[i][target], testList[i][target]
+                rf_regressor = util.getRandomForestRegressor()
+                util.fitLinearRegressor(X_train, y_train, rf_regressor)
+                prediction = util.predict(rf_regressor, X_test)
+                mse_rmse_mae_rf = regressionErrors(y_test, prediction)
+                print('*** Fold MSE, RMSE, MAE sklearn for random forest regressor :', mse_rmse_mae_rf)
 
             dummy_make_plot = plot_rms(errors_tree, errors_model, ds, target)
             dummy_diff = plot_diff(y_test_sk_all, y_pred_sk_all, y_pred_tree, criteria[0], ds, target)
