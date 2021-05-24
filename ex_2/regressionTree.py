@@ -34,7 +34,8 @@ class Node:
             self.attribute = bestSplit["attribute"]
             self.value = bestSplit["value"]
             # check if split would be redundant
-            if self.dataset.loc[self.dataset[self.attribute]<self.value].shape[0] == 0 or self.dataset.loc[self.dataset[self.attribute]>=self.value].shape[0] == 0:
+            if self.dataset.loc[self.dataset[self.attribute]<self.value].shape[0] == 0 \
+                    or self.dataset.loc[self.dataset[self.attribute]>=self.value].shape[0] == 0:
                 return
             left = Node(self.dataset.loc[self.dataset[self.attribute]<self.value],self.target)
             right = Node(self.dataset.loc[self.dataset[self.attribute]>=self.value],self.target)
