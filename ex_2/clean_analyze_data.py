@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import seaborn as sns
+from sklearn import preprocessing
 
 """ Storing the information of all datasets.
     Column names as they appear after data cleaning. """
@@ -101,6 +102,10 @@ def load_clean_data(name):
     if name == "math":
         df = mathCleaning(df)
 
+    if name == "wind":
+        for c in df.columns:
+            df = df.loc[df[c] != -99]
+            print(0)
     # Shuffling data
     df = df.sample(frac=1)
 
@@ -115,6 +120,10 @@ def load_clean_data(name):
     correlations = df.corr()
     plt.figure(figsize=(12, 10))
     sns.heatmap(correlations, annot=True, cmap='twilight_shifted')
+
+    if not os.path.isdir("Plots/data/" + name + '/'):
+        os.mkdir("Plots/data/" + name + '/')
+
     plt.savefig("Plots/data/" + name + '/' + name + '_correlation.png' , dpi = 150 )
     plt.close()
 
@@ -122,19 +131,3 @@ def load_clean_data(name):
 
 
 
-
-#ds = 'life'
-#a = load_clean_data(ds)
-
-
-"""
-# to fix, later
-for n,p in zip(ds_names, ds_path):
-    df = pd.read_csv(p)
-    df = clean(n,df)
-
-    for c in df.columns:
-        if 'id' in c or 'time' in c:
-            continue
-        dummy = histo(name=n, column= c , df = df )
-"""
