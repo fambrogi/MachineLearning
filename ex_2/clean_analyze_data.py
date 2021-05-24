@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import seaborn as sns
 
 """ Storing the information of all datasets.
     Column names as they appear after data cleaning. """
@@ -109,6 +110,14 @@ def load_clean_data(name):
     # Dropping not used columns
     if data[name]['drop']:
         df = df.drop(columns=data[name]['drop'])
+
+    ### plot correlation matrix with seaborn
+    correlations = df.corr()
+    plt.figure(figsize=(12, 10))
+    sns.heatmap(correlations, annot=True, cmap='twilight_shifted')
+    plt.savefig("Plots/data/" + name + '/' + name + '_correlation.png' , dpi = 150 )
+    plt.close()
+
     return df
 
 

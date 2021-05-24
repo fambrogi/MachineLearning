@@ -154,7 +154,7 @@ data = {'math': {'path': 'data/student-mat.csv',
 
 """ Folds for cross-validation """
 folds = 5
-datasets = ['life']
+datasets = ['math']
 
 
 
@@ -183,9 +183,9 @@ if __name__ == '__main__':
                 modelTreeRoot = modelTree.Node(trainList[i],target)
 
 
-
                 solCol, testSet = prepareTest(testList[i], target) # prepareTest func is useless?
                 y_test, testSet = testList[i][target].values, testList[i]
+
 
                 print(' - testing')
                 y_pred = test(testSet, target, root)

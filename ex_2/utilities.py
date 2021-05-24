@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 
 
 def standardDeviation(dataframe,target):
-
     return np.std(dataframe[target])
 
 def getAvg(dataframe,target):
@@ -87,6 +86,8 @@ def getReductions2(dataframe,target):
        reductionsList.append(getStandardDeviationReduction(dataframe, attribute, valueAverage, target))
    return reductionsList
 
+
+'''
 # calculates the value and SSR for the best split and returns them in a dictionary
 def getBestSplit(df, column, target):
     bestValue = 0
@@ -119,6 +120,79 @@ def getBestSplit(df, column, target):
             bestValue = v
 
     return {"attribute":column, "value":bestValue, "SSR":bestSSR}
+'''
+
+def getBestSplit(df, column, target):
+
+    def plot_ssr(values, rss, column):
+        fs = 13
+        if not os.path.isdir('Plots/results/rss'):
+            os.mkdir('Plots/results/rss')
+
+        plt.plot(values, rss)
+        plt.xlabel(column, fontsize = fs)
+        plt.ylabel('SSR', fontsize = fs)
+
+        plt.title('SSR for the feature ' + column, fontsize = fs)
+        plt.grid(ls=':', color='lightgray')
+        column = column.replace('/', '_')
+        plt.savefig('Plots/results/rss/' + column + '_rss.png', dpi=150)
+        plt.close()
+
+
+    bestValue = 0
+    bestSSR = 999999999999
+
+    # loop through all values of the column and calculate SSR. Only keep the best.
+
+    # sort the feature values and the target in the same order
+    # so I can loop over the feature values and do not need to search for indices
+    values = df[column].values
+    feature_indices = np.argsort(values)
+
+    target_values = df[target].values
+    sorted_target = target_values[feature_indices]
+
+    all_v, all_rss = [],[]
+
+    for ind,v in enumerate(values):
+        # split data
+        lower = sorted_target[:ind]
+        upper = sorted_target[ind:]
+
+        # if one of the dataframes is empty, continue
+        if len(lower) == 0 or len(upper) == 0:
+            continue
+
+        """
+        # calculate the respective means
+        lower_mean = np.mean(lower)
+        upper_mean = np.mean(upper)
+
+        # calculate residues
+        lower_residues = lower - lower_mean
+        upper_residues = upper - upper_mean
+
+        # calculate SSR
+        vSSR = np.sum(lower_residues**2) + np.sum(upper_residues**2)
+        """
+
+        rss_upper = np.sum(np.square(upper - np.mean(upper)))
+        rss_lower = np.sum(np.square(lower - np.mean(lower)))
+        vSSR = rss_lower + rss_upper
+
+        all_rss.append(vSSR)
+        all_v.append(v)
+
+        # check if this is a new best
+        if vSSR < bestSSR:
+            bestSSR = vSSR
+            bestValue = v
+
+    dummy_plot = plot_ssr(all_v, all_rss, column)
+
+    return {"attribute":column, "value":bestValue, "SSR":bestSSR}
+
 
 # the method returns the attribute-value on which we have to split the dataset
 def getSplitAttribute2(df,target):
@@ -184,11 +258,6 @@ def loss(y, y_pred):
 def regressionErrors(y_test, y_pred):
     """ Calculate MSE (mean squared error), RMSE (roor-MSE), MAE(mean absolute error) """
 
-    # print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
-    # print('Mean Squared Error:', metrics.mean_squared_error(y_test, y_pred))
-    # print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
-
-
     MAE = metrics.mean_absolute_error(y_test, y_pred)
     MSE = metrics.mean_squared_error(y_test, y_pred)
     RMSE = np.sqrt(MSE)
@@ -225,6 +294,7 @@ def plot_rms(errors_tree, errors_model, ds_name, target):
     plt.savefig('Plots/results/' + ds_name + '_' + target + '.png', dpi=150 )
     plt.close()
 
+
 def plot_diff(y_test_sk, predictions_sk, y_pred_tree, criterion, ds, target):
 
     num_points = 300
@@ -250,4 +320,5 @@ def plot_diff(y_test_sk, predictions_sk, y_pred_tree, criterion, ds, target):
     plt.ylabel(target, fontsize=fs)
     plt.legend(fontsize=fs)
     plt.tight_layout()
-    plt.savefig('Plots/results/sklearn_comparison_histo_' + ds + '.png', dpi = 150)
+    plt.savefig('Plots/results/sklearn_comparison_histo_' + ds + '_' + target + '.png', dpi=150)
+    plt.close()
