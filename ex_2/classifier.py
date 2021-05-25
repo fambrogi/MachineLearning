@@ -185,7 +185,6 @@ if __name__ == '__main__':
                 solCol, testSet = prepareTest(testList[i], target)
                 y_test, testSet = testList[i][target].values, testList[i]
 
-
                 print(' - testing')
                 y_pred = test(testSet, target, root)
                 y_pred_ModelTree=test(testSet, target, modelTreeRoot)
@@ -215,6 +214,17 @@ if __name__ == '__main__':
                 """ Using linear regressor """
                 X_train, X_test = trainList[i].loc[:, trainList[i].columns != target], testList[i].loc[:, testList[i].columns != target]
                 y_train, y_test = trainList[i][target], testList[i][target]
+
+                """ Federico version 
+                train_df = trainList[i]
+                test_df = testList[i]
+
+                X_train = train_df.drop(columns=[target])
+                y_train = train_df[target]
+                X_test = test_df.drop(columns=[target])
+                y_test = test_df[target]
+                """
+
                 linear_regressor = util.getLinearClassifier()
                 util.fitLinearRegressor(X_train, y_train, linear_regressor)
                 prediction_linReg = util.predict(linear_regressor, X_test)
@@ -240,7 +250,7 @@ if __name__ == '__main__':
                                    prediction_linReg,
                                    criteria[0], ds, target)
 
-            print('Check difference in predictions: ' , '\n')
+            print('************** Check difference in predictions: ' , '\n')
             print('Test set \t\t ', y_test_sk_all[:10]  , '\n')
             print('Regr. Tree \t\t ', y_pred_tree[:10]  , '\n')
             print('Model Tree \t\t ', y_pred_ModelTree[:10] , '\n')
