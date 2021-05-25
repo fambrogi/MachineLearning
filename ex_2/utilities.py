@@ -309,39 +309,45 @@ def plot_rms(errors_tree, errors_model, ds_name, target):
     plt.close()
 
 
-def plot_diff(y_test_sk, y_pred_tree, y_pred_ModelTree,  y_pred_skTree, y_pred_randomF, criterion, ds, target):
+def plot_diff(y_test_sk, y_pred_tree, y_pred_ModelTree,
+              y_pred_skTree, y_pred_randomF, prediction_linReg, criterion, ds, target):
 
-    num_points = 300
+    num_points = 100
     fs = 12
-    plt.plot(y_test_sk[:num_points], label = 'Test values', ls = '-', color = 'black')
+    plt.plot(y_test_sk[:num_points], label = 'Test values', ls = ':', color = 'black')
+    plt.scatter(range(num_points), y_test_sk[:num_points], ls = ':', color = 'black')
 
     plt.scatter(range(num_points), y_pred_skTree[:num_points],
-                label = 'Predicted sci-kit Regr. Tree ' , ls = '--' , color = 'red')
+                label = 'sci-kit Regr. Tree '  , color = 'red')
 
     plt.scatter(range(num_points), y_pred_tree[:num_points],
-                label = 'Predicted Regr. Tree' , color = 'blue')
+                label = '*Regr. Tree' , color = 'blue')
+
+    plt.scatter(range(num_points), y_pred_randomF[:num_points],
+                label = '* sci-kit Random Forest' , color = 'gold')
 
     plt.title('Test set vs Predictions - ' + ds, fontsize=fs)
     plt.ylabel(target, fontsize=fs)
-    plt.legend(fontsize=fs)
+    plt.xlabel('Test item', fontsize = fs )
+    plt.legend(fontsize=fs-3, loc = 'best')
     plt.tight_layout()
     plt.grid(ls=':', color = 'lightgray')
     plt.savefig('Plots/results/sklearn_comparison_lines_' + ds + '.png', dpi = 150)
     plt.close()
 
 
-    plt.hist([y_test_sk, y_pred_tree, y_pred_ModelTree,  y_pred_skTree, y_pred_randomF ],
+    plt.hist([y_test_sk, y_pred_tree, y_pred_ModelTree,  y_pred_skTree, y_pred_randomF, prediction_linReg ],
              histtype = 'step',
 
-             label = ['Test values', 'Regr. Tree', 'Model Tree',
-                      'sci-kit Regr. ', 'sci-kit Random Forest' ],
+             label = ['Test values', '*Regr. Tree', '*Model Tree',
+                      'sci-kit Regr. ', 'sci-kit Random Forest' , 'sci-kit Lin. Regr.' ],
 
-             color = ['blue','lime','orange', 'red', 'black'],
+             color = ['blue','lime','orange', 'red', 'black', 'cyan'],
 )
 
     plt.grid(ls=':', color='lightgray')
     plt.ylabel(target, fontsize=fs)
-    plt.legend(fontsize=fs-2, loc = 'best' )
+    plt.legend(fontsize=fs-2, loc = 'upper left' )
     plt.tight_layout()
     plt.savefig('Plots/results/sklearn_comparison_histo_' + ds + '_' + target + '.png', dpi=150)
     plt.close()

@@ -154,7 +154,7 @@ data = {'math': {'path': 'data/student-mat.csv',
 
 """ Folds for cross-validation """
 folds = 2
-datasets = ['wind']
+datasets = ['life']
 
 
 if __name__ == '__main__':
@@ -237,6 +237,7 @@ if __name__ == '__main__':
                                    y_pred_ModelTree,
                                    y_pred_sk_all,
                                    prediction_randomForest,
+                                   prediction_linReg,
                                    criteria[0], ds, target)
 
             print('Check difference in predictions: ' , '\n')
@@ -245,5 +246,6 @@ if __name__ == '__main__':
             print('Model Tree \t\t ', y_pred_ModelTree[:10] , '\n')
             print('sci-kit Reg.Tree  \t\t ', y_pred_sk_all[:10] , '\n')
             print('sci-kit Random Forest  \t\t ', prediction_randomForest[:10] , '\n')
+            print('sci-kit Lin. Regr.   \t\t ', prediction_linReg[:10] , '\n')
 
             print('*** Done Fold: ', i)
