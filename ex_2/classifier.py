@@ -117,7 +117,7 @@ data = {'math': {'path': 'data/student-mat.csv',
 
 """ Folds for cross-validation """
 folds = 5
-datasets = ['wind']
+datasets = ['math']
 
 
 if __name__ == '__main__':
@@ -182,7 +182,7 @@ if __name__ == '__main__':
                 X_train, X_test = trainList[i].loc[:, trainList[i].columns != target], testList[i].loc[:, testList[i].columns != target]
                 y_train, y_test = trainList[i][target], testList[i][target]
 
-                """ Federico version 
+                """ Federico version
                 train_df = trainList[i]
                 test_df = testList[i]
 

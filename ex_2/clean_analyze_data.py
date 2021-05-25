@@ -13,8 +13,8 @@ from sklearn import preprocessing
 data = {'math': {'path': 'data/student-mat.csv',
                  'features': [],
                  'drop': [],
-                 #'targets' : ['G1', 'G2', 'G3']},
-                 'targets' : ['G1']},
+                 'targets' : ['G3']},
+                 #'targets' : ['G1']},
 
                  'life': { 'path': 'data/Life_Expectancy_Data.csv',
                   'features': ['AdultMortality',
@@ -131,6 +131,3 @@ def load_clean_data(name):
     plt.close()
 
     return df
-
-
-

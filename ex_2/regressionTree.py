@@ -20,19 +20,26 @@ class Node:
         self.attribute=""
         self.value=0
         self.avg=util.getAvg(dataset,target)
-        self.standardDeviation=util.standardDeviation(dataset,target)
-        self.childList={}
-        self.cof=self.standardDeviation/self.avg
         self.numberOfRows=dataset.shape[0]
+        self.childList={}
+
+        # return if the target attribute has only a unique value
+        if self.dataset[self.target].unique().shape[0] == 1:
+            self.loss = util.loss(np.array(self.dataset[self.target]), np.repeat([self.avg], self.dataset[self.target].shape[0]))
+            return
+
+        self.standardDeviation=util.standardDeviation(dataset,target)
+        self.cof=self.standardDeviation/self.avg
         self.split()
 
     def split(self):
-        if (self.numberOfRows<20 or self.cof< 0.1):
+        if (self.numberOfRows<5 or self.cof< 0.05):
             return
         else:
-            bestSplit = util.getSplitAttribute2(self.dataset,self.target)
-            self.attribute = bestSplit["attribute"]
-            self.value = bestSplit["value"]
+            self.attribute = util.getSplitAttribute(self.dataset,self.target)
+            self.value = np.average(self.dataset[self.attribute])
+            # self.attribute = bestSplit["attribute"]
+            # self.value = bestSplit["value"]
             # check if split would be redundant
             if self.dataset.loc[self.dataset[self.attribute]<self.value].shape[0] == 0 \
                     or self.dataset.loc[self.dataset[self.attribute]>=self.value].shape[0] == 0:

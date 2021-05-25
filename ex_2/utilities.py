@@ -125,7 +125,7 @@ def getBestSplit(df, column, target):
 
 def getBestSplit(df, column, target, fast = False):
 
-    print("Length df: ", len(df) )
+    # print("Length df: ", len(df) )
 
     def plot_ssr(values, rss, column):
         fs = 13
@@ -201,8 +201,6 @@ def getBestSplit(df, column, target, fast = False):
             bestValue = v
 
     dummy_plot = plot_ssr(all_v, all_rss, column)
-
-    #print(column , ' ' , bestValue )
 
     return {"attribute":column, "value":bestValue, "SSR":bestSSR}
 
@@ -292,8 +290,6 @@ def plot_rms(errors_tree, errors_model, ds_name, target):
 
     os.system('mkdir Plots/results/')
     fs = 12
-    #for l,i,c in zip(['MSE', 'RMSE', 'MAE'], [0,1,2], ['lime', 'gold', 'blue']):
-
     for l,i,c in zip(['MSE', 'MAE'], [0,2], ['lime', 'blue']):
 
         plt.scatter(range(1,len(errors_tree)+1), [f[i] for f in errors_tree], label=l + ' reg. tree', color = c )
@@ -349,6 +345,7 @@ def plot_diff(y_test_sk, y_pred_tree, y_pred_ModelTree,
                       'sci-kit Regr. ', 'sci-kit Random Forest' , 'sci-kit Lin. Regr.' ],
 
              color = ['blue','lime','orange', 'red', 'black', 'cyan'],
+             density = True
 )
 
     plt.grid(ls=':', color='lightgray')
