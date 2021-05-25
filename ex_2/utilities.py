@@ -123,7 +123,7 @@ def getBestSplit(df, column, target):
     return {"attribute":column, "value":bestValue, "SSR":bestSSR}
 '''
 
-def getBestSplit(df, column, target, fast = True):
+def getBestSplit(df, column, target, fast = False):
 
     print("Length df: ", len(df) )
 
@@ -201,6 +201,8 @@ def getBestSplit(df, column, target, fast = True):
             bestValue = v
 
     dummy_plot = plot_ssr(all_v, all_rss, column)
+
+    #print(column , ' ' , bestValue )
 
     return {"attribute":column, "value":bestValue, "SSR":bestSSR}
 
@@ -290,13 +292,15 @@ def plot_rms(errors_tree, errors_model, ds_name, target):
 
     os.system('mkdir Plots/results/')
     fs = 12
-    for l,i,c in zip(['MSE', 'RMSE', 'MAE'], [0,1,2], ['lime', 'gold', 'blue']):
+    #for l,i,c in zip(['MSE', 'RMSE', 'MAE'], [0,1,2], ['lime', 'gold', 'blue']):
 
-        plt.scatter(range(1,len(errors_tree)+1), [f[i] for f in errors_tree], label=l + ' tree', color = c )
+    for l,i,c in zip(['MSE', 'MAE'], [0,2], ['lime', 'blue']):
+
+        plt.scatter(range(1,len(errors_tree)+1), [f[i] for f in errors_tree], label=l + ' reg. tree', color = c )
         plt.scatter(range(1,len(errors_model)+1), [f[i] for f in errors_model], label=l + ' model', color = c , ls = ':' )
 
         plt.plot(range(1,len(errors_tree)+1), np.full(len(errors_tree), np.mean([g[i] for g in errors_tree])),
-                 label='Average Tree', ls=':', color = c )
+                 label='Average ', ls=':', color = c )
 
     plt.xlabel('K-fold')
     plt.legend(fontsize=7)
@@ -332,6 +336,8 @@ def plot_diff(y_test_sk, y_pred_tree, y_pred_ModelTree,
     plt.legend(fontsize=fs-3, loc = 'best')
     plt.tight_layout()
     plt.grid(ls=':', color = 'lightgray')
+
+
     plt.savefig('Plots/results/sklearn_comparison_lines_' + ds + '.png', dpi = 150)
     plt.close()
 
@@ -346,8 +352,11 @@ def plot_diff(y_test_sk, y_pred_tree, y_pred_ModelTree,
 )
 
     plt.grid(ls=':', color='lightgray')
-    plt.ylabel(target, fontsize=fs)
-    plt.legend(fontsize=fs-2, loc = 'upper left' )
+    plt.legend(fontsize=fs-4, loc = 'best' )
     plt.tight_layout()
+    if ds == 'wind':
+        plt.xlim(0,20)
+        plt.xlabel(target, fontsize=fs-3)
+
     plt.savefig('Plots/results/sklearn_comparison_histo_' + ds + '_' + target + '.png', dpi=150)
     plt.close()
