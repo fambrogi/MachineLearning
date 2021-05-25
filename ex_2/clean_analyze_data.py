@@ -10,12 +10,13 @@ from sklearn import preprocessing
 """ Storing the information of all datasets.
     Column names as they appear after data cleaning. """
 
-data = {'math': {'path': 'data/student-mat.csv',
+data_full = {'math': {'path': 'data/student-mat.csv',
                  'features': [],
                  'drop': [],
-                 'targets' : ['G1', 'G2', 'G3']},
+                 #'targets' : ['G1', 'G2', 'G3']},
+                 'targets' : ['G1']},
 
-        'life': { 'path': 'data/Life_Expectancy_Data.csv',
+                 'life': { 'path': 'data/Life_Expectancy_Data.csv',
                   'features': ['AdultMortality',
                                'infantdeaths', 'Alcohol', 'percentageexpenditure', 'HepatitisB',
                                'Measles', 'BMI', 'under-fivedeaths', 'Polio', 'Totalexpenditure',
@@ -38,6 +39,38 @@ data = {'math': {'path': 'data/student-mat.csv',
                   'targets': ['windmill_generated_power(kW_h)']},
 
         }
+
+data = {'math': {'path': 'data/student-mat.csv',
+                 'features': [],
+                 'drop': [],
+                 #'targets' : ['G1', 'G2', 'G3']},
+                 'targets' : ['G1']},
+
+                 'life': { 'path': 'data/Life_Expectancy_Data.csv',
+                  'features': ['AdultMortality',
+                               'infantdeaths', 'Alcohol', 'percentageexpenditure', 'HepatitisB',
+                               'Measles', 'BMI', 'under-fivedeaths', 'Polio', 'Totalexpenditure',
+                               'Diphtheria', 'HIV/AIDS', 'GDP', 'thinness1-19years',
+                               'thinness5-9years', 'Incomecompositionofresources', 'Schooling' ],
+                  'drop': ['Country', 'Year', 'Status'],
+                  'targets': ['Lifeexpectancy']},
+
+        'wind': {'path': 'data/wind_train_data.csv',
+                  'features': ['wind_speed(m/s)',
+                               'atmospheric_temperature(°C)', 'shaft_temperature(°C)',
+                               'blades_angle(°)', 'gearbox_temperature(°C)', 'engine_temperature(°C)',
+                               'motor_torque(N-m)', 'generator_temperature(°C)',
+                               'atmospheric_pressure(Pascal)', 'area_temperature(°C)',
+                               'windmill_body_temperature(°C)', 'wind_direction(°)', 'resistance(ohm)',
+                               'rotor_torque(N-m)', 'blade_length(m)',
+                               'blade_breadth(m)', 'windmill_height(m)' ],
+
+                  'drop': ['turbine_status', 'cloud_level', 'tracking_id', 'datetime'],
+                  'targets': ['windmill_generated_power(kW_h)']},
+
+        }
+
+
 
 def histo(name='', column='' , df = '' ):
     os.system('mkdir Plots/')

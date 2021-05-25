@@ -123,7 +123,9 @@ def getBestSplit(df, column, target):
     return {"attribute":column, "value":bestValue, "SSR":bestSSR}
 '''
 
-def getBestSplit(df, column, target):
+def getBestSplit(df, column, target, fast = True):
+
+    print("Length df: ", len(df) )
 
     def plot_ssr(values, rss, column):
         fs = 13
@@ -150,14 +152,22 @@ def getBestSplit(df, column, target):
     # so I can loop over the feature values and do not need to search for indices
     values = df[column].values
     feature_indices = np.argsort(values)
-
     target_values = df[target].values
     sorted_target = target_values[feature_indices]
-
+    indices_all = range(len(sorted_target))
     all_v, all_rss = [],[]
 
-    for ind,v in enumerate(values):
+    if fast:
+        values = df[column].values
+        #values, indices = np.unique(df[column].values, return_index=True)  # extracting unique values
+        sorted_indices = np.argsort(values) # sorting values
+        values, indices =  np.unique(values[sorted_indices], return_index=True) # sorting unique indices in same order
+        sorted_target = target_values[sorted_indices]
+        indices_all = indices
+
+    for ind,v in zip(indices_all, values):
         # split data
+        #print('*** evaluating rss feature: ', column)
         lower = sorted_target[:ind]
         upper = sorted_target[ind:]
 
@@ -201,7 +211,7 @@ def getSplitAttribute2(df,target):
 
     # loop through all attributes and get the best split for each. Only keep the best.
     for col in df.columns:
-        if col == target:
+        if col == target or col in ['G1','G2','G3']: # must remove all targets for math
             continue
         curr_bestSplit = getBestSplit(df, col, target)
         if curr_bestSplit["SSR"] < bestSplit["SSR"]:
@@ -299,13 +309,17 @@ def plot_rms(errors_tree, errors_model, ds_name, target):
     plt.close()
 
 
-def plot_diff(y_test_sk, predictions_sk, y_pred_tree, criterion, ds, target):
+def plot_diff(y_test_sk, y_pred_tree, y_pred_ModelTree,  y_pred_skTree, y_pred_randomF, criterion, ds, target):
 
     num_points = 300
     fs = 12
-    plt.plot(y_test_sk[:num_points], label = 'Test values')
-    plt.scatter(range(num_points), predictions_sk[:num_points], label = 'Predicted SKlearn ' + criterion)
-    plt.scatter(range(num_points), y_pred_tree[:num_points], label = 'Predicted Tree' )
+    plt.plot(y_test_sk[:num_points], label = 'Test values', ls = '-', color = 'black')
+
+    plt.scatter(range(num_points), y_pred_skTree[:num_points],
+                label = 'Predicted sci-kit Regr. Tree ' , ls = '--' , color = 'red')
+
+    plt.scatter(range(num_points), y_pred_tree[:num_points],
+                label = 'Predicted Regr. Tree' , color = 'blue')
 
     plt.title('Test set vs Predictions - ' + ds, fontsize=fs)
     plt.ylabel(target, fontsize=fs)
@@ -315,14 +329,19 @@ def plot_diff(y_test_sk, predictions_sk, y_pred_tree, criterion, ds, target):
     plt.savefig('Plots/results/sklearn_comparison_lines_' + ds + '.png', dpi = 150)
     plt.close()
 
-    plt.hist([y_test_sk,predictions_sk,y_pred_tree],
+
+    plt.hist([y_test_sk, y_pred_tree, y_pred_ModelTree,  y_pred_skTree, y_pred_randomF ],
              histtype = 'step',
-             label = ['Test values', 'Predicted SKlearn ' + criterion , 'Predicted Tree' ],
-             color = ['blue','lime','orange'])
+
+             label = ['Test values', 'Regr. Tree', 'Model Tree',
+                      'sci-kit Regr. ', 'sci-kit Random Forest' ],
+
+             color = ['blue','lime','orange', 'red', 'black'],
+)
 
     plt.grid(ls=':', color='lightgray')
     plt.ylabel(target, fontsize=fs)
-    plt.legend(fontsize=fs)
+    plt.legend(fontsize=fs-2, loc = 'best' )
     plt.tight_layout()
     plt.savefig('Plots/results/sklearn_comparison_histo_' + ds + '_' + target + '.png', dpi=150)
     plt.close()

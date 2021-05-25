@@ -153,9 +153,8 @@ data = {'math': {'path': 'data/student-mat.csv',
 
 
 """ Folds for cross-validation """
-folds = 5
-datasets = ['life']
-
+folds = 2
+datasets = ['wind']
 
 
 if __name__ == '__main__':
@@ -178,12 +177,12 @@ if __name__ == '__main__':
             for i in range(len(trainList)):
 
                 print('*** Calculating Fold: ', i )
-                print(' - training ')
+                print(' - training Regression Tree ')
                 root = tree.Node(trainList[i],target)
+                print(' - training Model Tree ')
                 modelTreeRoot = modelTree.Node(trainList[i],target)
 
-
-                solCol, testSet = prepareTest(testList[i], target) # prepareTest func is useless?
+                solCol, testSet = prepareTest(testList[i], target)
                 y_test, testSet = testList[i][target].values, testList[i]
 
 
@@ -218,8 +217,8 @@ if __name__ == '__main__':
                 y_train, y_test = trainList[i][target], testList[i][target]
                 linear_regressor = util.getLinearClassifier()
                 util.fitLinearRegressor(X_train, y_train, linear_regressor)
-                prediction = util.predict(linear_regressor, X_test)
-                mse_rmse_mae_linear = regressionErrors(y_test, prediction)
+                prediction_linReg = util.predict(linear_regressor, X_test)
+                mse_rmse_mae_linear = regressionErrors(y_test, prediction_linReg)
                 print('*** Fold MSE, RMSE, MAE sklearn for linear regressor :', mse_rmse_mae_linear)
 
                 """ Using random forest regressor """
@@ -227,11 +226,24 @@ if __name__ == '__main__':
                 # y_train, y_test = trainList[i][target], testList[i][target]
                 rf_regressor = util.getRandomForestRegressor()
                 util.fitLinearRegressor(X_train, y_train, rf_regressor)
-                prediction = util.predict(rf_regressor, X_test)
-                mse_rmse_mae_rf = regressionErrors(y_test, prediction)
+                prediction_randomForest = util.predict(rf_regressor, X_test)
+                mse_rmse_mae_rf = regressionErrors(y_test, prediction_randomForest)
                 print('*** Fold MSE, RMSE, MAE sklearn for random forest regressor :', mse_rmse_mae_rf)
 
             dummy_make_plot = plot_rms(errors_tree, errors_model, ds, target)
-            dummy_diff = plot_diff(y_test_sk_all, y_pred_sk_all, y_pred_tree, criteria[0], ds, target)
+
+            dummy_diff = plot_diff(y_test_sk_all,
+                                   y_pred_tree,
+                                   y_pred_ModelTree,
+                                   y_pred_sk_all,
+                                   prediction_randomForest,
+                                   criteria[0], ds, target)
+
+            print('Check difference in predictions: ' , '\n')
+            print('Test set \t\t ', y_test_sk_all[:10]  , '\n')
+            print('Regr. Tree \t\t ', y_pred_tree[:10]  , '\n')
+            print('Model Tree \t\t ', y_pred_ModelTree[:10] , '\n')
+            print('sci-kit Reg.Tree  \t\t ', y_pred_sk_all[:10] , '\n')
+            print('sci-kit Random Forest  \t\t ', prediction_randomForest[:10] , '\n')
 
             print('*** Done Fold: ', i)
