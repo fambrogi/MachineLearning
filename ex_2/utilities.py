@@ -285,28 +285,41 @@ For Plotting
 """
 
 
-def plot_rms(errors_tree, errors_model, ds_name, target):
+def plot_rms(errors_tree, errors_model,
+             mse_rmse_mae_sk, mse_rmse_mae_linear, mse_rmse_mae_rf,
+            ds, target):
     """ Plot punctual and averaged errors for each fold """
 
     os.system('mkdir Plots/results/')
     fs = 12
-    for l,i,c in zip(['MSE', 'MAE'], [0,2], ['lime', 'blue']):
+    # ['lime', 'blue', 'gold', 'red', 'black']
+    for l,i in zip(['MSE', 'RMSE', 'AME'], [0,1,2]):
 
-        plt.scatter(range(1,len(errors_tree)+1), [f[i] for f in errors_tree], label=l + ' reg. tree', color = c )
-        plt.scatter(range(1,len(errors_model)+1), [f[i] for f in errors_model], label=l + ' model', color = c , ls = ':' )
+        plt.scatter(range(1,len(errors_tree)+1), [f[i] for f in errors_tree], label= '*Reg. tree', color = 'lime' )
+        plt.plot(range(1,len(errors_tree)+1), np.full(len(errors_tree), np.mean([g[i] for g in errors_tree])), ls=':', color = 'lime' )
 
-        plt.plot(range(1,len(errors_tree)+1), np.full(len(errors_tree), np.mean([g[i] for g in errors_tree])),
-                 label='Average ', ls=':', color = c )
+        plt.scatter(range(1,len(errors_model)+1), [f[i] for f in errors_model], label='*Model tree', color = 'blue' )
+        plt.plot(range(1,len(errors_model)+1), np.full(len(errors_model), np.mean([g[i] for g in errors_model])), ls=':', color = 'blue' )
 
-    plt.xlabel('K-fold')
-    plt.legend(fontsize=7)
-    plt.grid(ls=':', color='lightgray')
-    plt.title('Dataset ' + ds_name + ' - Target feature: ' + target, fontsize=fs)
+        plt.scatter(range(1,len(mse_rmse_mae_sk)+1), [f[i] for f in mse_rmse_mae_sk], label='Sci-kit Reg. Tree', color = 'gold' )
+        plt.plot(range(1,len(mse_rmse_mae_sk)+1), np.full(len(mse_rmse_mae_sk), np.mean([g[i] for g in mse_rmse_mae_sk])), ls=':', color = 'gold' )
 
-    plt.xticks(np.arange(1, len(errors_tree)+1, 1.0))
-    plt.tight_layout()
-    plt.savefig('Plots/results/' + ds_name + '_' + target + '.png', dpi=150 )
-    plt.close()
+        plt.scatter(range(1,len(mse_rmse_mae_linear)+1), [f[i] for f in mse_rmse_mae_linear], label= 'Sci-kit Lin. Reg.', color = 'red' )
+        plt.plot(range(1,len(mse_rmse_mae_linear)+1), np.full(len(mse_rmse_mae_linear), np.mean([g[i] for g in mse_rmse_mae_linear])), ls=':', color = 'red')
+
+        plt.scatter(range(1,len(mse_rmse_mae_rf)+1), [f[i] for f in mse_rmse_mae_rf], label=l + 'Sci-kit Rand. Forest', color = 'black' )
+        plt.plot(range(1,len(mse_rmse_mae_rf)+1), np.full(len(mse_rmse_mae_rf), np.mean([g[i] for g in mse_rmse_mae_rf])), ls=':', color = 'black' )
+
+        plt.xlabel('K-fold')
+        plt.legend(fontsize=7)
+        plt.grid(ls=':', color='lightgray')
+        plt.title('Dataset ' + ds + ' - Target feature: ' + target, fontsize=fs)
+
+        plt.xticks(np.arange(1, len(errors_tree)+1, 1.0))
+        #plt.tight_layout()
+        plt.ylabel(l, fontsize = fs)
+        plt.savefig('Plots/results/' + ds + '_' + target + '_' + l + '.png', dpi=150 )
+        plt.close()
 
 
 def plot_diff(y_test_sk, y_pred_tree, y_pred_ModelTree,
@@ -330,11 +343,11 @@ def plot_diff(y_test_sk, y_pred_tree, y_pred_ModelTree,
     plt.ylabel(target, fontsize=fs)
     plt.xlabel('Test item', fontsize = fs )
     plt.legend(fontsize=fs-3, loc = 'best')
-    plt.tight_layout()
+    #plt.tight_layout()
     plt.grid(ls=':', color = 'lightgray')
 
 
-    plt.savefig('Plots/results/sklearn_comparison_lines_' + ds + '.png', dpi = 150)
+    plt.savefig('Plots/results/' + ds + '_sklearn_comparison_lines.png', dpi = 150)
     plt.close()
 
 
@@ -345,15 +358,18 @@ def plot_diff(y_test_sk, y_pred_tree, y_pred_ModelTree,
                       'sci-kit Regr. ', 'sci-kit Random Forest' , 'sci-kit Lin. Regr.' ],
 
              color = ['blue','lime','orange', 'red', 'black', 'cyan'],
-             density = True
-)
+             density = True )
 
     plt.grid(ls=':', color='lightgray')
     plt.legend(fontsize=fs-4, loc = 'best' )
-    plt.tight_layout()
-    if ds == 'wind':
-        plt.xlim(0,20)
-        plt.xlabel(target, fontsize=fs-3)
+    plt.ylabel("Normalized Counts" , fontsize=fs)
 
-    plt.savefig('Plots/results/sklearn_comparison_histo_' + ds + '_' + target + '.png', dpi=150)
+    #plt.tight_layout()
+    if ds == 'wind' or ds == 'math':
+        plt.xlim(0,20)
+        plt.xlabel(target, fontsize=fs)
+    else:
+        plt.xlabel(target, fontsize=fs)
+
+    plt.savefig('Plots/results/' + ds + '_sklearn_comparison_histo_' + target + '.png', dpi=150)
     plt.close()
