@@ -13,9 +13,10 @@ from sklearn import preprocessing
 data = {'math': {'path': 'data/student-mat.csv',
                  'features': [],
                  'drop': [],
-                 'targets' : ['G1', 'G2', 'G3']},
+                 'targets' : ['G3']},
+                 #'targets' : ['G1']},
 
-        'life': { 'path': 'data/Life_Expectancy_Data.csv',
+                 'life': { 'path': 'data/Life_Expectancy_Data.csv',
                   'features': ['AdultMortality',
                                'infantdeaths', 'Alcohol', 'percentageexpenditure', 'HepatitisB',
                                'Measles', 'BMI', 'under-fivedeaths', 'Polio', 'Totalexpenditure',
@@ -38,6 +39,8 @@ data = {'math': {'path': 'data/student-mat.csv',
                   'targets': ['windmill_generated_power(kW_h)']},
 
         }
+
+
 
 def histo(name='', column='' , df = '' ):
     os.system('mkdir Plots/')
@@ -128,6 +131,3 @@ def load_clean_data(name):
     plt.close()
 
     return df
-
-
-

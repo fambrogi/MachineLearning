@@ -80,44 +80,7 @@ def test(testSet,target,treeHead):
         results.append(assigned)
     return results
 
-""" to remove
-def rootMeanSquaredError(testCol,solutionCol):
-    sum=0
-    for i in solutionCol.index:
-        regressorResult=testCol.pop()
-        realResult=solutionCol.loc[i]
-        #observed-predicted
-        difference=realResult-regressorResult
-        squaredDiff=difference**2
-        sum+=squaredDiff
-    mean=sum/solutionCol.shape[0]
-    return np.sqrt(mean)
-"""
 
-
-
-
-''' to remove
-def run(ds, folds):
-    """ Wrapper function to train the model on the input dataset and target feature """
-    # todo  here it goes the data cleaning !!!
-
-    """ Reading, cleaning, splitting the data """
-    print('*** Reading and preparing the dataset: ' , ds )
-
-    dataset = pd.read_csv(dataset)
-    trainSet, testSet = split(dataset)
-
-    for target in targets:
-        print('*** Training the dataset: ', dataset, ' on the target: ', target)
-        root = train(trainSet, target)
-
-        print('*** Testing the dataset: ', dataset, ' on the target: ', target)
-        solCol,testSet = prepareTest(testSet,target)
-        results = test(testSet,target,root)
-        rmsq = rootMeanSquaredError(results,solCol)
-        print('*** Root mean square: ', rmsq )
-'''
 
 
 """ data as imported from clean_analyze_data
@@ -154,8 +117,7 @@ data = {'math': {'path': 'data/student-mat.csv',
 
 """ Folds for cross-validation """
 folds = 5
-datasets = ['life']
-
+datasets = ['math']
 
 
 if __name__ == '__main__':
@@ -173,19 +135,22 @@ if __name__ == '__main__':
             errors_model = []
 
             y_test_sk_all, y_pred_sk_all = [], []
+            y_test_sk_all, y_pred_sk_all = [], []
+
             y_pred_tree, y_pred_model = [], []
+            prediction_randomForest_all = []
+            prediction_linReg_all = []
 
             for i in range(len(trainList)):
 
                 print('*** Calculating Fold: ', i )
-                print(' - training ')
+                print(' - training Regression Tree ')
                 root = tree.Node(trainList[i],target)
+                print(' - training Model Tree ')
                 modelTreeRoot = modelTree.Node(trainList[i],target)
 
-
-                solCol, testSet = prepareTest(testList[i], target) # prepareTest func is useless?
+                solCol, testSet = prepareTest(testList[i], target)
                 y_test, testSet = testList[i][target].values, testList[i]
-
 
                 print(' - testing')
                 y_pred = test(testSet, target, root)
@@ -216,22 +181,51 @@ if __name__ == '__main__':
                 """ Using linear regressor """
                 X_train, X_test = trainList[i].loc[:, trainList[i].columns != target], testList[i].loc[:, testList[i].columns != target]
                 y_train, y_test = trainList[i][target], testList[i][target]
+
+                """ Federico version
+                train_df = trainList[i]
+                test_df = testList[i]
+
+                X_train = train_df.drop(columns=[target])
+                y_train = train_df[target]
+                X_test = test_df.drop(columns=[target])
+                y_test = test_df[target]
+                """
+
                 linear_regressor = util.getLinearClassifier()
                 util.fitLinearRegressor(X_train, y_train, linear_regressor)
-                prediction = util.predict(linear_regressor, X_test)
-                mse_rmse_mae_linear = regressionErrors(y_test, prediction)
+                prediction_linReg = util.predict(linear_regressor, X_test)
+                mse_rmse_mae_linear = regressionErrors(y_test, prediction_linReg)
                 print('*** Fold MSE, RMSE, MAE sklearn for linear regressor :', mse_rmse_mae_linear)
+                prediction_linReg_all.extend(prediction_linReg)
+
 
                 """ Using random forest regressor """
                 # X_train, X_test = trainList[i].loc[:, trainList[i].columns != target], testList[i].loc[:, testList[i].columns != target]
                 # y_train, y_test = trainList[i][target], testList[i][target]
                 rf_regressor = util.getRandomForestRegressor()
                 util.fitLinearRegressor(X_train, y_train, rf_regressor)
-                prediction = util.predict(rf_regressor, X_test)
-                mse_rmse_mae_rf = regressionErrors(y_test, prediction)
+                prediction_randomForest = util.predict(rf_regressor, X_test)
+                mse_rmse_mae_rf = regressionErrors(y_test, prediction_randomForest)
                 print('*** Fold MSE, RMSE, MAE sklearn for random forest regressor :', mse_rmse_mae_rf)
+                prediction_randomForest_all.extend(prediction_randomForest)
 
             dummy_make_plot = plot_rms(errors_tree, errors_model, ds, target)
-            dummy_diff = plot_diff(y_test_sk_all, y_pred_sk_all, y_pred_tree, criteria[0], ds, target)
+
+            dummy_diff = plot_diff(y_test_sk_all,
+                                   y_pred_tree,
+                                   y_pred_ModelTree,
+                                   y_pred_sk_all,
+                                   prediction_randomForest_all,
+                                   prediction_linReg_all,
+                                   criteria[0], ds, target)
+
+            print('************** Check difference in predictions: ' , '\n')
+            print('Test set \t\t ', y_test_sk_all[:10]  , '\n')
+            print('Regr. Tree \t\t ', y_pred_tree[:10]  , '\n')
+            print('Model Tree \t\t ', y_pred_ModelTree[:10] , '\n')
+            print('sci-kit Reg.Tree  \t\t ', y_pred_sk_all[:10] , '\n')
+            print('sci-kit Random Forest  \t\t ', prediction_randomForest[:10] , '\n')
+            print('sci-kit Lin. Regr.   \t\t ', prediction_linReg[:10] , '\n')
 
             print('*** Done Fold: ', i)
