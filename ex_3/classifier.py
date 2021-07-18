@@ -13,6 +13,7 @@ from sklearn.preprocessing import LabelEncoder
 import warnings
 from sdv.tabular import GaussianCopula, CopulaGAN
 from sdv.tabular import CTGAN
+from sdv import *
 
 import random
 
@@ -40,13 +41,7 @@ features = { 'adult' :
                  {'features':  ["age","workclass","fnlwgt","education","education-num",
                                 "marital-status","occupation","relationship","race","sex",
                                 "capital-gain","capital-loss","hours-per-week","native-country"],
-                  'target': ["class"] }
-             }
-
-
-
-
-
+                  'target': ["class"] }          }
 
 def splitDataset(dataset = '', train_features = [], target_features = [] ):
     """ Split the dataset provided into train and test """
@@ -83,6 +78,48 @@ def evaluation(y_test,y_pred, normalize='true'):
     report = classification_report(y_test, y_pred, output_dict= True)
     return confusion_m, accuracy, report
 
+def printConfusionMatrix(matrix,title,dataset):
+    fs = 12
+    plt.figure(figsize=(6, 5))
+    # place labels at the top
+    plt.gca().xaxis.tick_top()
+    plt.gca().xaxis.set_label_position('top')
+    # plot the matrix per se
+    plt.imshow(matrix, interpolation='nearest', cmap=plt.cm.Blues, vmin=0, vmax=1)
+    # plot colorbar to the right
+    plt.colorbar()
+    fmt = 'd'
+    fmt = 'f.2'
+    # write the number of predictions in each bucket
+    thresh = matrix.max() / 2.
+    for i, j in itertools.product(range(matrix.shape[0]), range(matrix.shape[1])):
+        plt.text(j, i, '{0:.2f}'.format(matrix[i, j]), horizontalalignment="center",
+                 color="white" if matrix[i, j] > thresh else "black")
+    ticks = {'adult': ['0', '1'],
+             'titanic': ['0', '1'],
+             'ads': ['0', '1']}
+
+    classes = ticks[dataset]
+
+    classes = range(0, len(matrix))
+    tick_marks = np.arange(len(classes))
+
+    try:
+        plt.xticks(tick_marks, ticks[dataset], rotation=20, fontsize=8)
+        plt.yticks(tick_marks, ticks[dataset], rotation=20, va="center", fontsize=8)
+    except:
+        pass
+    titles = {'adult': 'class',
+              'titanic': 'survives',
+              'ads': 'buy'}
+    plt.title(title)
+
+    plt.ylabel('True label', size=fs)
+    plt.xlabel('Predicted label', size=fs)
+    plt.tight_layout()
+    plt.savefig('ConfusionMatrixes/' +title+'.png', dpi=150)
+    plt.close()
+
 
 def splitAndTrainOriginalModel():
     print('classification of adult income dataset')
@@ -103,6 +140,8 @@ def splitAndTrainOriginalModel():
     print("Precision (macro avg):", report['macro avg']['precision'])
     print("Recall (macro avg):", report['macro avg']['recall'])
     print("F1-score (macro avg):", report['macro avg']['f1-score'])
+    printConfusionMatrix(confusion_m,'AdultIncomeOriginal','adult')
+
 
     print('classification of titanic survivors dataset')
     dataset = pd.read_csv("input_data/" + 'titanic_cleaned.csv')
@@ -120,6 +159,7 @@ def splitAndTrainOriginalModel():
     print("Precision (macro avg):", report['macro avg']['precision'])
     print("Recall (macro avg):", report['macro avg']['recall'])
     print("F1-score (macro avg):", report['macro avg']['f1-score'])
+    printConfusionMatrix(confusion_m, 'titanicSurvivorsOriginal', 'titanic')
 
     print('classification of ads')
     dataset = pd.read_csv("input_data/" + 'ads_cleaned.csv')
@@ -137,6 +177,7 @@ def splitAndTrainOriginalModel():
     print("Precision (macro avg):", report['macro avg']['precision'])
     print("Recall (macro avg):", report['macro avg']['recall'])
     print("F1-score (macro avg):", report['macro avg']['f1-score'])
+    printConfusionMatrix(confusion_m, 'SocialNetworkAdsOriginal', 'ads')
 
 def generateGaussianCopulaModel():
     #I need to merge together x_train y_train
@@ -164,6 +205,7 @@ def generateGaussianCopulaModel():
     print("Precision (macro avg):", report['macro avg']['precision'])
     print("Recall (macro avg):", report['macro avg']['recall'])
     print("F1-score (macro avg):", report['macro avg']['f1-score'])
+    printConfusionMatrix(confusion_m, 'AdultIncomeCopula', 'adult')
 
     print('generating artificial data for Titanic dataset using gaussian model')
     x_train = pd.read_csv('splittedDatasets/x_trainTitanic.csv')
@@ -185,6 +227,7 @@ def generateGaussianCopulaModel():
     print("Precision (macro avg):", report['macro avg']['precision'])
     print("Recall (macro avg):", report['macro avg']['recall'])
     print("F1-score (macro avg):", report['macro avg']['f1-score'])
+    printConfusionMatrix(confusion_m, 'titanicCopula', 'titanic')
 
     print('generating artificial data for Ads dataset using gaussian model')
     x_train = pd.read_csv('splittedDatasets/x_trainAds.csv')
@@ -206,14 +249,16 @@ def generateGaussianCopulaModel():
     print("Precision (macro avg):", report['macro avg']['precision'])
     print("Recall (macro avg):", report['macro avg']['recall'])
     print("F1-score (macro avg):", report['macro avg']['f1-score'])
+    printConfusionMatrix(confusion_m, 'AdsCopula', 'ads')
 
 def generateCTGANModel():
     print('generating artificial data for adult income dataset using CTGAN model')
     x_train = pd.read_csv('splittedDatasets/x_trainAdult.csv')
     y_train = pd.read_csv('splittedDatasets/y_trainAdult.csv')
     model = CTGAN()
-    model.fit(pd.merge(x_train, y_train, left_index=True, right_index=True))
-    newAdultIncomeData = model.sample(100)
+    dataset=pd.merge(x_train, y_train, left_index=True, right_index=True)
+    model.fit(dataset[0:1500])
+    newAdultIncomeData = model.sample(1500)
     newAdultIncomeData['class'].to_csv('generatedData/y_trainAdultCTGAN.csv', index=False)
     del newAdultIncomeData['class']
     newAdultIncomeData.to_csv('generatedData/x_trainAdultCTGAN.csv', index=False)
@@ -228,16 +273,18 @@ def generateCTGANModel():
     print("Precision (macro avg):", report['macro avg']['precision'])
     print("Recall (macro avg):", report['macro avg']['recall'])
     print("F1-score (macro avg):", report['macro avg']['f1-score'])
+    printConfusionMatrix(confusion_m, 'AdultIncomeCTGAN', 'adult')
 
     print('generating artificial data for Titanic dataset using CTGAN model')
     x_train = pd.read_csv('splittedDatasets/x_trainTitanic.csv')
     y_train = pd.read_csv('splittedDatasets/y_trainTitanic.csv')
     model = CTGAN()
-    model.fit(pd.merge(x_train, y_train, left_index=True, right_index=True))
-    newAdultIncomeData = model.sample(100)
-    newAdultIncomeData['Survived'].to_csv('generatedData/y_trainTitanicCTGAN.csv', index=False)
-    del newAdultIncomeData['Survived']
-    newAdultIncomeData.to_csv('generatedData/x_trainTitanicCTGAN.csv', index=False)
+    dataset = pd.merge(x_train, y_train, left_index=True, right_index=True)
+    model.fit(dataset[0:1500])
+    newTitanicIncomeData = model.sample(1500)
+    newTitanicIncomeData['Survived'].to_csv('generatedData/y_trainTitanicCTGAN.csv', index=False)
+    del newTitanicIncomeData['Survived']
+    newTitanicIncomeData.to_csv('generatedData/x_trainTitanicCTGAN.csv', index=False)
     x_test = pd.read_csv('splittedDatasets/x_testTitanic.csv')
     y_test = pd.read_csv('splittedDatasets/y_testTitanic.csv')
     print('fitting and testing RF using the new generated data')
@@ -249,16 +296,18 @@ def generateCTGANModel():
     print("Precision (macro avg):", report['macro avg']['precision'])
     print("Recall (macro avg):", report['macro avg']['recall'])
     print("F1-score (macro avg):", report['macro avg']['f1-score'])
+    printConfusionMatrix(confusion_m, 'titanicCTGAN', 'titanic')
 
     print('generating artificial data for Ads dataset using CTGAN model')
     x_train = pd.read_csv('splittedDatasets/x_trainAds.csv')
     y_train = pd.read_csv('splittedDatasets/y_trainAds.csv')
     model = CTGAN()
-    model.fit(pd.merge(x_train, y_train, left_index=True, right_index=True))
-    newAdultIncomeData = model.sample(100)
-    newAdultIncomeData['Purchased'].to_csv('generatedData/y_trainAdsCTGAN.csv', index=False)
-    del newAdultIncomeData['Purchased']
-    newAdultIncomeData.to_csv('generatedData/x_trainAdsCTGAN.csv', index=False)
+    dataset = pd.merge(x_train, y_train, left_index=True, right_index=True)
+    model.fit(dataset[0:1500])
+    newAdsData = model.sample(1500)
+    newAdsData['Purchased'].to_csv('generatedData/y_trainAdsCTGAN.csv', index=False)
+    del newAdsData['Purchased']
+    newAdsData.to_csv('generatedData/x_trainAdsCTGAN.csv', index=False)
     x_test = pd.read_csv('splittedDatasets/x_testAds.csv')
     y_test = pd.read_csv('splittedDatasets/y_testAds.csv')
     print('fitting and testing RF using the new generated data')
@@ -270,14 +319,17 @@ def generateCTGANModel():
     print("Precision (macro avg):", report['macro avg']['precision'])
     print("Recall (macro avg):", report['macro avg']['recall'])
     print("F1-score (macro avg):", report['macro avg']['f1-score'])
+    printConfusionMatrix(confusion_m, 'adsCTGAN', 'ads')
+
 
 def generateGTGACopulaModel():
     print('generating artificial data for adult income dataset using CTGAN Copula model')
     x_train = pd.read_csv('splittedDatasets/x_trainAdult.csv')
     y_train = pd.read_csv('splittedDatasets/y_trainAdult.csv')
     model = CopulaGAN()
-    model.fit(pd.merge(x_train, y_train, left_index=True, right_index=True))
-    newAdultIncomeData = model.sample(1000)
+    dataset = pd.merge(x_train, y_train, left_index=True, right_index=True)
+    model.fit(dataset[0:1500])
+    newAdultIncomeData = model.sample(1500)
     newAdultIncomeData['class'].to_csv('generatedData/y_trainAdultCTGANCopula.csv', index=False)
     del newAdultIncomeData['class']
     newAdultIncomeData.to_csv('generatedData/x_trainAdultCTGANCopula.csv', index=False)
@@ -292,16 +344,18 @@ def generateGTGACopulaModel():
     print("Precision (macro avg):", report['macro avg']['precision'])
     print("Recall (macro avg):", report['macro avg']['recall'])
     print("F1-score (macro avg):", report['macro avg']['f1-score'])
+    printConfusionMatrix(confusion_m, 'adultIncomeCTGANCopula', 'adult')
 
     print('generating artificial data for Titanic dataset using CTGAN Copula model')
     x_train = pd.read_csv('splittedDatasets/x_trainTitanic.csv')
     y_train = pd.read_csv('splittedDatasets/y_trainTitanic.csv')
     model = CopulaGAN()
-    model.fit(pd.merge(x_train, y_train, left_index=True, right_index=True))
-    newAdultIncomeData = model.sample(1000)
-    newAdultIncomeData['Survived'].to_csv('generatedData/y_trainTitanicCTGANCopula.csv', index=False)
-    del newAdultIncomeData['Survived']
-    newAdultIncomeData.to_csv('generatedData/x_trainTitanicCTGANCopula.csv', index=False)
+    dataset = pd.merge(x_train, y_train, left_index=True, right_index=True)
+    model.fit(dataset[0:1500])
+    newTitanicData = model.sample(1500)
+    newTitanicData['Survived'].to_csv('generatedData/y_trainTitanicCTGANCopula.csv', index=False)
+    del newTitanicData['Survived']
+    newTitanicData.to_csv('generatedData/x_trainTitanicCTGANCopula.csv', index=False)
     x_test = pd.read_csv('splittedDatasets/x_testTitanic.csv')
     y_test = pd.read_csv('splittedDatasets/y_testTitanic.csv')
     print('fitting and testing RF using the new generated data')
@@ -313,16 +367,18 @@ def generateGTGACopulaModel():
     print("Precision (macro avg):", report['macro avg']['precision'])
     print("Recall (macro avg):", report['macro avg']['recall'])
     print("F1-score (macro avg):", report['macro avg']['f1-score'])
+    printConfusionMatrix(confusion_m, 'titanicCTGANCopula', 'titanic')
 
     print('generating artificial data for Ads dataset using CTGAN Copula model')
     x_train = pd.read_csv('splittedDatasets/x_trainAds.csv')
     y_train = pd.read_csv('splittedDatasets/y_trainAds.csv')
     model = CopulaGAN()
-    model.fit(pd.merge(x_train, y_train, left_index=True, right_index=True))
-    newAdultIncomeData = model.sample(1000)
-    newAdultIncomeData['Purchased'].to_csv('generatedData/y_trainAdsCTGANCopula.csv', index=False)
-    del newAdultIncomeData['Purchased']
-    newAdultIncomeData.to_csv('generatedData/x_trainAdsCTGANCopula.csv', index=False)
+    dataset = pd.merge(x_train, y_train, left_index=True, right_index=True)
+    model.fit(dataset[0:1500])
+    newAdsData = model.sample(1500)
+    newAdsData['Purchased'].to_csv('generatedData/y_trainAdsCTGANCopula.csv', index=False)
+    del newAdsData['Purchased']
+    newAdsData.to_csv('generatedData/x_trainAdsCTGANCopula.csv', index=False)
     x_test = pd.read_csv('splittedDatasets/x_testAds.csv')
     y_test = pd.read_csv('splittedDatasets/y_testAds.csv')
     print('fitting and testing RF using the new generated data')
@@ -334,20 +390,7 @@ def generateGTGACopulaModel():
     print("Precision (macro avg):", report['macro avg']['precision'])
     print("Recall (macro avg):", report['macro avg']['recall'])
     print("F1-score (macro avg):", report['macro avg']['f1-score'])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    printConfusionMatrix(confusion_m, 'adsCTGANCopula', 'ads')
 
 def main():
     warnings.simplefilter('ignore')
