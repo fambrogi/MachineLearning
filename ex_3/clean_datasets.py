@@ -6,24 +6,30 @@ from sklearn.preprocessing import LabelEncoder, LabelBinarizer
 import os,sys
 
 
+dic = {"income": {"path": "input_data/adult.data",
+				  "columns": ["age", "workclass", "fnlwgt", "education", "education-num", "marital-status",
+							  "occupation",
+							  "relationship", "race", "sex", "capital-gain", "capital-loss", "hours-per-week",
+							  "native-country", "class"],
+				  "remove": []},
+
+	   "titanic": {"path": "input_data/titanic.csv",
+				   "columns": ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',
+       'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked'],
+				   "remove": ['PassengerId', 'Name']},
+
+	   "social": {"path": "input_data/Social_Network_Ads.csv",
+				  "columns": ['User ID', 'Gender', 'Age', 'EstimatedSalary', 'Purchased'],
+				  "remove": ["User ID"] },
+
+	   }
+
+
 def clean_dataset(ds):
 
 	print(" ***** Pre-processing the dataset: " , ds )
 
-	dic = { "income" :{"path":"input_data/adult.data" ,
-			"columns":["age","workclass","fnlwgt","education","education-num","marital-status","occupation",
-					   "relationship","race","sex","capital-gain","capital-loss","hours-per-week","native-country","class"],
-			"remove": []},
 
-		    "titanic": { "path": "input_data/titanic.csv" ,
-			"columns": [] ,
-			"remove": ['PassengerId', 'Name'] } ,
-
-		    "social": { "path": "input_data/Social_Network_Ads.csv" ,
-			"columns": [],
-			"remove" : ["User ID"] },
-
-	} 
 
  
 	dataset = pd.read_csv(dic[ds]["path"] )
