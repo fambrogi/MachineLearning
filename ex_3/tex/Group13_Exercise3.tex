@@ -97,8 +97,9 @@ Here we briefly introduce our four datasets, analyze the distributions of the in
 
 \subsection{Income Data Set} 
 The "income" data set\cite{ }
-The distribution of the relevant features, as well as a scatter plot to highlight pair-wise correlations are shown in Fig. \ref{pairplot_income}, while a more general view on the correlations are shown in Fig. \ref{correlation_income}.
-
+The distribution of the relevant features, as well as a scatter plot to highlight pair-wise correlations are shown in Fig. \ref{pairplot_income}, while a more general view on the correlations are shown in Fig. \ref{correlation_income}.\\
+The dataset provides us information about people, like: age, workclass, education, marital-status, occupation, capital-gain, ecc...\\
+Our purpose is to determine if a person income is lower or greater than a given value specifically the threshold is 50000 Dollars per year.  
 
 \begin{figure}[h!]
 	\centering
@@ -118,7 +119,8 @@ The distribution of the relevant features, as well as a scatter plot to highligh
 
 
 \subsection{Titanic Data Set} 
-xxx
+The Titanic dataset contains informations about the Titanic's passengers. Given the observations we want to determine if a given person ,represented by an observation, will survive on the Titanic.\\
+Some features of the dataset are:Name, sex, age, Passenger class, ticket fare, where the passenger embarked ecc...
 
 \begin{figure}[h!]
 	\centering
@@ -138,7 +140,7 @@ xxx
 
 
 \subsection{Social Data Set}
-xxx
+The Social network ads datasets collects information about social network users in particular age,sex and income. Our objective is to understand if an user will buy the advised good.
 
 \begin{figure}[h!]
 	\centering
@@ -170,14 +172,23 @@ Here we provide an overview of the original data set data.
 The 
 \paragraph{Normalization}
 The 
-\paragraph{Hot Encoding ? }
-The 
+\paragraph{Labelling}
+In all datasets were present not numeric features.In order to synthetize them was necessary to change the strings into numeric values.In order to do so we used the cat.code method in this way for every not numeric features all the possible values where labelled using a different value.
+Using the labelling we had the possibility to use the three models.   
 \paragraph{Outliers}
 The 
 
 \section{Generation of Synthetic Data}
-Here we briefly outlined the motivations and techniques used for the generation of synthetic data.
+In order to generate the synthetic data we relied on three different generation models.The models are defined in the SDV library.The three models aim to generate a synthetic datasets whose properties are the same as the original dataset.
+The three models we used are: GaussianCopula model, CTGAN model, CopulaGAN model.
+We now describe the idea behind these three models as reported on the SDV library user guide.
+\paragraph{GaussianCopula}
+The Gaussian copula model is based on copulas which are distributions on[0;1]d which is constructed from a multivariate normal distribution over Rd by using the probability integral transform. Intuitively, a copula is a mathematical function that allows us to describe the joint distribution of multiple random variables by analyzing the dependencies between their marginal distributions.
 
+\paragraph{CTGAN model}
+The sdv.tabular.CTGAN model is based on the GAN-based Deep Learning data synthesizer which was presented at the NeurIPS 2020 conference by the paper titled Modeling Tabular data using Conditional GAN.
+\paragraph{Copula GAN}
+The sdv.tabular.CopulaGAN model is a variation of the CTGAN Model which takes advantage of the CDF based transformation that the GaussianCopulas apply to make the underlying CTGAN model task of learning the data easier.
 
 \section{Model Implementation}
 
