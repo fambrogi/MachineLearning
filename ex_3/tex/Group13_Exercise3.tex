@@ -87,19 +87,18 @@
 \tableofcontents
 
 \section*{Introduction}
-In this document we describe the results of the implementation of three algorithms to solve classification problems on four different dataset. 
+In this document we describe the results of the implementation of synthesizing algorithms to create synthetic replicas of three different data sets. We test them for their ability to create replicas of the original data set.
 
 
 
 \section{Data Sets Description}
-Here we briefly introduce our four datasets, analyze the distributions of the input data and check for significant correlations between variables. 
+Here we briefly introduce our datasets, analyze the distributions of the input data and check for significant correlations between variables.
 
 
-\subsection{Income Data Set} 
-The "income" data set\cite{ }
+\subsection{Income Data Set}
 The distribution of the relevant features, as well as a scatter plot to highlight pair-wise correlations are shown in Fig. \ref{pairplot_income}, while a more general view on the correlations are shown in Fig. \ref{correlation_income}.\\
-The dataset provides us information about people, like: age, workclass, education, marital-status, occupation, capital-gain, ecc...\\
-Our purpose is to determine if a person income is lower or greater than a given value specifically the threshold is 50000 Dollars per year.  
+The data set \cite{income} provides us information about people, like: age, workclass, education, marital-status, occupation, capital-gain, ecc...\\
+Our purpose is to determine if a person income is lower or greater than a given value specifically the threshold is 50000 Dollars per year.
 
 \begin{figure}[h!]
 	\centering
@@ -118,9 +117,9 @@ Our purpose is to determine if a person income is lower or greater than a given 
 
 
 
-\subsection{Titanic Data Set} 
-The Titanic dataset contains informations about the Titanic's passengers. Given the observations we want to determine if a given person ,represented by an observation, will survive on the Titanic.\\
-Some features of the dataset are:Name, sex, age, Passenger class, ticket fare, where the passenger embarked ecc...
+\subsection{Titanic Data Set}
+The Titanic data set \cite{titanic} contains informations about the Titanic's passengers. Given the observations we want to determine if a given person, represented by an observation, will survive on the Titanic.\\
+Some features of the dataset are: Name, sex, age, Passenger class, ticket fare, where the passenger embarked, etc.
 
 \begin{figure}[h!]
 	\centering
@@ -140,7 +139,7 @@ Some features of the dataset are:Name, sex, age, Passenger class, ticket fare, w
 
 
 \subsection{Social Data Set}
-The Social network ads datasets collects information about social network users in particular age,sex and income. Our objective is to understand if an user will buy the advised good.
+The Social network ads data set \cite{social} collects information about social network users in particular age,sex and income. Our objective is to understand if an user will buy the advised good.
 
 \begin{figure}[h!]
 	\centering
@@ -166,51 +165,47 @@ In this section we describe the necessary preliminary steps to import and prepar
 The steps are handled by the script \textit{data\_preparation.py} which includes dedicated function to pre-process each data set.
 
 \subsection{Data Overview}
-Here we provide an overview of the original data set data. 
+Here we provide an overview of the original data.
 
 \paragraph{Missing Value}
-The 
+The
 \paragraph{Normalization}
-The 
+The
 \paragraph{Labelling}
-In all datasets were present not numeric features.In order to synthetize them was necessary to change the strings into numeric values.In order to do so we used the cat.code method in this way for every not numeric features all the possible values where labelled using a different value.
-Using the labelling we had the possibility to use the three models.   
-\paragraph{Outliers}
-The 
+In all datasets were present not numeric features. In order to synthetize them was necessary to change the strings into numeric values. In order to do so we used the cat.code method in this way for every not numeric features all the possible values where labelled using a different value. Using the labelling we had the possibility to use the three models.
 
 \section{Generation of Synthetic Data}
-In order to generate the synthetic data we relied on three different generation models.The models are defined in the SDV library.The three models aim to generate a synthetic datasets whose properties are the same as the original dataset.
-The three models we used are: GaussianCopula model, CTGAN model, CopulaGAN model.
+In order to generate the synthetic data we relied on three different generation models. The models are defined in the SDV library. The three models aim to generate a synthetic data set whose properties are the same as in the original dataset. The three models we used are: GaussianCopula model, CTGAN model, CopulaGAN model.
 We now describe the idea behind these three models as reported on the SDV library user guide.
-\paragraph{GaussianCopula}
-The Gaussian copula model is based on copulas which are distributions on[0;1]d which is constructed from a multivariate normal distribution over Rd by using the probability integral transform. Intuitively, a copula is a mathematical function that allows us to describe the joint distribution of multiple random variables by analyzing the dependencies between their marginal distributions.
 
+\paragraph{GaussianCopula}
+The Gaussian copula model \cite{gaussiancopula} is based on copulas which are distributions on [0;1]$^d$ which is constructed from a multivariate normal distribution over $\mathbb{R}^d$ by using the probability integral transform. Intuitively, a copula is a mathematical function that allows us to describe the joint distribution of multiple random variables by analyzing the dependencies between their marginal distributions.
 \paragraph{CTGAN model}
-The sdv.tabular.CTGAN model is based on the GAN-based Deep Learning data synthesizer which was presented at the NeurIPS 2020 conference by the paper titled Modeling Tabular data using Conditional GAN.
+The sdv.tabular.CTGAN model \cite{ctgan} is based on the GAN-based Deep Learning data synthesizer which was presented at the NeurIPS 2020 conference by the paper titled "Modeling Tabular data using Conditional GAN".
 \paragraph{Copula GAN}
-The sdv.tabular.CopulaGAN model is a variation of the CTGAN Model which takes advantage of the CDF based transformation that the GaussianCopulas apply to make the underlying CTGAN model task of learning the data easier.
+The sdv.tabular.CopulaGAN model \cite{copulagan} is a variation of the CTGAN Model which takes advantage of the CDF based transformation that the GaussianCopulas apply to make the underlying CTGAN model task of learning the data easier.
 
 \section{Model Implementation}
 
 \subsection{Holdout and Cross Validation}
-Here we describe briefly the techniques of "holdout" and "cross validation" that are used to evaluate a model. The \textbf{holdout} method is essentially based on the splitting on the input data set into two subset, one used for training the model, and one used for testing the model, for example in $80\%-20\%$ proportion, although there is not fix recipe for this split. Once the model is trained, the evaluation can be performed on the test data set, and this is therefore possible to check if the prediction of the model match the data. One big issue of this model is that the training strongly depend on the splitting of the initial data set, for example if the characteristic of the training data set are not representative of the whole data set. 
+Here we describe briefly the techniques of "holdout" and "cross validation" that are used to evaluate a model. The \textbf{holdout} method is essentially based on the splitting on the input data set into two subset, one used for training the model, and one used for testing the model, for example in $80\%-20\%$ proportion, although there is not fix recipe for this split. Once the model is trained, the evaluation can be performed on the test data set, and this is therefore possible to check if the prediction of the model match the data. One big issue of this model is that the training strongly depend on the splitting of the initial data set, for example if the characteristic of the training data set are not representative of the whole data set.
 
 A more powerful method is the \textbf{cross-validation} or "k-fold cross validation". Form the full dataset, a test is held out for final evaluation, but the validation set is no longer needed. For this, the training set is split into $k$ sets, so that the model is trained using $k-1$ folds as training data, and the remaining one is used for the validation as a test set (to compute the interesting metric of the model).
-Once we obtain such $k$ number of metrics, the final result is the average of these parameters, obtained for each iteration of the cross-validation on each distinct fold. 
+Once we obtain such $k$ number of metrics, the final result is the average of these parameters, obtained for each iteration of the cross-validation on each distinct fold.
 
 
 \section{Performance Tests}
 
 \paragraph{Confusion Matrix}
-For each classifier, we produce a confusion matrix where each entry $i,j$ corresponds to the number of observations in group $i$, but predicted to be in group $j$. We chose to normalize the entries according to the sum of each row.  
-In case of binary classification, the matrix reduces to the number of true negatives ($TN$), false positives ($FP$), false negatives ($FN$) and true positives ($TP$). 
+For each classifier, we produce a confusion matrix where each entry $i,j$ corresponds to the number of observations in group $i$, but predicted to be in group $j$. We chose to normalize the entries according to the sum of each row.
+In case of binary classification, the matrix reduces to the number of true negatives ($TN$), false positives ($FP$), false negatives ($FN$) and true positives ($TP$).
 
 Examples can be see in Fig. \ref{confusion_matrices}.
 
 We remind here the definition of the metric parameters we will used to quantify the performance of our classifiers i.e. precision ($P$), recall ($R$) , accuracy ($A$) and specificity $S$:
 
 \begin{equation}
-P = \frac{TP}{TP + FP} \ \ \ \ \ \ \ \  R = \frac{TP}{TP + FN} \ \ \ \ \ \ \ \  A = \frac{TP + TN}{all} 
+P = \frac{TP}{TP + FP} \ \ \ \ \ \ \ \  R = \frac{TP}{TP + FN} \ \ \ \ \ \ \ \  A = \frac{TP + TN}{all}
 \ \ \ \ \ \ \ \  S = \frac{TN}{TN + FP}
 \end{equation}
 
@@ -219,13 +214,13 @@ It is straightforward to calculate these parameters for binary classification ta
 	\item  $TPs$ are the values in the diagonal; \
 	\item  $FNs$ for a certain class are the sum of values in the corresponding row excluding the $TP$; \
 	\item  $FPs$ for a certain class are the sum of values in the corresponding column excluding the $TP$; \
-	\item  $TNs$ for a certain class are the sum of all rows and columns, excluding the class's column and row. \	
+	\item  $TNs$ for a certain class are the sum of all rows and columns, excluding the class's column and row. \
 \end{enumerate}
 
 
 Another convenient metric, particularly because it is calculated directly from the proper \textit{scikit-learn} function, is called $f1-score$, which is defined as the harmonic mean of the precision and recall:
 \begin{equation}
-f1-score = 2 \times \frac{P \dot R }{P + R } 
+f1-score = 2 \times \frac{P \dot R }{P + R }
 \end{equation}
 
 

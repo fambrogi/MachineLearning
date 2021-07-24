@@ -1,0 +1,36 @@
+\begin{thebibliography}{1}
+
+\bibitem{income}
+Ronny Kohavi and Barry Becker.
+\newblock Uci - adult data set.
+\newblock \url{https://archive.ics.uci.edu/ml/datasets/Adult}.
+\newblock Accessed: 11.07.2021.
+
+\bibitem{titanic}
+Kaggle - titanic, machine learning from disaster.
+\newblock \url{https://www.kaggle.com/c/titanic/data}.
+\newblock Accessed: 11.07.2021.
+
+\bibitem{social}
+Kaggle - social network ads.
+\newblock \url{https://www.kaggle.com/rakeshrau/social-network-ads}.
+\newblock Accessed: 11.07.2021.
+
+\bibitem{gaussiancopula}
+Sdv.
+\newblock
+  \url{https://sdv.dev/SDV/user_guides/single_table/gaussian_copula.html#what-is-gaussiancopula}.
+\newblock Accessed: 11.07.2021.
+
+\bibitem{ctgan}
+Sdv.
+\newblock
+  \url{https://sdv.dev/SDV/user_guides/single_table/ctgan.html#what-is-ctgan}.
+\newblock Accessed: 11.07.2021.
+
+\bibitem{copulagan}
+Sdv.
+\newblock \url{https://sdv.dev/SDV/user_guides/single_table/copulagan.html}.
+\newblock Accessed: 11.07.2021.
+
+\end{thebibliography}
