@@ -9,19 +9,19 @@ from clean_datasets import dic
 
 """
 dic = {"income": {"path": "input_data/adult.data",
-				  "columns": ["age", "workclass", "fnlwgt", "education", "education-num", "marital-status",
+				  "features": ["age", "workclass", "fnlwgt", "education", "education-num", "marital-status",
 							  "occupation",
 							  "relationship", "race", "sex", "capital-gain", "capital-loss", "hours-per-week",
 							  "native-country", "class"],
 				  "remove": []},
 
 	   "titanic": {"path": "input_data/titanic.csv",
-				   "columns": ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',
+				   "features": ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',
        'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked'],
 				   "remove": ['PassengerId', 'Name']},
 
 	   "social": {"path": "input_data/Social_Network_Ads.csv",
-				  "columns": ['User ID', 'Gender', 'Age', 'EstimatedSalary', 'Purchased'],
+				  "features": ['User ID', 'Gender', 'Age', 'EstimatedSalary', 'Purchased'],
 				  "remove": ["User ID"] },
 
 	   }
@@ -40,7 +40,7 @@ def make_histos(ds):
         del df[c]
 
     if ds == "income":
-        df.columns = dic[ds]['columns']
+        df.columns = dic[ds]['features']
 
     print("Columns: " , df.columns )
 
@@ -53,10 +53,6 @@ def make_histos(ds):
     # correlation matrix
     # Compute the correlation matrix
     corr = df.corr()
-    #mask = np.triu(np.ones_like(corr, dtype=bool))
-    #f, ax = plt.subplots(figsize=(11, 9))
-    #cmap = sns.diverging_palette(230, 20, as_cmap=True)
-    #sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0, square=True, linewidths=.5, cbar_kws={"shrink": .5})
     a = sns.diverging_palette(145, 300, s=60, as_cmap=True)
     sns.heatmap(corr,  vmin = -1, vmax = 1, linewidths=.5, cbar_kws={"shrink": .5}, cmap = a)
     plt.title("Correlations for the data set " + ds , fontsize = fs )

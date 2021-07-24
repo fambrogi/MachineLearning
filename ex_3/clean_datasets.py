@@ -7,31 +7,31 @@ import os,sys
 
 
 dic = {"income": {"path": "input_data/adult.data",
-				  "columns": ["age", "workclass", "fnlwgt", "education", "education-num", "marital-status",
-							  "occupation",
-							  "relationship", "race", "sex", "capital-gain", "capital-loss", "hours-per-week",
-							  "native-country", "class"],
-				  "remove": []},
+				"features": ["age", "workclass", "fnlwgt", "education", "education-num", "marital-status", "occupation",
+							"relationship", "race", "sex", "capital-gain", "capital-loss", "hours-per-week", "native-country", "class"],
+				"train_features": ["age", "workclass", "fnlwgt", "education", "education-num", "marital-status", "occupation"
+        		,"relationship", "race", "sex", "capital-gain", "capital-loss", "hours-per-week", "native-country"],
+				"target_features": ["class"],
+				"remove": []},
 
 	   "titanic": {"path": "input_data/titanic.csv",
-				   "columns": ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',
-       'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked'],
-				   "remove": ['PassengerId', 'Name']},
-
+				"features": ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',
+       			'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked'],
+				"train_features": ['Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked'],
+				"target_features": ['Survived'],
+				"remove": ['PassengerId', 'Name'] },
 	   "social": {"path": "input_data/Social_Network_Ads.csv",
-				  "columns": ['User ID', 'Gender', 'Age', 'EstimatedSalary', 'Purchased'],
+				  "features": ['User ID', 'Gender', 'Age', 'EstimatedSalary', 'Purchased'],
+				  "train_features": ['User ID', 'Gender', 'Age', 'EstimatedSalary'],
+				  "target_features": ['Purchased'],
 				  "remove": ["User ID"] },
-
 	   }
 
 
+
+
 def clean_dataset(ds):
-
 	print(" ***** Pre-processing the dataset: " , ds )
-
-
-
- 
 	dataset = pd.read_csv(dic[ds]["path"] )
 
 	# removing unnecessary columns
@@ -41,20 +41,20 @@ def clean_dataset(ds):
 
 	# adding columns to income dataset
 	if ds == "income":
-		dataset.columns = dic[ds]["columns"]
+		dataset.columns = dic[ds]["features"]
 
-	print("Dataset shape: " , dataset.shape  )
-	print("Dataset types: " , dataset.dtypes )
+	print("Dataset shape: ", dataset.shape  )
+	print("Dataset types: ", dataset.dtypes )
 
 	# select numeric columns
 	datasetNumeric = dataset.select_dtypes(include=[np.number])
 	numericCols = datasetNumeric.columns.values
-	print("Numeric columns: " ,  numericCols )
+	print("Numeric columns: ",  numericCols )
 
 	# select non numeric columns
 	datasetNotNumeric = dataset.select_dtypes(exclude=[np.number])
 	notNumericColums = datasetNotNumeric.columns.values
-	print("Categorical columns: " ,  notNumericColums )
+	print("Categorical columns: ",  notNumericColums )
 
 
 	for col in notNumericColums:
@@ -83,9 +83,8 @@ def clean_dataset(ds):
 	print("Low info columns: " , lowInfoCols )
 	print("Final dataset shape: " , dataset.shape )
 
-	# Saving cleaned dataset 
-
-	dataset.to_csv('input_data/' + 'adult' + '_cleaned.csv' , index = False)
+	# Saving cleaned dataset
+	dataset.to_csv('input_data/' + ds + '_cleaned.csv' , index = False)
 
 
 
