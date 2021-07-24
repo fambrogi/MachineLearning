@@ -5,11 +5,96 @@ import seaborn as sns
 from sklearn.preprocessing import LabelEncoder, LabelBinarizer
 import os,sys
 
+
+dic = {"income": {"path": "input_data/adult.data",
+				"features": ["age", "workclass", "fnlwgt", "education", "education-num", "marital-status", "occupation",
+							"relationship", "race", "sex", "capital-gain", "capital-loss", "hours-per-week", "native-country", "class"],
+				"train_features": ["age", "workclass", "fnlwgt", "education", "education-num", "marital-status", "occupation"
+        		,"relationship", "race", "sex", "capital-gain", "capital-loss", "hours-per-week", "native-country"],
+				"target_features": ["class"],
+				"remove": []},
+
+	   "titanic": {"path": "input_data/titanic.csv",
+				"features": ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',
+       			'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked'],
+				"train_features": ['Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked'],
+				"target_features": ['Survived'],
+				"remove": ['PassengerId', 'Name'] },
+	   "social": {"path": "input_data/Social_Network_Ads.csv",
+				  "features": ['User ID', 'Gender', 'Age', 'EstimatedSalary', 'Purchased'],
+				  "train_features": ['User ID', 'Gender', 'Age', 'EstimatedSalary'],
+				  "target_features": ['Purchased'],
+				  "remove": ["User ID"] },
+	   }
+
+
+
+
+def clean_dataset(ds):
+	print(" ***** Pre-processing the dataset: " , ds )
+	dataset = pd.read_csv(dic[ds]["path"] )
+
+	# removing unnecessary columns
+	for c in dic[ds]["remove"]:
+		del dataset[c]
+
+
+	# adding columns to income dataset
+	if ds == "income":
+		dataset.columns = dic[ds]["features"]
+
+	print("Dataset shape: ", dataset.shape  )
+	print("Dataset types: ", dataset.dtypes )
+
+	# select numeric columns
+	datasetNumeric = dataset.select_dtypes(include=[np.number])
+	numericCols = datasetNumeric.columns.values
+	print("Numeric columns: ",  numericCols )
+
+	# select non numeric columns
+	datasetNotNumeric = dataset.select_dtypes(exclude=[np.number])
+	notNumericColums = datasetNotNumeric.columns.values
+	print("Categorical columns: ",  notNumericColums )
+
+
+	for col in notNumericColums:
+		dataset[col]=dataset[col].astype("category")
+		dataset[col]=dataset[col].cat.codes
+
+
+	for col in dataset.columns:
+		pct_missing = np.mean(dataset[col].isnull())
+		print('{} - {}%'.format(col, round(pct_missing * 100)))
+
+	print("missing values")
+	print(len(dataset.index))
+	lowInfoCols = []
+	numRows=dataset.shape[0]
+	for col in dataset.columns:
+		counts = dataset[col].value_counts(dropna=False)
+		top_pct = (counts / numRows).iloc[0]
+		if top_pct > 0.95:
+			lowInfoCols.append(col)
+			print('{0}: {1:.5f}%'.format(col, top_pct * 100))
+			print(counts)
+			print()
+
+
+	print("Low info columns: " , lowInfoCols )
+	print("Final dataset shape: " , dataset.shape )
+
+	# Saving cleaned dataset
+	dataset.to_csv('input_data/' + ds + '_cleaned.csv' , index = False)
+
+
+
+
+"""
 def cleanIncome():
 	dataset = pd.read_csv("input_data/" + 'adult.data')
 
 	dataset.columns=["age","workclass","fnlwgt","education","education-num","marital-status","occupation"
-		,"relationship","race","sex","capital-gain","capital-loss","hours-per-week","native-country","class"]
+		        ,"relationship","race","sex","capital-gain","capital-loss","hours-per-week","native-country","class"]
 
 	print("printing shape")
 	print(dataset.shape)
@@ -145,7 +230,7 @@ def cleanAds():
 	print(dataset.shape)
 
 	dataset.to_csv('input_data/' + 'ads' + '_cleaned.csv', index=False)
-
+"""
 
 
 def printBasicInfo(dataset):
@@ -254,16 +339,9 @@ def plotOutliersNotContinuous(dataset, notNumericCols, numericCols, folderName):
 		plt.close()
 
 
-
-
-
-def main():
-	print("cleaning income")
-	cleanIncome()
-	print("cleaning titanic")
-	cleanTitanic()
-	print("cleaning ads")
-	cleanAds()
+def	main():
+	for d in ["income","titanic","social"]:
+		dummy = clean_dataset(d)
 
 
 if __name__ == "__main__":
