@@ -26,8 +26,6 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import tree
 
-
-
 from generate_data import generateSyntheticData
 from clean_datasets import dic  # dic containing all the info about data frames
 from utils import * # printConfusionMatrix
@@ -136,9 +134,11 @@ def splitOriginalData(ds, rows=1000):
 
 
 datasets = ['income', 'titanic', 'social'] # names of datasets
+
 modes = ['gaussian_copula', 'ctGAN', 'copulaGAN'] # available synthetic data methods
 
 datasets = ['income','titanic', 'social']
+
 datasets = ['social']
 
 datasets = ['income','titanic', 'social']
@@ -150,11 +150,11 @@ def main():
 
     for ds in datasets:
         x_train, x_test, y_train, y_test = splitOriginalData(ds, rows=1000 )
-        trainEvaluateData(x_train, x_test, y_train, y_test, ds = ds, what='', classifier='forest', norm_confusion = 'true')
+        #trainEvaluateData(x_train, x_test, y_train, y_test, ds=ds, what='', classifier='forest', norm_confusion='true')
 
         for mode in modes:
             x_train_s, y_train_s = generateSyntheticData(ds, mode=mode, num_sample=len(x_train))
-            trainEvaluateData(x_train_s, x_test, y_train_s, y_test, ds = ds, what='Syntethic_' + mode )
+            #trainEvaluateData(x_train_s, x_test, y_train_s, y_test, ds=ds, what='Syntethic_' + mode )
 
 
 

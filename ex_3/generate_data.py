@@ -19,6 +19,9 @@ from sklearn.neighbors import KNeighborsClassifier
 
 
 from sklearn import tree
+from utils import make_histos_2
+
+
 #from classifier import Classifier
 
 def generateSyntheticData (ds, mode = '' , num_sample=5000):
@@ -49,19 +52,20 @@ def generateSyntheticData (ds, mode = '' , num_sample=5000):
         model = CopulaGAN()
 
 
-    model.fit(pd.merge(x_train,y_train,left_index=True,right_index=True))
+    df_all = pd.merge(x_train, y_train, left_index=True, right_index=True)
+    model.fit( df_all )
 
     synthetic_data = model.sample(num_sample)
 
-
     synthetic_data[target].to_csv('generatedData/y_train_' + ds + '_' + mode + '.csv', index=False)
     y_train_s = synthetic_data[target]
-
 
     del synthetic_data[target]
     synthetic_data.to_csv('generatedData/x_train' + ds + '_' + mode + '.csv', index=False)
 
     x_train_s = synthetic_data
+
+    make_histos_2(ds, df_all, what=mode)
 
     return x_train_s, y_train_s
 
