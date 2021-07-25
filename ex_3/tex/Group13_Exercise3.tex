@@ -159,48 +159,48 @@ The Social network ads data set \cite{social} collects information about social 
 
 
 \section{Workflow Overview and Code Structure}
-Here we outline the structure of the code. The Project is build using the \textit{python3.8} language and various standard libraries such as \textit{pandas} and \textit{numpy} (for basic data import and analysis), \textit{sklearn} (sci-kit learn for model training and evaluation), \textit{} (for the creation of the synthetic data sets), \textit{matplotlib} and \textit{seaborn} for data visualization. 
+Here we outline the structure of the code. The Project is build using the \textit{python3.8} language and various standard libraries such as \textit{pandas} and \textit{numpy} (for basic data import and analysis), \textit{sklearn} (sci-kit learn for model training and evaluation), \textit{} (for the creation of the synthetic data sets), \textit{matplotlib} and \textit{seaborn} for data visualization.
 
 The project includes five different scripts that perform different tasks:
 
 \begin{itemize}
 	\item \textit{clean\_dataset.py}: module for the loading and cleaning of the input data sets. It reads the input data sets ad \textit{pandas} data frames, which are the main format handled by the library for model training. Among the cleaning of the data, we find the outlier removals and data rescaling;\
-	
+
 	\item  \textit{generate\_data.py}: module for the creating of synthetic data, based on the \textit{SDV} library;\
-	
-	
+
+
 	\item  \textit{classifier.py}: main module of the project, contains the main functionalities to perform all the steps from data loading, cleaning, generation of synthetic data, model training and comparison of results;\
-	
+
 	\item \textit{utils.py}: module containing utilities e.g. for data plotting;\
-	 
+
 \end{itemize}
 
-In addition, a directory named "input\_data" is used to contain the input data sets as well as their respective cleaned version. 
-To run the entire project it is sufficient to first call the \textit{clean\_dataset.py} module e.g. 
-\begin{verbatim} 
-python3.8 clean_dataset.py 
-\end{verbatim} 
+In addition, a directory named "input\_data" is used to contain the input data sets as well as their respective cleaned version.
+To run the entire project it is sufficient to first call the \textit{clean\_dataset.py} module e.g.
+\begin{verbatim}
+python3.8 clean_dataset.py
+\end{verbatim}
 
 This step will produce the cleaned data set inside the same "input\_data" directory as well as some control plots to show the distributions and correlation of the data.
 \\
 
 
-In the second step it is required to run with 
-\begin{verbatim} 
-python3.8 classifier.py 
-\end{verbatim} 
+In the second step it is required to run with
+\begin{verbatim}
+python3.8 classifier.py
+\end{verbatim}
 that follows the following procedure:
 
 \begin{enumerate}
 	\item splitting of the original cleaned dataset into \textit{train} and \textit{test} sets, using a ratio of $70\%-30\%$ respectively; \
-	
+
 	\item  training and evaluation of the original dataset using the chosen classifier (random forest);
-	
-	
+
+
 	\item  creation of the synthetic data sets, using the training set from the previous splitting of the original dataset, for the three models GaussianCopula,CTGAN and Copula GAN (see \ref{sec::synthetic});
-	
-	\item evaluate the models trained with the original and the synthetic dataset wiht the test set, obtained from the original model.
-	
+
+	\item evaluate the models trained with the original and the synthetic dataset with the test set, obtained from the original model.
+
 \end{enumerate}
 
 
@@ -213,10 +213,9 @@ The steps are handled by the script \textit{data\_preparation.py} which includes
 \subsection{Data Overview}
 Here we provide an overview of the original data.
 
-\paragraph{Missing Value}
-The
 \paragraph{Normalization}
-The
+Since we will be working with a random forest classifier, normalization is not needed for the data. Same goes for the SVD methods that should only fit distributions to the data and handle everything on their own.
+
 \paragraph{Labelling}
 In all datasets were present not numeric features. In order to synthetize them was necessary to change the strings into numeric values. In order to do so we used the cat.code method in this way for every not numeric features all the possible values where labelled using a different value. Using the labelling we had the possibility to use the three models.
 
@@ -235,9 +234,28 @@ The sdv.tabular.CopulaGAN model \cite{copulagan} is a variation of the CTGAN Mod
 
 \section{Model Implementation and Evaluation}
 
-To train our model, we used the \textit{schi-kit learn} implementation of a random forest algorithm \textit{RandomForestClassifier()} with default parameters. We did not try to optimize the classification algorithm since we were more interested in comparing the results using the original and synthetic data sets.
-\\
+We follow the schematic in Fig. \ref{fig:schematic}. Thus, splitting the original data set in a train- and test-set (70\% train data and 30\% test data), synthesizing new data according to the chosen syntheziser methods and traning a classifier on the new and original data set to compare them in a classification task, tested on the test-set.
 
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.45\textwidth]{pics/schematic.png}
+
+	\caption{Outline of the used workflow.}
+	\label{fig:schematic}
+\end{figure}
+
+
+\subsection{Classification}
+
+The classification is done with a random forest classifier in a hold-out-validation fashion (using the previously created test-set). Since classification was already done in Exercise 1, we wont go in any further detail on the implementation. \\
+
+To train our model, we used the \textit{schi-kit learn} implementation of a random forest algorithm \textit{RandomForestClassifier()} with default parameters.
+
+\paragraph{Metrics}
+
+We use accuracy, precision and, as a combination, the f1-score as a metric for the classification results. Since our task is the creation of data that is close to the original one with respect to the underlying structure, it is not majorly important to achieve good classification results, but to achieve similar results for the original and synthesized data set. Thus, we were not optimizing the classification. \\
+
+Additionally as an optical metric, we use the confusion matrix to see the results of the classification. In a confusion matrix it is easy to see how well the classification performed by looking at the entries on the main diagonal - off-diagonal entries represent misclassifications. Again, the performance is not important but rather the similarity between the data sets.
 
 \subsection{Confusion Matrices}
 As outlined in the previous section, we classified both the original and synthetic data set and create the corresponding confusion matrices. Each entry $i,j$ corresponds to the number of observations in group $i$, but predicted to be in group $j$. We normalize the entries according to the sum of each row. Since it is a binary classification, the matrix reduces to the number of true negatives ($TN$), false positives ($FP$), false negatives ($FN$) and true positives ($TP$). We then analyzed the performance of the implementation using   precision ($P$) and recall ($R$), defined as :
@@ -246,7 +264,7 @@ As outlined in the previous section, we classified both the original and synthet
 P = \frac{TP}{TP + FP} \ \ \ \ \ \ \ \  R = \frac{TP}{TP + FN} \ \ \ \ \ \ \ \  A = \frac{TP + TN}{all}
 \end{equation}
 
-In this section we present the results of the confusion matrices, obtained after training our random forest classifier on the original data set and on the three different synthetic data sets. Results for the titanic, income and social data sets are shown respectively in Figures \ref{confusion_titanic}, \ref{confusion_income} and \ref{confusion_social}. 
+In this section we present the results of the confusion matrices, obtained after training our random forest classifier on the original data set and on the three different synthetic data sets. Results for the titanic, income and social data sets are shown respectively in Figures \ref{confusion_titanic}, \ref{confusion_income} and \ref{confusion_social}.
 
 
 \begin{figure}[h!]
@@ -255,7 +273,7 @@ In this section we present the results of the confusion matrices, obtained after
 	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/titanic_Syntethic_gaussian_copula_.png}
 	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/titanic_Syntethic_ctGAN_.png}
 	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/titanic_Syntethic_copulaGAN_.png}
-	
+
 	\caption{Correlation matrices for the "Titanic" data set: original dataset (top-left panel), Gaussian Copula synthetic data set (top-right panel), GAN synthetic data set (bottom-left panel) and GAN Copula synthetic data set (bottom-right panel).  }
 	\label{confusion_titanic}
 \end{figure}
@@ -266,7 +284,7 @@ In this section we present the results of the confusion matrices, obtained after
 	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/income_Syntethic_gaussian_copula_.png}
 	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/income_Syntethic_ctGAN_.png}
 	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/income_Syntethic_copulaGAN_.png}
-	
+
 	\caption{Correlation matrices for the "Income" data set: original dataset (top-left panel), Gaussian Copula synthetic data set (top-right panel), GAN synthetic data set (bottom-left panel) and GAN Copula synthetic data set (bottom-right panel).  }
 	\label{confusion_income}
 \end{figure}
@@ -278,13 +296,13 @@ In this section we present the results of the confusion matrices, obtained after
 	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/social_Syntethic_gaussian_copula_.png}
 	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/social_Syntethic_ctGAN_.png}
 	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/social_Syntethic_copulaGAN_.png}
-	
+
 	\caption{Correlation matrices for the "Social" data set: original dataset (top-left panel), Gaussian Copula synthetic data set (top-right panel), GAN synthetic data set (bottom-left panel) and GAN Copula synthetic data set (bottom-right panel).  }
 	\label{confusion_social}
 \end{figure}
 
 \subsection{Scores}
-Finally, in Figures \ref{scores_titanic} , \ref{scores_income} and \ref{scores_social} we show the values for the precision, accuracy and recall obtained after training the random classifier on the 4 different input data sets (original and three synthetic ones). 
+Finally, in Figures \ref{scores_titanic} , \ref{scores_income} and \ref{scores_social} we show the values for the precision, accuracy and recall obtained after training the random classifier on the 4 different input data sets (original and three synthetic ones).
 
 
 \begin{figure}[h!]
@@ -303,7 +321,7 @@ Finally, in Figures \ref{scores_titanic} , \ref{scores_income} and \ref{scores_s
 	\includegraphics[width=0.32\textwidth]{../plots/results/income_precision.png}
 	\includegraphics[width=0.32\textwidth]{../plots/results/income_accuracy.png}
 	\includegraphics[width=0.32\textwidth]{../plots/results/income_recall.png}
-	
+
 	\caption{Precision, accuracy and recall scores for the rand forest classifier, trained on the original data set and on the three synthetic data sets, for the "Titanic" data set.}
 	\label{scores_income}
 \end{figure}
@@ -313,7 +331,7 @@ Finally, in Figures \ref{scores_titanic} , \ref{scores_income} and \ref{scores_s
 	\includegraphics[width=0.32\textwidth]{../plots/results/social_precision.png}
 	\includegraphics[width=0.32\textwidth]{../plots/results/social_accuracy.png}
 	\includegraphics[width=0.32\textwidth]{../plots/results/social_recall.png}
-	
+
 	\caption{Precision, accuracy and recall scores for the rand forest classifier, trained on the original data set and on the three synthetic data sets, for the "Social" data set.}
 	\label{scores_social}
 \end{figure}
