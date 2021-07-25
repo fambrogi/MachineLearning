@@ -94,15 +94,15 @@ In this document we describe the results of the implementation of synthesizing a
 \section{Data Sets Description}
 Here we briefly introduce our datasets, analyze the distributions of the input data and check for significant correlations between variables.
 
-
+\clearpage
 \subsection{Income Data Set}
-The distribution of the relevant features, as well as a scatter plot to highlight pair-wise correlations are shown in Fig. \ref{pairplot_income}, while a more general view on the correlations are shown in Fig. \ref{correlation_income}.\\
 The data set \cite{income} provides us information about people, like: age, workclass, education, marital-status, occupation, capital-gain, ecc...\\
-Our purpose is to determine if a person income is lower or greater than a given value specifically the threshold is 50000 Dollars per year.
+Our purpose is to determine if a person income is lower or greater than a given value specifically the threshold is 50000 Dollars per year. The distribution of a selection of relevant features, as well as a scatter plot to highlight pair-wise correlations are shown in Fig. \ref{pairplot_income}, while a more general view on the correlations including all features are shown in Fig. \ref{correlation_income}.\\
+
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=\textwidth]{../plots/income_pairplot.png}
+	\includegraphics[width=0.8\textwidth]{../plots/income_pairplot_reduced_original.png}
 	\caption{ Distributions and pair-wise correlation for the features of the "income" data set.}
 	\label{pairplot_income}
 \end{figure}
@@ -110,20 +110,21 @@ Our purpose is to determine if a person income is lower or greater than a given 
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.7\textwidth]{../plots/income_correlations.png}
+	\includegraphics[width=0.5\textwidth]{../plots/income_correlations_original.png}
 	\caption{Correlation matrix for the "income" data set. }
 	\label{correlation_income}
 \end{figure}
 
 
 
+\clearpage
 \subsection{Titanic Data Set}
 The Titanic data set \cite{titanic} contains informations about the Titanic's passengers. Given the observations we want to determine if a given person, represented by an observation, will survive on the Titanic.\\
 Some features of the dataset are: Name, sex, age, Passenger class, ticket fare, where the passenger embarked, etc.
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=\textwidth]{../plots/social_pairplot.png}
+	\includegraphics[width=0.8\textwidth]{../plots/titanic_pairplot_reduced_original.png}
 	\caption{ Distributions and pair-wise correlation for the features of the "social" data set.}
 	\label{pairplot_income}
 \end{figure}
@@ -131,19 +132,19 @@ Some features of the dataset are: Name, sex, age, Passenger class, ticket fare, 
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.7\textwidth]{../plots/social_correlations.png}
+	\includegraphics[width=0.5\textwidth]{../plots/titanic_correlations_original.png}
 	\caption{Correlation matrix for the "social" data set. }
 	\label{correlation_income}
 \end{figure}
 
 
-
+\clearpage
 \subsection{Social Data Set}
 The Social network ads data set \cite{social} collects information about social network users in particular age,sex and income. Our objective is to understand if an user will buy the advised good.
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=\textwidth]{../plots/titanic_pairplot.png}
+	\includegraphics[width=0.8\textwidth]{../plots/social_pairplot_original.png}
 	\caption{ Distributions and pair-wise correlation for the features of the "Titanic" data set.}
 	\label{pairplot_income}
 \end{figure}
@@ -151,7 +152,7 @@ The Social network ads data set \cite{social} collects information about social 
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.7\textwidth]{../plots/titanic_correlations.png}
+	\includegraphics[width=0.5\textwidth]{../plots/social_correlations_original.png}
 	\caption{Correlation matrix for the "Titanic" data set. }
 	\label{correlation_income}
 \end{figure}
@@ -174,10 +175,34 @@ The project includes five different scripts that perform different tasks:
 	 
 \end{itemize}
 
-To run the entire project it is sufficient to call the \textit{classifier.py} module e.g. 
+In addition, a directory named "input\_data" is used to contain the input data sets as well as their respective cleaned version. 
+To run the entire project it is sufficient to first call the \textit{clean\_dataset.py} module e.g. 
+\begin{verbatim} 
+python3.8 clean_dataset.py 
+\end{verbatim} 
+
+This step will produce the cleaned data set inside the same "input\_data" directory as well as some control plots to show the distributions and correlation of the data.
+\\
+
+
+In the second step it is required to run with 
 \begin{verbatim} 
 python3.8 classifier.py 
 \end{verbatim} 
+that follows the following procedure:
+
+\begin{enumerate}
+	\item splitting of the original cleaned dataset into \textit{train} and \textit{test} sets, using a ratio of $70\%-30\%$ respectively; \
+	
+	\item  training and evaluation of the original dataset using the chosen classifier (random forest);
+	
+	
+	\item  creation of the synthetic data sets, using the training set from the previous splitting of the original dataset, for the three models GaussianCopula,CTGAN and Copula GAN (see \ref{sec::synthetic});
+	
+	\item evaluate the models trained with the original and the synthetic dataset wiht the test set, obtained from the original model.
+	
+\end{enumerate}
+
 
 
 \section{Data Exploration and Pre-processing}
@@ -195,7 +220,7 @@ The
 \paragraph{Labelling}
 In all datasets were present not numeric features. In order to synthetize them was necessary to change the strings into numeric values. In order to do so we used the cat.code method in this way for every not numeric features all the possible values where labelled using a different value. Using the labelling we had the possibility to use the three models.
 
-\section{Generation of Synthetic Data}
+\section{Generation of Synthetic Data} \label{sec::synthetic}
 In order to generate the synthetic data we relied on three different generation models. The models are defined in the \textit{SDV} library. The three models aim to generate a synthetic data set whose properties are the same as in the original dataset. The three models we used are: GaussianCopula model, CTGAN model, CopulaGAN model.
 We now describe the idea behind these three models as reported on the SDV library user guide.
 
@@ -206,61 +231,61 @@ The sdv.tabular.CTGAN model \cite{ctgan} is based on the GAN-based Deep Learning
 \paragraph{Copula GAN}
 The sdv.tabular.CopulaGAN model \cite{copulagan} is a variation of the CTGAN Model which takes advantage of the CDF based transformation that the GaussianCopulas apply to make the underlying CTGAN model task of learning the data easier.
 
-\section{Model Implementation}
-
-\subsection{Holdout and Cross Validation}
-Here we describe briefly the techniques of "holdout" and "cross validation" that are used to evaluate a model. The \textbf{holdout} method is essentially based on the splitting on the input data set into two subset, one used for training the model, and one used for testing the model, for example in $80\%-20\%$ proportion, although there is not fix recipe for this split. Once the model is trained, the evaluation can be performed on the test data set, and this is therefore possible to check if the prediction of the model match the data. One big issue of this model is that the training strongly depend on the splitting of the initial data set, for example if the characteristic of the training data set are not representative of the whole data set.
-
-A more powerful method is the \textbf{cross-validation} or "k-fold cross validation". Form the full dataset, a test is held out for final evaluation, but the validation set is no longer needed. For this, the training set is split into $k$ sets, so that the model is trained using $k-1$ folds as training data, and the remaining one is used for the validation as a test set (to compute the interesting metric of the model).
-Once we obtain such $k$ number of metrics, the final result is the average of these parameters, obtained for each iteration of the cross-validation on each distinct fold.
 
 
-\section{Performance Tests}
+\section{Model Implementation and Evaluation}
 
-\paragraph{Confusion Matrix}
-For each classifier, we produce a confusion matrix where each entry $i,j$ corresponds to the number of observations in group $i$, but predicted to be in group $j$. We chose to normalize the entries according to the sum of each row.
-In case of binary classification, the matrix reduces to the number of true negatives ($TN$), false positives ($FP$), false negatives ($FN$) and true positives ($TP$).
+To train our model, we used the \textit{schi-kit learn} implementation of a random forest algorithm \textit{RandomForestClassifier()} with default parameters. We did not try to optimize the classification algorithm since we were more interested in comparing the results using the original and synthetic data sets.
+\\
 
-Examples can be see in Fig. \ref{confusion_matrices}.
-
-We remind here the definition of the metric parameters we will used to quantify the performance of our classifiers i.e. precision ($P$), recall ($R$) , accuracy ($A$) and specificity $S$:
+As outlined in the previous section, we classified both the original and synthetic data set and create the corresponding confusion matrices. Each entry $i,j$ corresponds to the number of observations in group $i$, but predicted to be in group $j$. We normalize the entries according to the sum of each row. Since it is a binary classification, the matrix reduces to the number of true negatives ($TN$), false positives ($FP$), false negatives ($FN$) and true positives ($TP$). We then analyzed the performance of the implementation using   precision ($P$) and recall ($R$), defined as :
 
 \begin{equation}
 P = \frac{TP}{TP + FP} \ \ \ \ \ \ \ \  R = \frac{TP}{TP + FN} \ \ \ \ \ \ \ \  A = \frac{TP + TN}{all}
-\ \ \ \ \ \ \ \  S = \frac{TN}{TN + FP}
-\end{equation}
-
-It is straightforward to calculate these parameters for binary classification tasks out of the confusion matrix. In case of multiple labels, we need to calculate these parameter for each class, given that:
-\begin{enumerate}
-	\item  $TPs$ are the values in the diagonal; \
-	\item  $FNs$ for a certain class are the sum of values in the corresponding row excluding the $TP$; \
-	\item  $FPs$ for a certain class are the sum of values in the corresponding column excluding the $TP$; \
-	\item  $TNs$ for a certain class are the sum of all rows and columns, excluding the class's column and row. \
-\end{enumerate}
-
-
-Another convenient metric, particularly because it is calculated directly from the proper \textit{scikit-learn} function, is called $f1-score$, which is defined as the harmonic mean of the precision and recall:
-\begin{equation}
-f1-score = 2 \times \frac{P \dot R }{P + R }
 \end{equation}
 
 
+\section{Confusion Matrices}
+In this section we present the results of the confusion matrices, obtained after training our random forest classifier on the original data set and on the three different synthetic data sets. Results for the titanic, income and social data sets are shown respectively in Figures \ref{confusion_titanic}, \ref{confusion_income} and \ref{confusion_social}. 
 
-\iffalse
+
 \begin{figure}[h!]
 	\centering
-	\begin{minipage}[b]{0.49\textwidth}
-		\includegraphics[width=\textwidth]{plots/m2.png}
-	\end{minipage}
-	\begin{minipage}[b]{0.49\textwidth}
-		\includegraphics[width=\textwidth]{plots/m1.png}
-	\end{minipage}
-	\caption{Example confusion matrices for {\color{red} XXX }  }
-	\label{confusion_matrices}
+	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/titanic_Original_.png}
+	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/titanic_Syntethic_gaussian_copula_.png}
+	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/titanic_Syntethic_ctGAN_.png}
+	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/titanic_Syntethic_copulaGAN_.png}
+	
+	\caption{Correlation matrices for the "Titanic" data set: original dataset (top-left panel), Gaussian Copula synthetic data set (top-right panel), GAN synthetic data set (bottom-left panel) and GAN Copula synthetic data set (bottom-right panel).  }
+	\label{confusion_titanic}
 \end{figure}
-\fi
 
-{\color{red} Describe micro averaging and macro averaging, will we report both ? }
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/income_Original_.png}
+	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/income_Syntethic_gaussian_copula_.png}
+	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/income_Syntethic_ctGAN_.png}
+	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/income_Syntethic_copulaGAN_.png}
+	
+	\caption{Correlation matrices for the "Income" data set: original dataset (top-left panel), Gaussian Copula synthetic data set (top-right panel), GAN synthetic data set (bottom-left panel) and GAN Copula synthetic data set (bottom-right panel).  }
+	\label{confusion_income}
+\end{figure}
+
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/social_Original_.png}
+	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/social_Syntethic_gaussian_copula_.png}
+	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/social_Syntethic_ctGAN_.png}
+	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/social_Syntethic_copulaGAN_.png}
+	
+	\caption{Correlation matrices for the "Social" data set: original dataset (top-left panel), Gaussian Copula synthetic data set (top-right panel), GAN synthetic data set (bottom-left panel) and GAN Copula synthetic data set (bottom-right panel).  }
+	\label{confusion_social}
+\end{figure}
+
+
+
+
 
 \section{Conclusion}
 
