@@ -47,7 +47,7 @@ def make_histos_2(ds, df, what = ''):
     if not os.path.isdir('plots'):
         os.system('mkdir plots')
 
-    """
+
     # print 2 by 2 correlations and histograms
     sns.set_theme(style="ticks")
     sns.pairplot(df, corner=False, diag_kind = "hist")
@@ -82,7 +82,7 @@ def make_histos_2(ds, df, what = ''):
         plt.tight_layout()
         plt.savefig('plots/' + ds + '_pairplot_reduced_' + what + '.png', dpi = 200)
         plt.close()
-    """
+
     return 0
 
 
@@ -140,7 +140,7 @@ def printConfusionMatrix(matrix, ds, title='', what='') :
 
 
 
-def plot_results(res):
+def plot_results(res, ds ):
 
     if not os.path.isdir('plots/results'):
         os.system(' mkdir plots/results' )
@@ -148,15 +148,14 @@ def plot_results(res):
     fs = 12
     labels = ['Original', 'Gaussian Copula' , 'ctGAN', 'Copula GAN']
 
-    for ds in res.keys():
-         for r,c in zip(['precision', 'accuracy', 'recall'], ['lime', 'orange', 'blue']):
-             plt.scatter([1,2,3,4] , res[ds][r], label = r, color = c )
-             plt.title (ds + ' Dataset ', fontsize = fs, y = 1.02)
-             plt.ylabel(r, fontsize = fs)
-             plt.grid(ls = ':' , color = 'lightgray')
-             plt.xticks([1,2,3,4] , labels)
-             plt.savefig('plots/results/' + ds + '_' + r + '.png' , dpi = 200 )
-             plt.close()
+    for r,c in zip(['precision', 'accuracy', 'recall'], ['lime', 'orange', 'blue']):
+         plt.scatter([1,2,3,4] , res[ds][r], label = r, color = c )
+         plt.title (ds + ' Dataset ', fontsize = fs, y = 1.02)
+         plt.ylabel(r, fontsize = fs)
+         plt.grid(ls = ':' , color = 'lightgray')
+         plt.xticks([1,2,3,4] , labels)
+         plt.savefig('plots/results/' + ds + '_' + r + '.png' , dpi = 200 )
+         plt.close()
 
     print("Done plotting results *** ")
 
