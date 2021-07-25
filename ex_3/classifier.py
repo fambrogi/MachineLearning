@@ -109,7 +109,7 @@ def trainEvaluateData(x_train, x_test, y_train, y_test, ds = '', what='', classi
 
 
 
-def splitOriginalData(ds, rows=1000):
+def splitOriginalData(ds, rows=None):
     """ ds: data set name,
         rows: if set, gives the total number of rows to consider (for testing / faster processing ) """
 
@@ -119,7 +119,7 @@ def splitOriginalData(ds, rows=1000):
     dataset = pd.read_csv("input_data/" + ds + '_cleaned.csv')
 
     if rows:
-        dataset = dataset[:1000]
+        dataset = dataset[:rows]
 
     # split the datasets
     x_train, x_test, y_train, y_test = splitDataset(df=dataset, ds=ds)
@@ -137,11 +137,11 @@ datasets = ['income', 'titanic', 'social'] # names of datasets
 
 modes = ['gaussian_copula', 'ctGAN', 'copulaGAN'] # available synthetic data methods
 
-datasets = ['income','titanic', 'social']
+#datasets = ['income','titanic', 'social']
 
 datasets = ['social']
 
-datasets = ['income','titanic', 'social']
+datasets = ['income', 'titanic', 'social']
 
 to_clean = True
 
@@ -150,11 +150,11 @@ def main():
 
     for ds in datasets:
         x_train, x_test, y_train, y_test = splitOriginalData(ds, rows=1000 )
-        #trainEvaluateData(x_train, x_test, y_train, y_test, ds=ds, what='', classifier='forest', norm_confusion='true')
+        trainEvaluateData(x_train, x_test, y_train, y_test, ds=ds, what='Original', classifier='forest', norm_confusion='true')
 
         for mode in modes:
             x_train_s, y_train_s = generateSyntheticData(ds, mode=mode, num_sample=len(x_train))
-            #trainEvaluateData(x_train_s, x_test, y_train_s, y_test, ds=ds, what='Syntethic_' + mode )
+            trainEvaluateData(x_train_s, x_test, y_train_s, y_test, ds=ds, what='Syntethic_' + mode )
 
 
 
