@@ -109,17 +109,34 @@ def trainEvaluateData(x_train, x_test, y_train, y_test, ds = '', what='', classi
 
 
 
-def splitOriginalData(ds, rows=None):
+def splitOriginalData(ds, rows=None, balance = True):
     """ ds: data set name,
-        rows: if set, gives the total number of rows to consider (for testing / faster processing ) """
-
+        rows: if set, gives the total number of rows to consider (for testing / faster processing )
+        balance: [True, False]  if True, balances the majority target class between the two possible outcome
+        """
     print('classification of ' , ds , ' dataset')
 
     # reading cleaned dataset
     dataset = pd.read_csv("input_data/" + ds + '_cleaned.csv')
 
+    # balancing the data sets to have 50% equal target class
+    if balance:
+        values, counts = np.unique( dataset[dic[ds]['target_features'][0]], return_counts = True )
+        df_f = dataset.loc [ dataset[ dic[ds]['target_features'][0] ] == min(values) ]
+        df_s = dataset.loc [ dataset[ dic[ds]['target_features'][0] ] == max(values) ]
+
+        if len(df_f) > len(df_s):
+            df_down = df_f.sample( len(df_s) )
+            dataset = pd.concat( [df_down, df_s ])
+
+        elif len(df_s) > len(df_f) :
+            df_down = df_s.sample( len(df_f) )
+            dataset = pd.concat( [df_down, df_f ])
+
+    # extracting a smaller set of rows for faster testing
     if rows:
-        dataset = dataset[:rows]
+        n = min(rows, len(dataset))
+        dataset = dataset.sample(n)
 
     # split the datasets
     x_train, x_test, y_train, y_test = splitDataset(df=dataset, ds=ds)
@@ -134,14 +151,15 @@ def splitOriginalData(ds, rows=None):
 
 
 datasets = ['income', 'titanic', 'social'] # names of datasets
-
 modes = ['gaussian_copula', 'ctGAN', 'copulaGAN'] # available synthetic data methods
 
 #datasets = ['income','titanic', 'social']
 
 datasets = ['social']
 
-datasets = ['income', 'titanic', 'social']
+datasets = ['titanic', 'social']
+
+modes = ['copulaGAN']
 
 to_clean = True
 
@@ -149,7 +167,7 @@ to_clean = True
 def main():
 
     for ds in datasets:
-        x_train, x_test, y_train, y_test = splitOriginalData(ds, rows=1000 )
+        x_train, x_test, y_train, y_test = splitOriginalData(ds, rows=5000, balance = True )
         trainEvaluateData(x_train, x_test, y_train, y_test, ds=ds, what='Original', classifier='forest', norm_confusion='true')
 
         for mode in modes:

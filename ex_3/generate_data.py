@@ -4,8 +4,7 @@ import pandas as pd
 import numpy as np
 
 import warnings
-from sdv.tabular import GaussianCopula, CopulaGAN
-from sdv.tabular import CTGAN
+from sdv.tabular import GaussianCopula, CopulaGAN, CTGAN
 from sdv import *
 
 import random
@@ -46,11 +45,10 @@ def generateSyntheticData (ds, mode = '' , num_sample=5000):
 
     if mode == 'gaussian_copula':
         model = GaussianCopula()
-    if mode == 'ctGAN' :
+    elif mode == 'ctGAN' :
         model = CTGAN()
-    if mode == 'copulaGAN' :
+    elif mode == 'copulaGAN' :
         model = CopulaGAN()
-
 
     df_all = pd.merge(x_train, y_train, left_index=True, right_index=True)
     model.fit( df_all )
@@ -65,7 +63,7 @@ def generateSyntheticData (ds, mode = '' , num_sample=5000):
 
     x_train_s = synthetic_data
 
-    make_histos_2(ds, df_all, what=mode)
+    make_histos_2(ds, synthetic_data, what=mode)
 
     return x_train_s, y_train_s
 
