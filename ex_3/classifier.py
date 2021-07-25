@@ -118,7 +118,7 @@ def trainEvaluateData(x_train, x_test, y_train, y_test, ds = '', what='', classi
 
     cl.fit(x_train, y_train)
 
-    y_pred = predict(x_test, cl, )
+    y_pred = cl.predict(x_test)
 
     confusion_m = confusion_matrix(y_test, y_pred, normalize= norm_confusion)
     accuracy = accuracy_score(y_test,y_pred)
@@ -201,12 +201,12 @@ def main():
 
     for ds in datasets:
 
-        x_train, x_test, y_train, y_test = splitOriginalData(ds, rows=50, balance = True )
-        trainEvaluateData(x_train, x_test, y_train, y_test, ds=ds, what='Original', classifier='forest', norm_confusion='true')
+        x_train, x_test, y_train, y_test = splitOriginalData(ds, rows=100, balance = True )
+        d = trainEvaluateData(x_train, x_test, y_train, y_test, ds=ds, what='Original', classifier='forest', norm_confusion='true')
 
         for mode in modes:
             x_train_s, y_train_s = generateSyntheticData(ds, mode=mode, num_sample=len(x_train))
-            trainEvaluateData(x_train_s, x_test, y_train_s, y_test, ds=ds, what='Syntethic_' + mode, classifier='forest', norm_confusion='true' )
+            d = trainEvaluateData(x_train_s, x_test, y_train_s, y_test, ds=ds, what='Syntethic_' + mode, classifier='forest', norm_confusion='true' )
 
         # Plotting summary information
         plot_histo_comparison_ds(ds, columns = dic[ds]['train_features'])
