@@ -157,6 +157,27 @@ The Social network ads data set \cite{social} collects information about social 
 \end{figure}
 
 
+\section{Workflow Overview and Code Structure}
+Here we outline the structure of the code. The Project is build using the \textit{python3.8} language and various standard libraries such as \textit{pandas} and \textit{numpy} (for basic data import and analysis), \textit{sklearn} (sci-kit learn for model training and evaluation), \textit{} (for the creation of the synthetic data sets), \textit{matplotlib} and \textit{seaborn} for data visualization. 
+
+The project includes five different scripts that perform different tasks:
+
+\begin{itemize}
+	\item \textit{clean\_dataset.py}: module for the loading and cleaning of the input data sets. It reads the input data sets ad \textit{pandas} data frames, which are the main format handled by the library for model training. Among the cleaning of the data, we find the outlier removals and data rescaling;\
+	
+	\item  \textit{generate\_data.py}: module for the creating of synthetic data, based on the \textit{SDV} library;\
+	
+	
+	\item  \textit{classifier.py}: main module of the project, contains the main functionalities to perform all the steps from data loading, cleaning, generation of synthetic data, model training and comparison of results;\
+	
+	\item \textit{utils.py}: module containing utilities e.g. for data plotting;\
+	 
+\end{itemize}
+
+To run the entire project it is sufficient to call the \textit{classifier.py} module e.g. 
+\begin{verbatim} 
+python3.8 classifier.py 
+\end{verbatim} 
 
 
 \section{Data Exploration and Pre-processing}
@@ -175,7 +196,7 @@ The
 In all datasets were present not numeric features. In order to synthetize them was necessary to change the strings into numeric values. In order to do so we used the cat.code method in this way for every not numeric features all the possible values where labelled using a different value. Using the labelling we had the possibility to use the three models.
 
 \section{Generation of Synthetic Data}
-In order to generate the synthetic data we relied on three different generation models. The models are defined in the SDV library. The three models aim to generate a synthetic data set whose properties are the same as in the original dataset. The three models we used are: GaussianCopula model, CTGAN model, CopulaGAN model.
+In order to generate the synthetic data we relied on three different generation models. The models are defined in the \textit{SDV} library. The three models aim to generate a synthetic data set whose properties are the same as in the original dataset. The three models we used are: GaussianCopula model, CTGAN model, CopulaGAN model.
 We now describe the idea behind these three models as reported on the SDV library user guide.
 
 \paragraph{GaussianCopula}
