@@ -9,6 +9,9 @@ import os,sys
 
 def make_histos_2(ds, df, what = ''):
     """ Creates histograms and correlation matrices """
+
+    if not os.path.isdir('plots'):
+        os.system('mkdir plots')
     fs = 12
 
     red = { 'income' : ["age", "workclass",  "education",
