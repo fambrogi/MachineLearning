@@ -188,8 +188,7 @@ datasets = ['titanic', 'social', 'income']
 
 
 modes = ['gaussian_copula', 'ctGAN', 'copulaGAN'] # available synthetic data methods
-datasets = ['titanic']
-datasets = ['social']
+datasets = ['titanic', 'social', 'income']
 
 to_clean = True
 

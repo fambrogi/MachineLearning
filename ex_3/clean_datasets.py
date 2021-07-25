@@ -31,8 +31,6 @@ dic = {"income": {"path": "input_data/adult.data",
 	   }
 
 
-
-
 def clean_dataset(ds):
 	print(" ***** Pre-processing the dataset: " , ds )
 	dataset = pd.read_csv(dic[ds]["path"] )
