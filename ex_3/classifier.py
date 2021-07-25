@@ -62,9 +62,6 @@ res_all = { 'income': { 'precision': [],
                         'accuracy': [],
                         'recall': [] },
 
-
-
-
             }
 
 def splitDataset(df='', ds='' ):
@@ -186,41 +183,36 @@ def splitOriginalData(ds, rows=None, balance = True):
     return x_train, x_test, y_train, y_test
 
 
-datasets = ['income', 'titanic', 'social'] # names of datasets
-modes = ['gaussian_copula', 'ctGAN', 'copulaGAN'] # available synthetic data methods
-
-#datasets = ['income','titanic', 'social']
-
-datasets = ['social']
 
 datasets = ['titanic', 'social', 'income']
+
+
 modes = ['gaussian_copula', 'ctGAN', 'copulaGAN'] # available synthetic data methods
+datasets = ['titanic']
+datasets = ['social']
+
 to_clean = True
+
+
+
+
+
 # the number of synthetic ds rows must be equal to the rows in the original training ds
 def main():
 
     for ds in datasets:
-        x_train, x_test, y_train, y_test = splitOriginalData(ds, rows=1000, balance = True )
+
+        x_train, x_test, y_train, y_test = splitOriginalData(ds, rows=50, balance = True )
         trainEvaluateData(x_train, x_test, y_train, y_test, ds=ds, what='Original', classifier='forest', norm_confusion='true')
 
         for mode in modes:
             x_train_s, y_train_s = generateSyntheticData(ds, mode=mode, num_sample=len(x_train))
-            plot_histo_comparison_ds(ds, columns = dic[ds]['train_features'])
-
             trainEvaluateData(x_train_s, x_test, y_train_s, y_test, ds=ds, what='Syntethic_' + mode, classifier='forest', norm_confusion='true' )
 
-    plot_results(res_all)
-
-
-
-
-
-
-
-
-
-
-
+        # Plotting summary information
+        plot_histo_comparison_ds(ds, columns = dic[ds]['train_features'])
+        print(res_all)
+        plot_results(res_all, ds)
 
 
 
