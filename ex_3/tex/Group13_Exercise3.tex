@@ -274,7 +274,7 @@ In this section we present the results of the confusion matrices, obtained after
 	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/titanic_Syntethic_ctGAN_.png}
 	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/titanic_Syntethic_copulaGAN_.png}
 
-	\caption{Correlation matrices for the "Titanic" data set: original dataset (top-left panel), Gaussian Copula synthetic data set (top-right panel), GAN synthetic data set (bottom-left panel) and GAN Copula synthetic data set (bottom-right panel).  }
+	\caption{Confusion matrices for the "Titanic" data set: original dataset (top-left panel), Gaussian Copula synthetic data set (top-right panel), GAN synthetic data set (bottom-left panel) and GAN Copula synthetic data set (bottom-right panel).  }
 	\label{confusion_titanic}
 \end{figure}
 
@@ -285,7 +285,7 @@ In this section we present the results of the confusion matrices, obtained after
 	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/income_Syntethic_ctGAN_.png}
 	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/income_Syntethic_copulaGAN_.png}
 
-	\caption{Correlation matrices for the "Income" data set: original dataset (top-left panel), Gaussian Copula synthetic data set (top-right panel), GAN synthetic data set (bottom-left panel) and GAN Copula synthetic data set (bottom-right panel).  }
+	\caption{Confusion matrices for the "Income" data set: original dataset (top-left panel), Gaussian Copula synthetic data set (top-right panel), GAN synthetic data set (bottom-left panel) and GAN Copula synthetic data set (bottom-right panel).  }
 	\label{confusion_income}
 \end{figure}
 
@@ -297,7 +297,7 @@ In this section we present the results of the confusion matrices, obtained after
 	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/social_Syntethic_ctGAN_.png}
 	\includegraphics[width=0.45\textwidth]{../ConfusionMatrixes/social_Syntethic_copulaGAN_.png}
 
-	\caption{Correlation matrices for the "Social" data set: original dataset (top-left panel), Gaussian Copula synthetic data set (top-right panel), GAN synthetic data set (bottom-left panel) and GAN Copula synthetic data set (bottom-right panel).  }
+	\caption{Confusion matrices for the "Social" data set: original dataset (top-left panel), Gaussian Copula synthetic data set (top-right panel), GAN synthetic data set (bottom-left panel) and GAN Copula synthetic data set (bottom-right panel).  }
 	\label{confusion_social}
 \end{figure}
 
@@ -341,6 +341,16 @@ Finally, in Figures \ref{scores_titanic} , \ref{scores_income} and \ref{scores_s
 
 \clearpage
 \section{Conclusion}
+
+As can be seen in the figures above, the outcome of the data synthesizing depends on the underlying data set and the used SDV method. On the "adult income" dataset all methods produce a data set for which the best strategy of the RF classifier is to constantly guess the same class. This makes sense when looking at the produced data - mainly data points of one class are produced. We did not find out what could be the cause for this and could be further investigated. But since the documentation on the SDV methods is rather sparse and it is not point of this assignment we will skip this. \\
+
+For the other two data sets the \textit{GaussianCopula} method was performing the best out of the SDV methods and actually gives quite reasonable results. \textit{ctGAN} gives a low performance on all data sets and the RF classifier returns a trivial strategy (same reasons as before). The result for \textit{copulaGAN} is rather surprising. Having lots of entries off the main diagonal, the synthesizer seems to often swap (binary labels) the labels a data point would normally have - he does this consistently with both classes. \\
+
+Looking at the metrics we can see again, that the \textit{GaussianCopula} is performing the best out of our synthesizers. But looking at those metrics one could assume that \textit{ctGAN} performs halfway between \textit{GaussianCopula} and \textit{copulaGAN}. This of course a deception since both are performing bad, only that \textit{ctGAN} makes correct guesses for one of the classes. \\
+
+We cannot see what in the "adult income" data set causes it to perform so bad. It has a similar amount of features to the "titanic" data set and has a mixture of categorical and non-categorical features. It is a bit heavy on the categorical features though - testing it on a subset of the features could be a way to test for improvment. It is also by far the biggest data set having 32.560 entries (compared to 891 in the "titanic" and 400 in the "social media ad" data sets). But we don't see how more data could negatively affect the results of the synthesizer methods. \\
+
+To wrap everything up, we think that the lack of the documentation and the resulting lack of knowledge on the working of the methods (only the code of the implementation in form of the sdv package was given) was limiting our ability to easily improve the results. We would've had the best shot by simply trying out a lot of things to hope and find an underlying pattern in the response of the model.
 
 \clearpage
 \bibliography{literature.bib}{}
