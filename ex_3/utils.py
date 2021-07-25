@@ -64,7 +64,7 @@ def make_histos(ds, df):
     return 0
 
 
-def make_histos_2(ds, df):
+def make_histos_2(ds, df, what = ''):
     fs = 12
 
     print("Analysing and plotting : ", ds )
@@ -77,7 +77,8 @@ def make_histos_2(ds, df):
     # print 2 by 2 correlations and histograms
     sns.set_theme(style="ticks")
     sns.pairplot(df, corner=True )
-    plt.savefig('plots/' + ds + '_pairplot.png', dpi = 200)
+    plt.tight_layout()
+    plt.savefig('plots/' + ds + '_pairplot_' + what + '.png', dpi = 200)
     plt.close()
 
     # correlation matrix
@@ -85,8 +86,9 @@ def make_histos_2(ds, df):
     corr = df.corr()
     a = sns.diverging_palette(145, 300, s=60, as_cmap=True)
     sns.heatmap(corr,  vmin = -1, vmax = 1, linewidths=.5, cbar_kws={"shrink": .5}, cmap = a)
-    plt.title("Correlations for the data set " + ds , fontsize = fs )
-    plt.savefig('plots/' + ds + '_correlations.png', dpi = 200)
+    plt.title("Correlations for the data set " + ds + ' ' + what , fontsize = fs )
+    plt.tight_layout()
+    plt.savefig('plots/' + ds + '_correlations_' + what + '.png', dpi = 200)
     plt.close()
 
 
