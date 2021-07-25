@@ -201,7 +201,7 @@ def main():
 
     for ds in datasets:
 
-        x_train, x_test, y_train, y_test = splitOriginalData(ds, rows=100, balance = True )
+        x_train, x_test, y_train, y_test = splitOriginalData(ds, rows=35000, balance = True )
         d = trainEvaluateData(x_train, x_test, y_train, y_test, ds=ds, what='Original', classifier='forest', norm_confusion='true')
 
         for mode in modes:
