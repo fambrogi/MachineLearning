@@ -54,7 +54,9 @@ def generateSyntheticData (ds, mode = '' , num_sample=5000):
     model.fit( df_all )
 
     synthetic_data = model.sample(num_sample)
-
+    if not os.path.isdir('generatedData'):
+        os.system('mkdir generatedData')
+        
     synthetic_data[target].to_csv('generatedData/y_train_' + ds + '_' + mode + '.csv', index=False)
     y_train_s = synthetic_data[[target]]
 

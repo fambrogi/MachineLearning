@@ -91,6 +91,8 @@ def make_histos_2(ds, df, what = ''):
 
 def printConfusionMatrix(matrix, ds, title='', what='') :
 
+    if not os.path.isdir('ConfusionMatrixes'):
+        os.system('mkdir ConfusionMatrixes')
     fs = 12
     plt.figure(figsize=(6, 5))
     # place labels at the top
