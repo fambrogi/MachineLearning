@@ -68,7 +68,7 @@ def splitDataset(df='', ds='' ):
                                                         test_size=0.30,
                                                         shuffle=True)
 
-    return train_set, target_set, x_train, x_test, y_train, y_test
+    return x_train, x_test, y_train, y_test
 
 
 
@@ -111,14 +111,20 @@ def trainEvaluateData(x_train, x_test, y_train, y_test, ds = '', what='', classi
 
 
 
-def splitOriginalData(ds):
+def splitOriginalData(ds, rows=1000):
+    """ ds: data set name,
+        rows: if set, gives the total number of rows to consider (for testing / faster processing ) """
+
     print('classification of ' , ds , ' dataset')
 
     # reading cleaned dataset
     dataset = pd.read_csv("input_data/" + ds + '_cleaned.csv')
 
+    if rows:
+        dataset = dataset[:1000]
+
     # split the datasets
-    x, y, x_train, x_test, y_train, y_test = splitDataset(df=dataset, ds=ds)
+    x_train, x_test, y_train, y_test = splitDataset(df=dataset, ds=ds)
 
     x_train.to_csv('splittedDatasets/x_train_' + ds + '.csv', index=False)
     x_test.to_csv('splittedDatasets/x_test_' + ds + '.csv', index=False)
@@ -132,14 +138,22 @@ def splitOriginalData(ds):
 datasets = ['income', 'titanic', 'social'] # names of datasets
 modes = ['gaussian_copula', 'ctGAN', 'copulaGAN'] # available synthetic data methods
 
-datasets = ['income']
+datasets = ['income','titanic', 'social']
+datasets = ['social']
 
+datasets = ['income','titanic', 'social']
+
+to_clean = True
+
+# the number of synthetic ds rows must be equal to the rows in the original training ds
 def main():
+
     for ds in datasets:
-        x_train, x_test, y_train, y_test = splitOriginalData(ds)
+        x_train, x_test, y_train, y_test = splitOriginalData(ds, rows=1000 )
         trainEvaluateData(x_train, x_test, y_train, y_test, ds = ds, what='', classifier='forest', norm_confusion = 'true')
+
         for mode in modes:
-            x_train_s, y_train_s = generateSyntheticData(ds, mode=mode, num_sample=5000)
+            x_train_s, y_train_s = generateSyntheticData(ds, mode=mode, num_sample=len(x_train))
             trainEvaluateData(x_train_s, x_test, y_train_s, y_test, ds = ds, what='Syntethic_' + mode )
 
 
@@ -156,39 +170,7 @@ def main():
 
 
 
-def plot_line_results(results, dataset):
 
-    if not os.path.isdir('Plots/comparison/'):
-        os.mkdir('Plots/comparison/')
-
-    fs = 15
-
-    to_plot = {}
-
-    for cl in ['adult']:
-        to_plot[cl] = {'accuracy': [], 'recall': [], 'precision': [], 'f1': []}
-        for i in ['recall','f1','precision']:
-            print(dataset,' ',cl, ' ', i )
-            to_plot[cl][i].append(results[dataset][cl][i])
-
-    for i in ['recall','f1','precision']:
-
-        fig, ax = plt.subplots(figsize = (12,5))
-
-        plt.scatter(range(1,len(to_plot['adult'][i])+1), to_plot['adult'][i] )
-        plt.plot(range(1,len(to_plot['adult'][i])+1), to_plot['adult'][i], label = 'adult' )
-
-
-        plt.ylim(0,0.4)
-        ax.set_xticks(range(1,len(to_plot['adult'][i])+1))
-        ax.set_xticklabels(rotation=35, fontsize=10 )
-
-        plt.title( i + ' for ' + dataset + ' dataset ', fontsize = fs )
-        plt.legend()
-        plt.tight_layout()
-        plt.grid(ls=':', color='lightgray')
-        plt.savefig('Plots/comparison/'+ i + '_comparison_'+ dataset + '.png', dpi = 200)
-        plt.close()
 
 if __name__=="__main__":
     main()

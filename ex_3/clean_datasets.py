@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.preprocessing import LabelEncoder, LabelBinarizer
 import os,sys
+from utils import make_histos, make_histos_2
 
 
 dic = {"income": {"path": "input_data/adult.data",
@@ -20,9 +21,10 @@ dic = {"income": {"path": "input_data/adult.data",
 				"train_features": ['Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked'],
 				"target_features": ['Survived'],
 				"remove": ['PassengerId', 'Name'] },
+
 	   "social": {"path": "input_data/Social_Network_Ads.csv",
 				  "features": ['User ID', 'Gender', 'Age', 'EstimatedSalary', 'Purchased'],
-				  "train_features": ['User ID', 'Gender', 'Age', 'EstimatedSalary'],
+				  "train_features": ['Gender', 'Age', 'EstimatedSalary'],
 				  "target_features": ['Purchased'],
 				  "remove": ["User ID"] },
 	   }
@@ -83,9 +85,12 @@ def clean_dataset(ds):
 	print("Low info columns: " , lowInfoCols )
 	print("Final dataset shape: " , dataset.shape )
 
+	dataset = dataset.dropna()
+
 	# Saving cleaned dataset
 	dataset.to_csv('input_data/' + ds + '_cleaned.csv' , index = False)
 
+	return dataset
 
 
 
@@ -340,8 +345,10 @@ def plotOutliersNotContinuous(dataset, notNumericCols, numericCols, folderName):
 
 
 def	main():
-	for d in ["income","titanic","social"]:
-		dummy = clean_dataset(d)
+	for ds in ["income","titanic","social"]:
+		dataset = clean_dataset(ds)
+		make_histos_2(ds, dataset)
+
 
 
 if __name__ == "__main__":
