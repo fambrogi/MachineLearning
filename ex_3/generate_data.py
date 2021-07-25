@@ -59,7 +59,7 @@ def generateSyntheticData (ds, mode = '' , num_sample=5000):
     y_train_s = synthetic_data[[target]]
 
     del synthetic_data[target]
-    synthetic_data.to_csv('generatedData/x_train' + ds + '_' + mode + '.csv', index=False)
+    synthetic_data.to_csv('generatedData/x_train_' + ds + '_' + mode + '.csv', index=False)
 
     x_train_s = synthetic_data
 

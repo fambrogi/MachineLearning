@@ -40,16 +40,32 @@ if not os.path.isdir(plot_dir):
 
 
 """ Dictionary containing the training and prediction features """
+
+"""
 features = { 'adult' :
                  {'features':  ["age","workclass","fnlwgt","education","education-num",
                                 "marital-status","occupation","relationship","race","sex",
                                 "capital-gain","capital-loss","hours-per-week","native-country"],
                   'target': ["class"] }          }
+"""
+
+
+
+res_all = { 'income': { 'precision': [],
+                        'accuracy': [],
+                        'recall': [] },
+            'titanic': { 'precision': [],
+                        'accuracy': [],
+                        'recall': [] },
+
+            'social': { 'precision': [],
+                        'accuracy': [],
+                        'recall': [] },
 
 
 
 
-
+            }
 
 def splitDataset(df='', ds='' ):
     """ Split the data frame df provided into train and test.
@@ -89,6 +105,17 @@ def evaluation(y_test,y_pred, normalize='true'):
 
 def trainEvaluateData(x_train, x_test, y_train, y_test, ds = '', what='', classifier='forest', norm_confusion = 'true'):
 
+    """
+    if not os.path.isdir('plots/histo_check'):
+        os.system('mkdir plots/histo_check')
+
+    for c in x_train.columns :
+        plt.hist(x_train[c] , label = c)
+        plt.title(ds + ' ' + c + ' ' + what )
+        plt.savefig('plots/histo_check/' + ds + '_' + c + '_' + what + '.png' , dpi = 200)
+        plt.close()
+    """
+
     if classifier == 'forest':
         cl = RandomForestClassifier();
 
@@ -105,6 +132,12 @@ def trainEvaluateData(x_train, x_test, y_train, y_test, ds = '', what='', classi
     print("Precision (macro avg):", report['macro avg']['precision'])
     print("Recall (macro avg):", report['macro avg']['recall'])
     print("F1-score (macro avg):", report['macro avg']['f1-score'])
+
+    res_all[ds]['accuracy'].append(accuracy)
+    res_all[ds]['precision'].append(report['macro avg']['precision'])
+    res_all[ds]['recall'].append(report['macro avg']['recall'])
+
+
     printConfusionMatrix(confusion_m, ds , title ='', what=what)
 
 
@@ -115,6 +148,9 @@ def splitOriginalData(ds, rows=None, balance = True):
         balance: [True, False]  if True, balances the majority target class between the two possible outcome
         """
     print('classification of ' , ds , ' dataset')
+
+    if not os.path.isdir('splittedDatasets'):
+        os.system('mkdir splittedDatasets')
 
     # reading cleaned dataset
     dataset = pd.read_csv("input_data/" + ds + '_cleaned.csv')
@@ -157,24 +193,23 @@ modes = ['gaussian_copula', 'ctGAN', 'copulaGAN'] # available synthetic data met
 
 datasets = ['social']
 
-datasets = ['titanic', 'social']
-
-modes = ['copulaGAN']
-
+datasets = ['titanic', 'social', 'income']
+modes = ['gaussian_copula', 'ctGAN', 'copulaGAN'] # available synthetic data methods
 to_clean = True
-
 # the number of synthetic ds rows must be equal to the rows in the original training ds
 def main():
 
     for ds in datasets:
-        x_train, x_test, y_train, y_test = splitOriginalData(ds, rows=5000, balance = True )
+        x_train, x_test, y_train, y_test = splitOriginalData(ds, rows=1000, balance = True )
         trainEvaluateData(x_train, x_test, y_train, y_test, ds=ds, what='Original', classifier='forest', norm_confusion='true')
 
         for mode in modes:
             x_train_s, y_train_s = generateSyntheticData(ds, mode=mode, num_sample=len(x_train))
-            trainEvaluateData(x_train_s, x_test, y_train_s, y_test, ds=ds, what='Syntethic_' + mode )
+            plot_histo_comparison_ds(ds, columns = dic[ds]['train_features'])
 
+            trainEvaluateData(x_train_s, x_test, y_train_s, y_test, ds=ds, what='Syntethic_' + mode, classifier='forest', norm_confusion='true' )
 
+    plot_results(res_all)
 
 
 

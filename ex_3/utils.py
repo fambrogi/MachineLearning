@@ -29,60 +29,35 @@ dic = {"income": {"path": "input_data/adult.data",
 """
 
 
-def make_histos(ds, df):
-    fs = 12
 
-    print("Analysing and plotting : ", ds )
-
-    if not os.path.isdir('plots'):
-        os.system('mkdir plots')
-    df = pd.read_csv(dic[ds]['path'])
-    for c in dic[ds]['remove']:
-        del df[c]
-
-    if ds == "income":
-        df.columns = dic[ds]['features']
-
-    print("Columns: " , df.columns )
-
-    # print 2 by 2 correlations and histograms
-    sns.set_theme(style="ticks")
-    sns.pairplot(df, corner=True )
-    plt.savefig('plots/' + ds + '_pairplot.png', dpi = 200)
-    plt.close()
-
-    # correlation matrix
-    # Compute the correlation matrix
-    corr = df.corr()
-    a = sns.diverging_palette(145, 300, s=60, as_cmap=True)
-    sns.heatmap(corr,  vmin = -1, vmax = 1, linewidths=.5, cbar_kws={"shrink": .5}, cmap = a)
-    plt.title("Correlations for the data set " + ds , fontsize = fs )
-    plt.savefig('plots/' + ds + '_correlations.png', dpi = 200)
-    plt.close()
-
-
-    return 0
 
 
 def make_histos_2(ds, df, what = ''):
     fs = 12
 
+    red = { 'income' : ["age", "workclass",  "education",
+                        "capital-gain", "capital-loss", "class"] ,
+
+            'titanic' : ['Age', 'Ticket', 'Fare', 'Sex', 'Pclass', 'Survived'] }
+
+
     print("Analysing and plotting : ", ds )
+
 
     if not os.path.isdir('plots'):
         os.system('mkdir plots')
 
-    print("Columns: " , df.columns )
-
+    """
     # print 2 by 2 correlations and histograms
     sns.set_theme(style="ticks")
-    sns.pairplot(df, corner=True )
+    sns.pairplot(df, corner=False, diag_kind = "hist")
+
     plt.tight_layout()
     plt.savefig('plots/' + ds + '_pairplot_' + what + '.png', dpi = 200)
     plt.close()
 
     # correlation matrix
-    # Compute the correlation matrix
+    # Compute the correlation matrix, using only a subset of columns for some data sets
     corr = df.corr()
     a = sns.diverging_palette(145, 300, s=60, as_cmap=True)
     sns.heatmap(corr,  vmin = -1, vmax = 1, linewidths=.5, cbar_kws={"shrink": .5}, cmap = a)
@@ -90,8 +65,24 @@ def make_histos_2(ds, df, what = ''):
     plt.tight_layout()
     plt.savefig('plots/' + ds + '_correlations_' + what + '.png', dpi = 200)
     plt.close()
+    
 
+    if ds in red.keys():
+        df_r = df[red[ds]]
 
+        corr = df_r.corr()
+        a = sns.diverging_palette(145, 300, s=60, as_cmap=True)
+        sns.heatmap(corr, vmin=-1, vmax=1, linewidths=.5, cbar_kws={"shrink": .5}, cmap=a)
+        plt.title("Correlations for the data set " + ds + ' ' + what, fontsize=fs)
+        plt.tight_layout()
+        plt.savefig('plots/' + ds + '_correlations_reduced_' + what + '.png', dpi=200)
+        plt.close()
+
+        sns.pairplot(df_r )
+        plt.tight_layout()
+        plt.savefig('plots/' + ds + '_pairplot_reduced_' + what + '.png', dpi = 200)
+        plt.close()
+    """
     return 0
 
 
@@ -136,7 +127,7 @@ def printConfusionMatrix(matrix, ds, title='', what='') :
               'titanic': 'Survive',
               'social': 'Buy'}
 
-    plt.title( titles[ds] + ' for ' + what)
+    plt.title( what + ", Dataset " + ds  )
 
     plt.ylabel('True label', size=fs)
     plt.xlabel('Predicted label', size=fs)
@@ -145,37 +136,53 @@ def printConfusionMatrix(matrix, ds, title='', what='') :
     plt.close()
 
 
-def plot_line_results(results, dataset):
-
-    if not os.path.isdir('Plots/comparison/'):
-        os.mkdir('Plots/comparison/')
-
-    fs = 15
-
-    to_plot = {}
-
-    for cl in ['adult']:
-        to_plot[cl] = {'accuracy': [], 'recall': [], 'precision': [], 'f1': []}
-        for i in ['recall','f1','precision']:
-            print(dataset,' ',cl, ' ', i )
-            to_plot[cl][i].append(results[dataset][cl][i])
-
-    for i in ['recall','f1','precision']:
-
-        fig, ax = plt.subplots(figsize = (12,5))
-
-        plt.scatter(range(1,len(to_plot['adult'][i])+1), to_plot['adult'][i] )
-        plt.plot(range(1,len(to_plot['adult'][i])+1), to_plot['adult'][i], label = 'adult' )
 
 
-        plt.ylim(0,0.4)
-        ax.set_xticks(range(1,len(to_plot['adult'][i])+1))
-        ax.set_xticklabels(rotation=35, fontsize=10 )
+def plot_results(res):
 
-        plt.title( i + ' for ' + dataset + ' dataset ', fontsize = fs )
+    if not os.path.isdir('plots/results'):
+        os.system(' mkdir plots/results' )
+
+    fs = 12
+    labels = ['Original', 'Gaussian Copula' , 'ctGAN', 'Copula GAN']
+
+    for ds in res.keys():
+         for r,c in zip(['precision', 'accuracy', 'recall'], ['lime', 'orange', 'blue']):
+             plt.scatter([1,2,3,4] , res[ds][r], label = r, color = c )
+             plt.title (ds + ' Dataset ', fontsize = fs, y = 1.02)
+             plt.ylabel(r, fontsize = fs)
+             plt.grid(ls = ':' , color = 'lightgray')
+             plt.xticks([1,2,3,4] , labels)
+             plt.savefig('plots/results/' + ds + '_' + r + '.png' , dpi = 200 )
+             plt.close()
+
+    print("Done plotting results *** ")
+
+def plot_histo_comparison_ds(ds, columns=''):
+    """ Creating"""
+    if not os.path.isdir('plots/histo_check'):
+        os.system('mkdir plots/histo_check')
+
+
+
+    original_df = pd.read_csv('splittedDatasets/x_train_' + ds + '.csv')
+    copula_df = pd.read_csv('generatedData/x_train_' + ds + '_gaussian_copula.csv')
+    GAN_df = pd.read_csv('generatedData/x_train_' + ds + '_ctGAN.csv')
+    GAN_copula_df = pd.read_csv('generatedData/x_train_' + ds + '_copulaGAN.csv')
+
+    data = []
+
+    labels = ['Original' , 'Copula', 'GAN', 'Copula GAN']
+    for c in columns:
+        data = []
+        for df in [original_df , copula_df, GAN_df, GAN_copula_df]:
+            h = df[c]
+            data.append(h)
+        plt.title('Data comparison for ' + ds + ' feature: ' + c )
+        plt.hist(data, label= labels, bins = 20 )
         plt.legend()
-        plt.tight_layout()
-        plt.grid(ls=':', color='lightgray')
-        plt.savefig('Plots/comparison/'+ i + '_comparison_'+ dataset + '.png', dpi = 200)
+        plt.savefig('plots/histo_check/' + ds + '_' + c + '.png', dpi = 200)
         plt.close()
 
+
+    return

@@ -4,9 +4,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.preprocessing import LabelEncoder, LabelBinarizer
 import os,sys
-from utils import make_histos, make_histos_2
+from utils import make_histos_2
 
 
+# Dictionary holding the relevant information for all data sets
 dic = {"income": {"path": "input_data/adult.data",
 				"features": ["age", "workclass", "fnlwgt", "education", "education-num", "marital-status", "occupation",
 							"relationship", "race", "sex", "capital-gain", "capital-loss", "hours-per-week", "native-country", "class"],
@@ -39,7 +40,6 @@ def clean_dataset(ds):
 	# removing unnecessary columns
 	for c in dic[ds]["remove"]:
 		del dataset[c]
-
 
 	# adding columns to income dataset
 	if ds == "income":
@@ -90,152 +90,9 @@ def clean_dataset(ds):
 	# Saving cleaned dataset
 	dataset.to_csv('input_data/' + ds + '_cleaned.csv' , index = False)
 
+
 	return dataset
 
-
-
-"""
-def cleanIncome():
-	dataset = pd.read_csv("input_data/" + 'adult.data')
-
-	dataset.columns=["age","workclass","fnlwgt","education","education-num","marital-status","occupation"
-		        ,"relationship","race","sex","capital-gain","capital-loss","hours-per-week","native-country","class"]
-
-	print("printing shape")
-	print(dataset.shape)
-	print("printing types")
-	print(dataset.dtypes)
-	# select numeric columns
-	datasetNumeric = dataset.select_dtypes(include=[np.number])
-	numericCols = datasetNumeric.columns.values
-	print("printing numeric columns")
-	print(numericCols)
-	# select non numeric columns
-	datasetNotNumeric = dataset.select_dtypes(exclude=[np.number])
-	notNumericColums = datasetNotNumeric.columns.values
-	print("printing non numeric columns")
-	print(notNumericColums)
-
-
-	for col in notNumericColums:
-		dataset[col]=dataset[col].astype("category")
-		dataset[col]=dataset[col].cat.codes
-
-
-	for col in dataset.columns:
-		pct_missing = np.mean(dataset[col].isnull())
-		print('{} - {}%'.format(col, round(pct_missing * 100)))
-	print("missing values")
-	print(len(dataset.index))
-	lowInfoCols = []
-	numRows=dataset.shape[0]
-	for col in dataset.columns:
-		counts = dataset[col].value_counts(dropna=False)
-		top_pct = (counts / numRows).iloc[0]
-		if top_pct > 0.95:
-			lowInfoCols.append(col)
-			print('{0}: {1:.5f}%'.format(col, top_pct * 100))
-			print(counts)
-			print()
-	print("printing low info columns")
-	print(lowInfoCols)
-
-	print(dataset.shape)
-
-	dataset.to_csv('input_data/' + 'adult' + '_cleaned.csv' , index = False)
-
-def cleanTitanic():
-	dataset = pd.read_csv("input_data/" + 'titanic.csv')
-	print("printing shape")
-	print(dataset.shape)
-	print("printing types")
-	print(dataset.dtypes)
-	# select numeric columns
-	datasetNumeric = dataset.select_dtypes(include=[np.number])
-	numericCols = datasetNumeric.columns.values
-	print("printing numeric columns")
-	print(numericCols)
-	# select non numeric columns
-	datasetNotNumeric = dataset.select_dtypes(exclude=[np.number])
-	notNumericColums = datasetNotNumeric.columns.values
-	print("printing non numeric columns")
-	print(notNumericColums)
-
-	for col in notNumericColums:
-		dataset[col] = dataset[col].astype("category")
-		dataset[col] = dataset[col].cat.codes
-
-	for col in dataset.columns:
-		pct_missing = np.mean(dataset[col].isnull())
-		print('{} - {}%'.format(col, round(pct_missing * 100)))
-	print("missing values")
-	print(len(dataset.index))
-	lowInfoCols = []
-	numRows = dataset.shape[0]
-	for col in dataset.columns:
-		counts = dataset[col].value_counts(dropna=False)
-		top_pct = (counts / numRows).iloc[0]
-		if top_pct > 0.95:
-			lowInfoCols.append(col)
-			print('{0}: {1:.5f}%'.format(col, top_pct * 100))
-			print(counts)
-			print()
-	print("printing low info columns")
-	print(lowInfoCols)
-	#the name and id of the buyer are not useful i proceed with the deletion of the two columns
-	del(dataset['PassengerId'])
-	del (dataset['Name'])
-	dataset = dataset.dropna()
-	print(dataset.shape)
-
-	dataset.to_csv('input_data/' + 'titanic' + '_cleaned.csv', index=False)
-
-def cleanAds():
-	dataset = pd.read_csv("input_data/" + 'Social_Network_Ads.csv')
-	print("printing shape")
-	print(dataset.shape)
-	print("printing types")
-	print(dataset.dtypes)
-	# select numeric columns
-	datasetNumeric = dataset.select_dtypes(include=[np.number])
-	numericCols = datasetNumeric.columns.values
-	print("printing numeric columns")
-	print(numericCols)
-	# select non numeric columns
-	datasetNotNumeric = dataset.select_dtypes(exclude=[np.number])
-	notNumericColums = datasetNotNumeric.columns.values
-	print("printing non numeric columns")
-	print(notNumericColums)
-
-	for col in notNumericColums:
-		dataset[col] = dataset[col].astype("category")
-		dataset[col] = dataset[col].cat.codes
-
-	for col in dataset.columns:
-		pct_missing = np.mean(dataset[col].isnull())
-		print('{} - {}%'.format(col, round(pct_missing * 100)))
-	print("missing values")
-	print(len(dataset.index))
-	lowInfoCols = []
-	numRows = dataset.shape[0]
-	for col in dataset.columns:
-		counts = dataset[col].value_counts(dropna=False)
-		top_pct = (counts / numRows).iloc[0]
-		if top_pct > 0.95:
-			lowInfoCols.append(col)
-			print('{0}: {1:.5f}%'.format(col, top_pct * 100))
-			print(counts)
-			print()
-	print("printing low info columns")
-	print(lowInfoCols)
-	# the user Id gives us no info
-	del (dataset['User ID'])
-
-	#dataset = dataset.dropna()
-	print(dataset.shape)
-
-	dataset.to_csv('input_data/' + 'ads' + '_cleaned.csv', index=False)
-"""
 
 
 def printBasicInfo(dataset):
@@ -334,7 +191,6 @@ def plotOutliersNotContinuous(dataset, notNumericCols, numericCols, folderName):
 		plt.savefig("Plots/preprocessing_plots/" + folderName + '/' + col + '.png', dpi=150)
 		plt.close()
 
-	# due the fact that numerical attributes are numerical but they corresponts at intervals I print histograms also for them in order to
 	# spot outliers
 	for col in numericCols:
 		dataset[col].value_counts().plot.bar()
@@ -347,7 +203,7 @@ def plotOutliersNotContinuous(dataset, notNumericCols, numericCols, folderName):
 def	main():
 	for ds in ["income","titanic","social"]:
 		dataset = clean_dataset(ds)
-		make_histos_2(ds, dataset)
+		make_histos_2(ds, dataset, what='original')
 
 
 
