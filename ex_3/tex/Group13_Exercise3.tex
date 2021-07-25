@@ -238,14 +238,14 @@ The sdv.tabular.CopulaGAN model \cite{copulagan} is a variation of the CTGAN Mod
 To train our model, we used the \textit{schi-kit learn} implementation of a random forest algorithm \textit{RandomForestClassifier()} with default parameters. We did not try to optimize the classification algorithm since we were more interested in comparing the results using the original and synthetic data sets.
 \\
 
+
+\subsection{Confusion Matrices}
 As outlined in the previous section, we classified both the original and synthetic data set and create the corresponding confusion matrices. Each entry $i,j$ corresponds to the number of observations in group $i$, but predicted to be in group $j$. We normalize the entries according to the sum of each row. Since it is a binary classification, the matrix reduces to the number of true negatives ($TN$), false positives ($FP$), false negatives ($FN$) and true positives ($TP$). We then analyzed the performance of the implementation using   precision ($P$) and recall ($R$), defined as :
 
 \begin{equation}
 P = \frac{TP}{TP + FP} \ \ \ \ \ \ \ \  R = \frac{TP}{TP + FN} \ \ \ \ \ \ \ \  A = \frac{TP + TN}{all}
 \end{equation}
 
-
-\section{Confusion Matrices}
 In this section we present the results of the confusion matrices, obtained after training our random forest classifier on the original data set and on the three different synthetic data sets. Results for the titanic, income and social data sets are shown respectively in Figures \ref{confusion_titanic}, \ref{confusion_income} and \ref{confusion_social}. 
 
 
@@ -283,10 +283,45 @@ In this section we present the results of the confusion matrices, obtained after
 	\label{confusion_social}
 \end{figure}
 
+\subsection{Scores}
+Finally, in Figures \ref{scores_titanic} , \ref{scores_income} and \ref{scores_social} we show the values for the precision, accuracy and recall obtained after training the random classifier on the 4 different input data sets (original and three synthetic ones). 
+
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.32\textwidth]{../plots/results/titanic_precision.png}
+	\includegraphics[width=0.32\textwidth]{../plots/results/titanic_accuracy.png}
+	\includegraphics[width=0.32\textwidth]{../plots/results/titanic_recall.png}
+
+	\caption{Precision, accuracy and recall scores for the rand forest classifier, trained on the original data set and on the three synthetic data sets, for the "Titanic" data set.}
+	\label{scores_titanic}
+\end{figure}
+
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.32\textwidth]{../plots/results/income_precision.png}
+	\includegraphics[width=0.32\textwidth]{../plots/results/income_accuracy.png}
+	\includegraphics[width=0.32\textwidth]{../plots/results/income_recall.png}
+	
+	\caption{Precision, accuracy and recall scores for the rand forest classifier, trained on the original data set and on the three synthetic data sets, for the "Titanic" data set.}
+	\label{scores_income}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.32\textwidth]{../plots/results/social_precision.png}
+	\includegraphics[width=0.32\textwidth]{../plots/results/social_accuracy.png}
+	\includegraphics[width=0.32\textwidth]{../plots/results/social_recall.png}
+	
+	\caption{Precision, accuracy and recall scores for the rand forest classifier, trained on the original data set and on the three synthetic data sets, for the "Social" data set.}
+	\label{scores_social}
+\end{figure}
 
 
 
 
+\clearpage
 \section{Conclusion}
 
 \clearpage

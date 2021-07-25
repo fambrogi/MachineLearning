@@ -7,5 +7,6 @@
 \BOOKMARK [2][-]{subsection.3.1}{Data Overview}{section.3}% 7
 \BOOKMARK [1][-]{section.4}{Generation of Synthetic Data}{}% 8
 \BOOKMARK [1][-]{section.5}{Model Implementation and Evaluation}{}% 9
-\BOOKMARK [1][-]{section.6}{Confusion Matrices}{}% 10
-\BOOKMARK [1][-]{section.7}{Conclusion}{}% 11
+\BOOKMARK [2][-]{subsection.5.1}{Confusion Matrices}{section.5}% 10
+\BOOKMARK [2][-]{subsection.5.2}{Scores}{section.5}% 11
+\BOOKMARK [1][-]{section.6}{Conclusion}{}% 12
