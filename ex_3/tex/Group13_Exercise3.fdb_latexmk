@@ -1,12 +1,12 @@
 # Fdb version 3
-["bibtex Group13_Exercise3"] 1627240246 "Group13_Exercise3.aux" "Group13_Exercise3.bbl" "Group13_Exercise3" 1627246967
+["bibtex Group13_Exercise3"] 1627247689 "Group13_Exercise3.aux" "Group13_Exercise3.bbl" "Group13_Exercise3" 1627247738
   "/usr/share/texlive/texmf-dist/bibtex/bst/base/unsrt.bst" 1292289607 18030 1376b4b231b50c66211e47e42eda2875 ""
-  "Group13_Exercise3.aux" 1627246967 9021 401c2e7282c635a9290a59033f801816 "pdflatex"
+  "Group13_Exercise3.aux" 1627247738 9021 401c2e7282c635a9290a59033f801816 "pdflatex"
   "literature.bib" 1627142422 1136 55a0896e4ef121526207a7dd9152b2d8 ""
   (generated)
   "Group13_Exercise3.bbl"
   "Group13_Exercise3.blg"
-["pdflatex"] 1627246962 "Group13_Exercise3.tex" "Group13_Exercise3.pdf" "Group13_Exercise3" 1627246967
+["pdflatex"] 1627247733 "Group13_Exercise3.tex" "Group13_Exercise3.pdf" "Group13_Exercise3" 1627247738
   "../ConfusionMatrixes/income_Original_.png" 1627244602 31199 33a77a2d0460a0963d6706e700c7d549 ""
   "../ConfusionMatrixes/income_Syntethic_copulaGAN_.png" 1627244602 35094 01ea84e1c4f4df940a88e2d8bce1d45a ""
   "../ConfusionMatrixes/income_Syntethic_ctGAN_.png" 1627244602 35497 2cf4ef06af12c11237125db60f1e72b8 ""
@@ -157,15 +157,15 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1583234869 38841 ce3692aa899bb693b90b87eaa5d4d84e ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1612814595 4506899 5aa06387a89422d950281f9266951d5a ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1615902045 5819275 000bc554c0e772f61147292a18777d7e ""
-  "Group13_Exercise3.aux" 1627246967 9021 401c2e7282c635a9290a59033f801816 "pdflatex"
-  "Group13_Exercise3.bbl" 1627240246 979 d8b68ba7a3b789c890892514b8089c2f "bibtex Group13_Exercise3"
-  "Group13_Exercise3.out" 1627246967 819 f27a68c82deac8937a16d175fb57dfab "pdflatex"
-  "Group13_Exercise3.tex" 1627246962 19341 4ba0b45c8d1222236fbdd2b99c327218 ""
-  "Group13_Exercise3.toc" 1627246967 1394 de19759173bf8aef389a108b51a529c9 "pdflatex"
+  "Group13_Exercise3.aux" 1627247738 9021 401c2e7282c635a9290a59033f801816 "pdflatex"
+  "Group13_Exercise3.bbl" 1627247689 979 d8b68ba7a3b789c890892514b8089c2f "bibtex Group13_Exercise3"
+  "Group13_Exercise3.out" 1627247738 819 f27a68c82deac8937a16d175fb57dfab "pdflatex"
+  "Group13_Exercise3.tex" 1627247733 19265 ac47452f0031ab8c1d2ecd34b9d9b75b ""
+  "Group13_Exercise3.toc" 1627247738 1394 de19759173bf8aef389a108b51a529c9 "pdflatex"
   "pics/schematic.png" 1627228346 111691 71e5fe56bd6b48c822e0a74e1c3b9b06 ""
   (generated)
-  "Group13_Exercise3.out"
-  "Group13_Exercise3.pdf"
   "Group13_Exercise3.aux"
   "Group13_Exercise3.toc"
+  "Group13_Exercise3.out"
+  "Group13_Exercise3.pdf"
   "Group13_Exercise3.log"
